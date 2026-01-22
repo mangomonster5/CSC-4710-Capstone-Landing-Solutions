@@ -16,10 +16,6 @@ private:
     string tail_number;
     string model;
 
-    // Performance
-    double max_speed_kmh;
-    const double OpFactor = 0.80;
-
     // State
     string current_airport;
     double flight_hours;
@@ -37,7 +33,6 @@ public:
     string get_tail() const;
     string get_model() const;
     string get_location() const;
-    double cruise_speed() const;
     double get_hours() const;
     bool available() const;
 

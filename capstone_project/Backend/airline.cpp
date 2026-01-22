@@ -19,11 +19,6 @@ string aircraft::get_model() const { return model; }
 string aircraft::get_location() const { return current_airport; }
 double aircraft::get_hours() const { return flight_hours; }
 
-double aircraft::cruise_speed() const
-{
-    return max_speed_kmh * OpFactor;
-}
-
 bool aircraft::available() const
 {
     return !in_maintenance;
