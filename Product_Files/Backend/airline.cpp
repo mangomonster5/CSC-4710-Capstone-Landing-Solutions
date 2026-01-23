@@ -1,37 +1,37 @@
 #include "airline.h"
 
 // Constructor
-aircraft::aircraft(string tail, string m,
+airline::airline(string tail, string m,
                    double max_speed, string start_airport)
 {
     tail_number = tail;
     model = m;
-    max_speed_kmh = max_speed;
+    max_speed = max_speed;
     current_airport = start_airport;
     flight_hours = 0.0;
     in_maintenance = false;
-    maintenance_days_left = 0;
+    maintenance_hourse_left = 0;
 }
 
 // Getters
-string aircraft::get_tail() const { return tail_number; }
-string aircraft::get_model() const { return model; }
-string aircraft::get_location() const { return current_airport; }
-double aircraft::get_hours() const { return flight_hours; }
+string airline::get_tail() const { return tail_number; }
+string airline::get_model() const { return model; }
+string airline::get_location() const { return current_airport; }
+double airline::get_hours() const { return flight_hours; }
 
-bool aircraft::available() const
+bool airline::available() const
 {
     return !in_maintenance;
 }
 
 // Flight rules
-bool aircraft::can_fly(string from) const
+bool airline::can_fly(string from) const
 {
     if (in_maintenance) return false;
     return current_airport == from;
 }
 
-void aircraft::fly(double hours, string destination)
+void airline::fly(double hours, string destination)
 {
     if (in_maintenance) return;
 
@@ -40,28 +40,28 @@ void aircraft::fly(double hours, string destination)
 }
 
 // Maintenance rules
-bool aircraft::needs_maintenance() const
+bool airline::needs_maintenance() const
 {
     return flight_hours >= 200.0;
 }
 
-bool aircraft::start_maintenance(bool is_hub, int hub_active)
+bool airline::start_maintenance(bool is_hub, int hub_active)
 {
     if (!is_hub) return false;
     if (hub_active >= 3) return false;
     if (!needs_maintenance()) return false;
 
     in_maintenance = true;
-    maintaince_hours_left = 36;
+    maintenance_hourse_left = 36;
     flight_hours = 0.0;
     return true;
 }
 
-void aircraft::advance_hour()
+void airline::advance_hour()
 {
     if (in_maintenance) {
-        maintenance_hours_left--;
-        if (maintenance_hours_left <= 0) {
+        maintenance_hourse_left--;
+        if ( maintenance_hourse_left <= 0) {
             in_maintenance = false;
         }
     }

@@ -10,7 +10,7 @@ using namespace std;
  * Aircraft operational model
  * Tracks speed, hours, maintenance, and location
  */
-class aircraft {
+class airline {
 private:
     // Identity
     string tail_number;
@@ -22,11 +22,11 @@ private:
 
     // Maintenance
     bool in_maintenance;
-    int maintaince_hourse_left;
+    int maintenance_hourse_left;
 
 public:
     //Creator for each individual aircraft
-    aircraft(string tail, string model,
+    airline(string tail, string model,
              double max_speed, string start_airport);
 
     // Information on each plane

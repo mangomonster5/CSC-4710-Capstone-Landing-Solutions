@@ -34,6 +34,8 @@ class flight {
         const int AccelRate = 25;
         const int DecelRate = 35;
 
+        const double PI = 3.14;
+
     public:
         // Determine cruising altitude
         int cruise_altitude(bool intl, double miles);
