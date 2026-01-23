@@ -33,7 +33,6 @@ double costs::airport_eu(int ops)
     return conversion(2, 0, ops * EUAirportEU);
 }
 
-
 double costs::flight_cost(double gal, bool intl, bool from_eu, bool to_eu)
 {
     double c = 0;
