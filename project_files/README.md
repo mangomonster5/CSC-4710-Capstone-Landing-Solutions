@@ -1,7 +1,5 @@
-# CSC-4710-Capstone
-
-
 # Below is an auto generated read me file after I [Sean H] ran: npx create-react-app capstone_project
+
 
 # Getting Started with Create React App
 
