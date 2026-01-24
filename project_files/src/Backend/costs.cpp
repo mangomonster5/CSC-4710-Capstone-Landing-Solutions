@@ -57,7 +57,7 @@ double costs::lease(int n1, int n2, int n3, int n4)
 
 double costs::ticket_price(double op_cost, int seats)
 {
-    int pax = seats * 0.30;
+    double pax = seats * 0.30;
     if(pax == 0) return 0;
     return op_cost / pax;
 }

@@ -1,7 +1,9 @@
 // compile: g++ flightSim.cpp flight.cpp costs.cpp airline.cpp airport.cpp
 //USED TO TEST THE ACTUAL CODE AND SIMULATE FLIGHTS
 
-#include <iostream>
+#include <bits/stdc++.h>
+
+//all the header files
 #include "flight.h"
 #include "costs.h"
 #include "airline.h"
@@ -15,11 +17,7 @@ int main() {
 
     // Load airports
     airport::loadAirports();
-
-    // Create 3 aircraft starting at DCA
-    airline plane1("A1", "Boeing 737", 900, "DCA");
-    airline plane2("A2", "Boeing 737", 900, "DCA");
-    airline plane3("A3", "Boeing 737", 900, "DCA");
+    vector<airline> fleet = airline::preloadFleet();
 
     int choice;
 
@@ -32,24 +30,71 @@ int main() {
         cin >> choice;
 
         if (choice == 1) {
+            airline* selected = nullptr;
             int p;
+            string from;
             string dest;
 
-            cout << "Select plane (1, 2, 3): ";
-            cin >> p;
+            //START OF PICKING STARTING AIRPORT
+            cout << "Pick one of the following airport codes: " << endl;
+            
+            list<string> current_airports;
 
-            cout << "Enter destination airport code: ";
+            // loop through the fleet
+            for (int i = 0; i < fleet.size(); i++) {
+                string loc = fleet[i].get_location();
+
+                // check if it's already in the list
+                bool exists = false;
+                for (const auto& airport : current_airports) {
+                    if (airport == loc) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                // if not in the list, add it
+                if (!exists) {
+                    current_airports.push_back(loc);
+                    cout << current_airports.size() << ": " << loc << endl;
+                }
+            }
+
+            bool valid = false;
+            while(!valid){
+                cout << "Enter valid starting airport code: ";
+                cin >> from; 
+
+                for(int i = 0; i < fleet.size(); i++){
+                    if(from == fleet[i].get_location()){
+                        valid = true;
+                        break;
+                    }
+                }
+                if(!valid){
+                    cout << "Not a valid starting code, re-printing valid starting airport codes: " << endl;
+                }
+
+            }
+
+            //for loop to find first avaiable plane at selected location
+            for(int i = 0; i < fleet.size(); i++){
+                if(from == fleet[i].get_location() && fleet[i].available()){
+                    selected = &fleet[i];
+                    break;
+                }
+            }
+
+
+            //END OF PICKING STARTING AIRPORT
+
+            //START OF PICKING DESTINATION AIRPORT
+
+            cout << "Pick a Destionation Airport: ";
             cin >> dest;
 
-            airline* selected = nullptr;
-            if (p == 1) selected = &plane1;
-            else if (p == 2) selected = &plane2;
-            else if (p == 3) selected = &plane3;
+            //cout << airline::can_fly()
 
-            if (!selected) {
-                cout << "Invalid plane selection.\n";
-                continue;
-            }
 
             double miles = airport::flyAircraft(*selected, dest);
             if (miles < 0) continue;
@@ -58,26 +103,22 @@ int main() {
             double max_kmh = 840;
 
             int cruiseAlt = f.cruise_altitude(intl, miles);
-            double flightTime = f.flight_time(miles, max_kmh, 180);
+            double flightTime = f.flight_time(miles, max_kmh, 180, cruiseAlt);
+            int flightCost = c.flight_cost(6000, false, false, false);
+            int seats = selected->get_seats();
+            cout << "SEATS: " << seats << endl;
+            double ticketPrice = c.ticket_price(flightCost, selected->get_seats());
 
-            cout << "Flight distance: " << miles << " miles\n";
-            cout << "Cruise altitude: " << cruiseAlt << " ft\n";
-            cout << "Flight time: " << flightTime << " hours\n";
+            //cout << "Flight distance: " << miles << " miles\n";
+            cout << "Cruise altitude: " << cruiseAlt << " ft" << endl;
+            cout << "Flight time: " << flightTime << " hours" << endl;
+            //cout << "Seats: " << 
+            cout << "Ticket Price: $" << ticketPrice << " per seat" << endl;
 
-        } else if (choice == 2) {
+        } /*else if (choice == 2) {
             int p;
             cout << "Select plane (1, 2, 3): ";
             cin >> p;
-
-            airline* selected = nullptr;
-            if (p == 1) selected = &plane1;
-            else if (p == 2) selected = &plane2;
-            else if (p == 3) selected = &plane3;
-
-            if (!selected) {
-                cout << "Invalid plane selection.\n";
-                continue;
-            }
 
             cout << "\n--- Plane Status ---\n";
             cout << "Tail Number: " << selected->get_tail() << endl;
@@ -85,7 +126,7 @@ int main() {
             cout << "Flight Hours: " << selected->get_hours() << endl;
             cout << "Available: "
                  << (selected->available() ? "Yes" : "No") << endl;
-        }
+        }*/
 
     } while (choice != 0);
 
