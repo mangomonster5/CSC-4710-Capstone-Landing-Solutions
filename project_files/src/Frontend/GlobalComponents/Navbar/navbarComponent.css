@@ -1,0 +1,9 @@
+
+
+.navItemUnderline {
+    text-decoration: underline;           
+    text-decoration-color: #8C52FF;      
+    text-decoration-thickness: 2px;       
+    text-underline-offset: 10px;           
+    color: inherit;                       
+}
