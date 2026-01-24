@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 #ifndef airline_h
 #define airline_h
@@ -15,6 +16,9 @@ private:
     // Identity
     string tail_number;
     string model;
+    double seats;
+    double lease;
+    double ops;
 
     // State
     string current_airport;
@@ -26,13 +30,17 @@ private:
 
 public:
     //Creator for each individual aircraft
-    airline(string tail, string model,
-             double max_speed, string start_airport);
+    airline(string tail, string m,
+                   double max_speed, string start_airport, double seats, double lease);
+    
+    static vector<airline> preloadFleet();
 
     // Information on each plane
     string get_tail() const;
     string get_model() const;
     string get_location() const;
+    double get_seats() const;
+    double get_ops() const;
     double get_hours() const;
     bool available() const;
 

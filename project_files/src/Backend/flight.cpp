@@ -52,22 +52,6 @@ double flight::heading_adjust(double time_hr, double heading_deg)
     return time_hr * (1.0 + (factor * WestFactor));
 }
 
-double flight::flight_time(double miles, double max_kmh, double heading_deg)
-{
-
-    const double accel_rate = 25.0; // kt/min
-    const double decel_rate = 35.0; // kt/min
-
-    double speed = cruise_speed(max_kmh);
-    double time = base_time(miles, speed);
-
-    double accel_time_min = (speed - 280.0) / accel_rate;
-    double decel_time_min = (speed - 250.0) / decel_rate;
-
-    time += (accel_time_min + decel_time_min) / 60.0;
-
-    return heading_adjust(time, heading_deg);
-}
 
 double flight::climb_time(int cruise_alt_ft) {
     const double climb_angle_deg = 6.0;
@@ -106,3 +90,27 @@ double flight::descent_time(int cruise_alt_ft)
 
 
 }
+
+//
+
+
+double flight::flight_time(double miles, double max_kmh, double heading_deg, double altitude)
+{
+
+    const double accel_rate = 25.0; // kt/min
+    const double decel_rate = 35.0; // kt/min
+    
+
+    double speed = cruise_speed(max_kmh);
+    double time = base_time(miles, speed);
+    double climb = climb_time(altitude);
+    double descent = descent_time(altitude);
+
+    double accel_time_min = (speed - 280.0) / accel_rate;
+    double decel_time_min = (speed - 250.0) / decel_rate;
+
+    time += (accel_time_min + decel_time_min + climb + descent) / 60.0;
+
+    return heading_adjust(time, heading_deg);
+}
+

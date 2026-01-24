@@ -50,7 +50,7 @@ class flight {
         double heading_adjust(double time_hr, double heading_deg);
 
         // Full flight time calculation
-        double flight_time(double miles, double max_kmh, double heading_deg);
+        double flight_time(double miles, double max_kmh, double heading_deg, double altitude);
 
         // Climb time (minutes)
         double climb_time(int altitude_ft);

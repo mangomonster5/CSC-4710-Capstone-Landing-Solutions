@@ -6,6 +6,9 @@
 #define costs_h
 using namespace std;
 
+//ops is lease amount
+
+
 class costs{
     private:
         const double GalPriceUS = 6.19;
