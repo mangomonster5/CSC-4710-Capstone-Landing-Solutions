@@ -57,8 +57,7 @@ class costs{
         double ticket_price(double op_cost, int seats);
 
         // Calculate revenue from ticket sales
-        // pax: number of passengers (short for "passengers")
-        // price: ticket price per passenger
+        // pax - number of passengers (short for "passengers"); price - ticket price per passenger
         // Returns: total revenue in USD
         double revenue(int pax, double price);
 
