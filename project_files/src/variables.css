@@ -1,0 +1,38 @@
+:root {
+  --panther-primary-blue-500: #167ED9
+}
+
+.bg-primary-blue-500 {
+  background-color: var(--panther-primary-blue-500);
+}
+
+
+
+.no-i-cursor {
+  cursor: default;
+  -webkit-user-select: none; /* Safari */
+  user-select: none; /* Standard */
+}
+
+
+.segmentButton {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  min-width: 100px;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+  border: 1.5px solid black;
+}
+
+.segmentButton.left {
+  border-radius: .5rem 0px 0px .5rem;
+}
+
+.segmentButton.right {
+  border-radius: 0px .5rem .5rem 0px;
+}
+
+.segmentButton.selected {
+  background-color: var(--panther-primary-blue-500);
+  color: white;
+}
