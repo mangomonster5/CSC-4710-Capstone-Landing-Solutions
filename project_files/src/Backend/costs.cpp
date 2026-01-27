@@ -7,22 +7,26 @@ using namespace std;
 // xe.com rate 01/31/26
 const double EUR_USD = 1.09;
 
+// Currency conversion: type 1 = USD->EUR, type 2 = EUR->USD
 double costs::conversion(int type, double US, double EU)
 {
     if(type == 1) return US / EUR_USD;
     return EU * EUR_USD;
 }
 
+// US fuel cost: $6.19/gallon (fixed price)
 double costs::fuel_us(double gal)
 {
-    return gal * GalPriceUS;
+    return gal * GalPriceUS; // GalPriceUS = 6.19 from header
 }
 
+// Paris fuel cost: EUR 1.97/liter which will be converted to USD
 double costs::fuel_eu(double L)
 {
-    return conversion(2, 0, L * LitrPriceEU);
+    return conversion(2, 0, L * LitrPriceEU); // LitrPriceEU = 1.97, convert EUR to USD
 }
 
+// 
 double costs::airport_us(int ops)
 {
     return ops * USAirportUS;
@@ -75,6 +79,9 @@ double costs::revenue(int pax, double price)
     return pax * price; // passengers times ticket price
 }
 
+// Profit or loss calculation
+// rev: total revenue from ticket sales
+// cost: total operating costs (fuel + fees + leases)
 double costs::profit(double rev, double cost)
 {
     return rev - cost; // revenue minus total costs
