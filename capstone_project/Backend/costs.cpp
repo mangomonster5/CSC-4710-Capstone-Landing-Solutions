@@ -33,15 +33,16 @@ double costs::airport_eu(int ops)
     return conversion(2, 0, ops * EUAirportEU);
 }
 
+// Total flight operating cost
 double costs::flight_cost(double gal, bool intl, bool from_eu, bool to_eu)
 {
     double c = 0;
     
     if(intl && to_eu){
-        double L = gal * 3.78541;
-        c += fuel_eu(L);
+        double L = gal * 3.78541; // convert gallons to liters
+        c += fuel_eu(L); // use Paris fuel pricing
     } else {
-        c += fuel_us(gal);
+        c += fuel_us(gal); // use US fuel pricing
     }
     
     c += from_eu ? airport_eu(1) : airport_us(1);
@@ -50,24 +51,31 @@ double costs::flight_cost(double gal, bool intl, bool from_eu, bool to_eu)
     return c;
 }
 
+// Monthly lease costs
 double costs::lease(int n1, int n2, int n3, int n4)
 {
     return (n1 * 245000) + (n2 * 270000) + (n3 * 192000) + (n4 * 228000);
+    // n1 = 737-600 at $245k/month
+    // n2 = 737-800 at $270k/month  
+    // n3 = A220-100 at $192k/month
+    // n4 = A220-300 at $228k/month
 }
 
+// Ticket pricing based on 30% load factor
 double costs::ticket_price(double op_cost, int seats)
 {
-    int pax = seats * 0.30;
+    int pax = seats * 0.30; // assume 30% full to ensure profit
     if(pax == 0) return 0;
-    return op_cost / pax;
+    return op_cost / pax; // dividing the cost by expected passengers
 }
 
+// Revenue calculation (pax=passengers)
 double costs::revenue(int pax, double price)
 {
-    return pax * price;
+    return pax * price; // passengers times ticket price
 }
 
 double costs::profit(double rev, double cost)
 {
-    return rev - cost;
+    return rev - cost; // revenue minus total costs
 }
