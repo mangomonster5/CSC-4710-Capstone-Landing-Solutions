@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS aircraft (
 );
 
 CREATE TABLE IF NOT EXISTS exchange_rate (
-  rate_date   TEXT PRIMARY KEY,                -- YYYY-MM-DD (month end)
+  rate_date   TEXT PRIMARY KEY,                
   eur_to_usd  REAL NOT NULL CHECK (eur_to_usd > 0)
 );
 
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS scenario_day (
 CREATE TABLE IF NOT EXISTS scheduled_trip (
   scheduled_trip_id  INTEGER PRIMARY KEY,
   trip_code          TEXT UNIQUE,
-  valid_from_date    TEXT,                     -- YYYY-MM-DD (optional)
-  valid_to_date      TEXT,                     -- YYYY-MM-DD (optional)
+  valid_from_date    TEXT,                     
+  valid_to_date      TEXT,                     
   CHECK (
     valid_from_date IS NULL OR valid_to_date IS NULL OR valid_from_date <= valid_to_date
   )
@@ -75,11 +75,11 @@ CREATE TABLE IF NOT EXISTS scheduled_flight (
   scheduled_trip_id          INTEGER NOT NULL,
   origin_airport_id          INTEGER NOT NULL,
   dest_airport_id            INTEGER NOT NULL,
-  aircraft_id                INTEGER,          -- optional until finalized
+  aircraft_id                INTEGER,          
   leg_seq                    INTEGER NOT NULL DEFAULT 1 CHECK (leg_seq >= 1),
   flight_number              TEXT    NOT NULL,
-  sched_depart_local_time    TEXT    NOT NULL, -- HH:MM or HH:MM:SS
-  sched_arrive_local_time    TEXT    NOT NULL, -- HH:MM or HH:MM:SS
+  sched_depart_local_time    TEXT    NOT NULL, 
+  sched_arrive_local_time    TEXT    NOT NULL, 
   distance_km                REAL,
   planned_block_minutes      INTEGER CHECK (planned_block_minutes >= 0),
   seat_capacity              INTEGER CHECK (seat_capacity >= 0),
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS scheduled_flight (
 CREATE TABLE IF NOT EXISTS scheduled_operating_day (
   scheduled_operating_day_id  INTEGER PRIMARY KEY,
   scheduled_flight_id         INTEGER NOT NULL,
-  service_date                TEXT    NOT NULL, -- YYYY-MM-DD
+  service_date                TEXT    NOT NULL, 
   sched_depart_dt_local       TEXT    NOT NULL,
   sched_arrive_dt_local       TEXT    NOT NULL, 
   FOREIGN KEY (scheduled_flight_id) REFERENCES scheduled_flight(scheduled_flight_id)
@@ -111,16 +111,16 @@ CREATE TABLE IF NOT EXISTS scheduled_operating_day (
 
 CREATE TABLE IF NOT EXISTS sim_flight (
   sim_flight_id          INTEGER PRIMARY KEY,
-  scheduled_flight_id    INTEGER,              -- nullable
+  scheduled_flight_id    INTEGER,              
   scenario_day           INTEGER NOT NULL,     
   aircraft_id            INTEGER NOT NULL,
   origin_airport_id      INTEGER NOT NULL,
   dest_airport_id        INTEGER NOT NULL,
   flight_number          TEXT    NOT NULL,
   sched_depart_dt_local  TEXT    NOT NULL,
-  actual_depart_dt_local TEXT,                 -- nullable
+  actual_depart_dt_local TEXT,                 
   sched_arrive_dt_local  TEXT    NOT NULL,
-  actual_arrive_dt_local TEXT,                 -- nullable
+  actual_arrive_dt_local TEXT,                 
   status                 TEXT    NOT NULL DEFAULT 'SCHEDULED'
     CHECK (status IN ('SCHEDULED','DEPARTED','ARRIVED','CANCELLED')),
   passengers_count       INTEGER NOT NULL DEFAULT 0 CHECK (passengers_count >= 0),
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS passenger_itinerary (
   passenger_id       INTEGER NOT NULL,
   source_airport_id  INTEGER NOT NULL,
   dest_airport_id    INTEGER NOT NULL,
-  service_date       TEXT    NOT NULL, -- YYYY-MM-DD
+  service_date       TEXT    NOT NULL, 
   status             TEXT    NOT NULL DEFAULT 'PLANNED'
     CHECK (status IN ('PLANNED','FLOWN','DISRUPTED','CANCELLED')),
   FOREIGN KEY (passenger_id) REFERENCES passenger(passenger_id)
@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS tarmac_wait (
 
 CREATE TABLE IF NOT EXISTS aircraft_daily_status (
   aircraft_id                         INTEGER NOT NULL,
-  service_date                        TEXT    NOT NULL, -- YYYY-MM-DD
+  service_date                        TEXT    NOT NULL, 
   start_airport_id                    INTEGER NOT NULL,
   end_airport_id                      INTEGER NOT NULL,
   flight_minutes                      INTEGER NOT NULL DEFAULT 0 CHECK (flight_minutes >= 0),
@@ -286,7 +286,7 @@ CREATE TABLE IF NOT EXISTS flight_financials (
 
 CREATE TABLE IF NOT EXISTS monthly_aircraft_lease_cost (
   aircraft_id     INTEGER NOT NULL,
-  month_end_date  TEXT    NOT NULL,  -- YYYY-MM-DD (month end)
+  month_end_date  TEXT    NOT NULL,  
   lease_cost_usd  REAL    NOT NULL CHECK (lease_cost_usd >= 0),
   PRIMARY KEY (aircraft_id, month_end_date),
   FOREIGN KEY (aircraft_id) REFERENCES aircraft(aircraft_id)
