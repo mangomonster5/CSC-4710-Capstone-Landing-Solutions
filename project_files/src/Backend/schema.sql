@@ -111,16 +111,16 @@ CREATE TABLE IF NOT EXISTS scheduled_operating_day (
 
 CREATE TABLE IF NOT EXISTS sim_flight (
   sim_flight_id          INTEGER PRIMARY KEY,
-  scheduled_flight_id    INTEGER,              -- nullable if ad-hoc
-  scenario_day           INTEGER NOT NULL,     -- 1..14
+  scheduled_flight_id    INTEGER,              -- nullable
+  scenario_day           INTEGER NOT NULL,     
   aircraft_id            INTEGER NOT NULL,
   origin_airport_id      INTEGER NOT NULL,
   dest_airport_id        INTEGER NOT NULL,
   flight_number          TEXT    NOT NULL,
   sched_depart_dt_local  TEXT    NOT NULL,
-  actual_depart_dt_local TEXT,                 -- nullable if cancelled
+  actual_depart_dt_local TEXT,                 -- nullable
   sched_arrive_dt_local  TEXT    NOT NULL,
-  actual_arrive_dt_local TEXT,                 -- nullable if cancelled
+  actual_arrive_dt_local TEXT,                 -- nullable
   status                 TEXT    NOT NULL DEFAULT 'SCHEDULED'
     CHECK (status IN ('SCHEDULED','DEPARTED','ARRIVED','CANCELLED')),
   passengers_count       INTEGER NOT NULL DEFAULT 0 CHECK (passengers_count >= 0),
