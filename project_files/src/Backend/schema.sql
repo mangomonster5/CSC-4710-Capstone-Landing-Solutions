@@ -99,8 +99,8 @@ CREATE TABLE IF NOT EXISTS scheduled_operating_day (
   scheduled_operating_day_id  INTEGER PRIMARY KEY,
   scheduled_flight_id         INTEGER NOT NULL,
   service_date                TEXT    NOT NULL, -- YYYY-MM-DD
-  sched_depart_dt_local       TEXT    NOT NULL, -- ISO8601 local datetime string
-  sched_arrive_dt_local       TEXT    NOT NULL, -- ISO8601 local datetime string
+  sched_depart_dt_local       TEXT    NOT NULL,
+  sched_arrive_dt_local       TEXT    NOT NULL, 
   FOREIGN KEY (scheduled_flight_id) REFERENCES scheduled_flight(scheduled_flight_id)
     ON UPDATE CASCADE ON DELETE CASCADE,
   UNIQUE (scheduled_flight_id, service_date),
