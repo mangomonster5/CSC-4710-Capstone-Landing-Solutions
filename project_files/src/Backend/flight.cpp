@@ -114,3 +114,121 @@ double flight::flight_time(double miles, double max_kmh, double heading_deg, dou
     return heading_adjust(time, heading_deg);
 }
 
+// taxi time from project 
+// pop: metro population of airport
+// hub: true if airport is aactually a hub
+double flight::taxi(int pop, bool hub)
+{
+    if(hub){
+        // hub airports: 15 min base for <= 9M pop
+        if(pop <= 9000000) return 15;
+        // add 1 min per 2M people over 9M, max 20 min
+        int extra = (pop - 9000000) / 2000000;
+        return extra + 15 > 20 ? 20 : extra + 15;
+    }
+    // non-hub: pop * 0.00075%, max 13 min
+    double t = pop * 0.0000075;
+    return t > 13 ? 13 : t;
+}
+
+// gate to gate time
+// mi: flight distance in miles
+// spd: cruise speed in miles per hour
+// hdg: flight heading in degrees
+// intl: true if international flight
+// o_pop: origin airport population
+// o_hub: true if origin is a hub
+// d_pop: destination airport population
+// d_hub: true if destination is a hub
+double flight::gate_time(double mi, double spd, double hdg, bool intl,
+                         int o_pop, bool o_hub, int d_pop, bool d_hub)
+{
+    double total = 0;  // accumulator for total time
+    
+    total += taxi(o_pop, o_hub);  // origin taxi time
+    total += 1;  // takeoff: 1 min on runway (spec page 7)
+    
+    int alt = cruise_altitude(intl, mi);  // get cruise altitude
+    total += climb_time(alt);  // time to climb
+    total += flight_time(mi, spd, hdg, alt) * 60;  // cruise time (convert hrs to min)
+    total += descent_time(alt);  // time to descend
+    
+    total += 2;  // landing: 2 min on runway (spec page 7)
+    total += taxi(d_pop, d_hub);  // destination taxi time
+    
+    return total;  // total time in minutes
+}
+
+// great circle distance 
+// lat1, lon1: origin latitude and longitude (degrees)
+// lat2, lon2: destination latitude and longitude (degrees)
+// R = earth radius, returns miles
+double flight::dist(double lat1, double lon1, double lat2, double lon2)
+{
+    double R = 3958.8;  // earth radius in miles
+    
+    // convert to radians
+    double a1 = lat1 * PI / 180.0;
+    double a2 = lat2 * PI / 180.0;
+    double dlat = (lat2 - lat1) * PI / 180.0;  // delta latitude
+    double dlon = (lon2 - lon1) * PI / 180.0;  // delta longitude
+    
+    // haversine formula
+    double a = sin(dlat/2) * sin(dlat/2) +
+               cos(a1) * cos(a2) * sin(dlon/2) * sin(dlon/2);
+    double c = 2 * atan2(sqrt(a), sqrt(1-a));
+    
+    return R * c;  // distance in miles
+}
+
+// bearing calculation 
+// lat1, lon1: origin latitude and longitude (degrees)
+// lat2, lon2: destination latitude and longitude (degrees)
+// returns heading 0-360 (0=N, 90=E, 180=S, 270=W)
+double flight::hdg(double lat1, double lon1, double lat2, double lon2)
+{
+    // convert to radians
+    double a1 = lat1 * PI / 180.0;
+    double a2 = lat2 * PI / 180.0;
+    double dlon = (lon2 - lon1) * PI / 180.0;
+    
+    // bearing formula
+    double x = sin(dlon) * cos(a2);
+    double y = cos(a1) * sin(a2) - sin(a1) * cos(a2) * cos(dlon);
+    
+    double bearing = atan2(x, y) * 180.0 / PI;  // convert to degrees
+    return fmod(bearing + 360, 360);  // normalize to 0-360
+}
+
+// fuel consumption
+// fuel rates in gallons per mile by aircraft type is returned
+// mi: flight distance in miles
+// model: aircraft model string
+double flight::fuel(double mi, string model)
+{
+    double rate;  // gal per mile
+    
+    // rates (Page 6)
+    if(model == "Boeing 737-600") rate = 4.8;
+    else if(model == "Boeing 737-800") rate = 5.2;
+    else if(model == "Airbus A220-100") rate = 4.2;
+    else if(model == "Airbus A220-300") rate = 4.6;
+    else rate = 5.0;  // default
+    
+    return mi * rate;  // total gallons
+}
+
+// refueling check 
+// flights over 1000 miles need refuel
+bool flight::refuel(double mi)
+{
+    return mi > 1000;
+}
+
+// turnaround time
+// needs_gas: true if aircraft requires refueling
+// 40 min normal, 50 min if refueling
+int flight::turn(bool needs_gas)
+{
+    return needs_gas ? 50 : 40;
+}
