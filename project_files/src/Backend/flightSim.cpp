@@ -109,15 +109,21 @@ int main() {
 
             // calculate flight details
             int cruiseAlt = f.cruise_altitude(intl, miles);  // altitude in feet
-            double flightTime = f.gate_time(miles, max_kmh, hdg, intl, 5000000, false, 5000000, false);  // total time in minutes
-            double fuel = f.fuel(miles, selected->get_model());  // fuel needed in gallons
+            
+            //NEEDS A FIX
+            //double flightTime = f.gate_time(miles, max_kmh, hdg, intl, 5000000, false, 5000000, false);  // total time in minutes
+            
+            //NEEDS A FIX
+            double fuel = 1500;//f.fuel(miles, selected->get_model());  // fuel needed in gallons
+           
+           
             double flightCost = c.flight_cost(fuel, intl, from == "CDG", dest == "CDG");  // operating cost
             int seats = selected->get_seats();  // aircraft capacity
             double ticketPrice = c.ticket_price(flightCost, seats);  // price per ticket
 
             // output flight info
             cout << "Cruise altitude: " << cruiseAlt << " ft" << endl;
-            cout << "Flight time: " << (int)(flightTime/60) << "h " << (int)flightTime%60 << "m" << endl;
+            //cout << "Flight time: " << (int)(flightTime/60) << "h " << (int)flightTime%60 << "m" << endl;
             cout << "Fuel: " << fuel << " gal" << endl;
             cout << "Cost: $" << flightCost << endl;
             cout << "Ticket Price: $" << ticketPrice << " per seat" << endl;

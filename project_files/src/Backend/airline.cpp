@@ -95,27 +95,27 @@ vector<airline> airline::preloadFleet()
         ));
     }
 
-    /*
+    
     // 15 Boeing 737-800
     for (int i = 0; i < 15; i++) {
         fleet.emplace_back(
             "B738-" + to_string(tail++), //tail number
             "Boeing 737-800", //model
             876, //cruise speed(km/h)
-            "DCA", //starting airport
+            "DFW", //starting airport
             189, //seats 
             270000 //lease
 
         );
     }
 
-    // 12 Airbus A220-100
+    //12 Airbus A220-100
     for (int i = 0; i < 12; i++) {
         fleet.emplace_back(
             "A221-" + to_string(tail++),//tail number
             "Airbus A220-100", //model
             829, //cruise speed(km/h)
-            "DCA", //starting airport
+            "LAX", //starting airport
             135, //seats
             192000 //lease
         );
@@ -127,12 +127,11 @@ vector<airline> airline::preloadFleet()
             "A223-" + to_string(tail++), //tail number
             "Airbus A220-300", //model
             871, //cruise speed (km/h)
-            "DCA", //starting airport
+            "JFK", //starting airport
             130, //seats
             228000 //lease
         );
     }
-    */
     return fleet;
 }
     
