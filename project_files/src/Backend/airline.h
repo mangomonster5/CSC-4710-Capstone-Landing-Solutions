@@ -16,6 +16,8 @@ private:
     // Identity
     string tail_number;
     string model;
+    double max_speeds;
+    double fuel;
     double seats;
     double lease;
     double ops;
@@ -28,10 +30,12 @@ private:
     bool in_maintenance;
     int maintenance_hourse_left;
 
+
 public:
     //Creator for each individual aircraft
     airline(string tail, string m,
-                   double max_speed, string start_airport, double seats, double lease);
+                   double max_speed, double starting_fuel,
+                   string start_airport, double seats, double lease);
     
     static vector<airline> preloadFleet();
 
@@ -39,6 +43,9 @@ public:
     string get_tail() const;
     string get_model() const;
     string get_location() const;
+    double get_maxSpeed()  const;
+    double get_fuel()  const;
+    void update_fuel(double f);
     double get_seats() const;
     double get_ops() const;
     double get_hours() const;

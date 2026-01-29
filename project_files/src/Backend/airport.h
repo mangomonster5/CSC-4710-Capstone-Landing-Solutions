@@ -12,14 +12,16 @@ private:
     string code;
     double latitude;
     double longitude;
+    long population;
 
 public:
     airport() = default;
-    airport(string code, double latitude, double longitude);
+    airport(string code, double latitude, double longitude, long population);
 
     string getCode() const;
     double getLatitude() const;
     double getLongitude() const;
+    long getPopulation() const;
 
     double distanceTo(const airport& other) const;
 
