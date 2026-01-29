@@ -5,7 +5,7 @@
 using namespace std;
 
 // xe.com rate 01/31/26
-const double EUR_USD = 1.09;
+const double EUR_USD = 1.20;
 
 // Currency conversion: type 1 = USD->EUR, type 2 = EUR->USD
 double costs::conversion(int type, double US, double EU)
