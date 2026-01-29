@@ -1,7 +1,12 @@
 // compile: g++ flightSim.cpp flight.cpp costs.cpp airline.cpp airport.cpp validation.cpp -o flightSimulation
 //USED TO TEST THE ACTUAL CODE AND SIMULATE FLIGHTS
 
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <list>
 
 //all the header files
 #include "flight.h"
