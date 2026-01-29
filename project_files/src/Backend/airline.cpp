@@ -4,11 +4,12 @@
 
 // Constructor
 airline::airline(string tail, string m,
-                   double max_speed, string start_airport, double seat, double lease)
+                   double max_speed, double starting_fuel, string start_airport, double seat, double lease)
 {
     tail_number = tail;
     model = m;
-    max_speed = max_speed;
+    max_speeds = max_speed;
+    fuel = starting_fuel;
     current_airport = start_airport;
     seats = seat;
     ops = lease;
@@ -20,6 +21,9 @@ airline::airline(string tail, string m,
 // Getters
 string airline::get_tail() const { return tail_number; }
 string airline::get_model() const { return model; }
+double airline::get_maxSpeed()  const {return max_speeds; }
+double airline::get_fuel()  const {return fuel; }
+void airline::update_fuel(double f){ this -> fuel = f; }
 string airline::get_location() const { return current_airport; }
 double airline::get_seats() const { return seats; }
 double airline::get_ops() const { return ops;}
@@ -85,9 +89,10 @@ vector<airline> airline::preloadFleet()
     for (int i = 0; i < 15; i++) {
 
         fleet.emplace_back(
-            airline("B736-" + to_string(tail++), //tail number
+            airline("B737-600-" + to_string(tail++), //tail number
             "Boeing 737-600", //model
             850,        // cruise speed (km/h)
+            6785, //starting fuel (GAL)
             "DCA", //starting airport
             130, //seats
             245000 //lease) 
@@ -99,38 +104,41 @@ vector<airline> airline::preloadFleet()
     // 15 Boeing 737-800
     for (int i = 0; i < 15; i++) {
         fleet.emplace_back(
-            "B738-" + to_string(tail++), //tail number
+            airline("B737-800-" + to_string(tail++), //tail number
             "Boeing 737-800", //model
             876, //cruise speed(km/h)
+            6785, //starting fuel (GAL)
             "DFW", //starting airport
             189, //seats 
             270000 //lease
 
-        );
+        ));
     }
 
     //12 Airbus A220-100
     for (int i = 0; i < 12; i++) {
         fleet.emplace_back(
-            "A221-" + to_string(tail++),//tail number
+            airline("A220-100-" + to_string(tail++),//tail number
             "Airbus A220-100", //model
             829, //cruise speed(km/h)
+            5760, //startingfuel (GAL)
             "LAX", //starting airport
             135, //seats
             192000 //lease
-        );
+        ));
     }
 
     // 13 Airbus A220-300
     for (int i = 0; i < 13; i++) {
         fleet.emplace_back(
-            "A223-" + to_string(tail++), //tail number
-            "Airbus A220-300", //model
+            airline("A220-300-" + to_string(tail++), //tail number
+            "", //model
             871, //cruise speed (km/h)
+            5681, //starting fuel (GAL)
             "JFK", //starting airport
             130, //seats
             228000 //lease
-        );
+        ));
     }
     return fleet;
 }

@@ -1,4 +1,4 @@
-// compile: g++ flightSim.cpp flight.cpp costs.cpp airline.cpp airport.cpp
+// compile: g++ flightSim.cpp flight.cpp costs.cpp airline.cpp airport.cpp validation.cpp -o flightSimulation
 //USED TO TEST THE ACTUAL CODE AND SIMULATE FLIGHTS
 
 #include <bits/stdc++.h>
@@ -32,7 +32,7 @@ int main() {
         cout << "Choice: ";
         cin >> choice;
 
-        if (choice == 1) {
+        if (choice == 1) { //FLY A PLANE
             airline* selected = nullptr;  // pointer to chosen aircraft
             string from;  // origin airport code
             string dest;  // destination airport code
@@ -64,6 +64,7 @@ int main() {
 
             bool valid = false;  // flag for valid input
             while(!valid){
+
                 cout << "Enter valid starting airport code: ";
                 cin >> from; 
 
@@ -74,9 +75,15 @@ int main() {
                         break;
                     }
                 }
-                if(!valid){
-                    cout << "Not a valid starting code, re-printing valid starting airport codes: " << endl;
+                if (!valid) {
+                    cout << "Not a valid starting code, re-printing valid starting airport codes:\n";
+
+                    int idx = 1;
+                    for (const auto& a : current_airports) {
+                        cout << idx++ << ": " << a << endl;
+                    }
                 }
+
             }
 
             //for loop to find first avaiable plane at selected location
@@ -95,41 +102,121 @@ int main() {
             //END OF PICKING STARTING AIRPORT
 
             //START OF PICKING DESTINATION AIRPORT
+            cout << "Available destination airports:" << endl;
 
-            cout << "Pick a Destionation Airport: ";
+            int idx = 1;  // counter
+            for (const auto& entry : airport::airports) {
+                cout << idx++ << ". " << entry.first << "  " << endl;
+            }
+            cout << endl;
+
+
+            cout << "Pick a Destination Airport: " << endl;
             cin >> dest;
 
-            // fly the plane and get distance
-            double miles = airport::flyAircraft(*selected, dest);
-            if (miles < 0) continue;  // flight failed
+
+            // ====== FLYING THE PLANE ITSELF AND CALCULATING NUMBERS NEEDED =====
+
+            //FUEL SECTION
+
+            //calculates fuel needed and removes it from the plane, 
+            //also makes sure the current plane has enough to fly otherwise it picks the next avaiable plane
+            bool refuel = false;
+            bool needFuel = false; //will tell future calculations if fuel was needed
+            double fuel; //holds any fuel
+            double miles = airport::flyAircraft(*selected, dest); //returns miles
+            double fuelNeed = f.fuelNeeded(miles, selected->get_model());  // fuel needed in gallons
+           
+            
+            
+            //checks if refueling is needed
+            if(selected->get_fuel() >= fuelNeed){ //no need for fuel
+                cout << "this WORKS 2.0" << endl;
+                fuel = selected->get_fuel();
+                fuel -= fuelNeed;
+                selected->update_fuel(fuel);
+                refuel = true;
+            }
+           
+           //refuel plane if needed
+            if(!refuel){ //need fuel, refuel here
+                needFuel = true;
+                fuel = f.refuel(selected->get_model()); 
+                selected->update_fuel(fuel);
+            }
+
+            //DETERMINES CRITICAL NUMBERS AND TRUE/FALSE VALUES FOR REST OF FLIGHT CALCS
 
             bool intl = (from == "CDG" || dest == "CDG");  // international if Paris involved
-            double max_kmh = 840;  // average cruise speed
-            double hdg = 180;  // heading (placeholder)
+            double max_kmh = selected->get_maxSpeed(); // average cruise speed
+           
+            //Create airport functions based on the to/from locations
+            airport& fromAirport = airport::airports[from];
+            airport& destAirport = airport::airports[dest];
+
+            //get flight heading
+            double hdg = f.hdg(fromAirport.getLatitude(), fromAirport.getLongitude(), 
+                                    destAirport.getLatitude(), destAirport.getLongitude()); 
 
             // calculate flight details
             int cruiseAlt = f.cruise_altitude(intl, miles);  // altitude in feet
-            
-            //NEEDS A FIX
-            //double flightTime = f.gate_time(miles, max_kmh, hdg, intl, 5000000, false, 5000000, false);  // total time in minutes
-            
-            //NEEDS A FIX
-            double fuel = 1500;//f.fuel(miles, selected->get_model());  // fuel needed in gallons
-           
-           
-            double flightCost = c.flight_cost(fuel, intl, from == "CDG", dest == "CDG");  // operating cost
+
+            //determines if the either to/from location is a hub or not
+            bool fromHub = false;
+            bool destHub = false;
+
+            if (from == "DCA" || from == "DFW" || from == "LAX" || from == "JFK") {
+                fromHub = true;
+            }
+
+            if (dest == "DCA" || dest == "DFW" || dest == "LAX" || dest == "JFK") {
+                destHub = true;
+            }
+
+            //gets populations of the 2 airports invovles
+            long fromPop = fromAirport.getPopulation();
+            long destPop = destAirport.getPopulation();
+            cout << "FROM POPULATOIN  ======= " << fromPop << endl;
+
+            //parameters: double miles, double max_kmh, double hdg, bool intl, 
+            //              int starting pop, bool fromHub, int destination pop, bool dest hub
+            //              bool needFuel
+            double flightTime = f.flight_time(miles, max_kmh, hdg, intl, 
+                fromPop, fromHub, destPop, destHub, needFuel);  // total time in minutes
+
+
+            //flight costs calc part
+
+            //FOR JIMI TO CHECK AND CONFIRM IT WORKS   
+            double flightCost = c.flight_cost(fuelNeed, intl, from == "CDG", dest == "CDG");  // operating cost
             int seats = selected->get_seats();  // aircraft capacity
+
             double ticketPrice = c.ticket_price(flightCost, seats);  // price per ticket
 
+            
+            
             // output flight info
+
+            cout << endl << "===Flight Information ===" << endl;
+
+            cout << "Aircraft " << selected->get_tail() << " flew from " 
+            << from << " to " << dest << " (" << miles << " miles)" << endl;
+
+
             cout << "Cruise altitude: " << cruiseAlt << " ft" << endl;
-            //cout << "Flight time: " << (int)(flightTime/60) << "h " << (int)flightTime%60 << "m" << endl;
-            cout << "Fuel: " << fuel << " gal" << endl;
+
+            cout << "Flight time: " << (int)(flightTime/60) << "h " << (int)flightTime%60 << "m" << endl;
+            cout << "Fuel: " << fuelNeed << " gal" << endl;
             cout << "Cost: $" << flightCost << endl;
             cout << "Ticket Price: $" << ticketPrice << " per seat" << endl;
 
         } else if (choice == 2) {
             string tail;  // tail number to search
+
+            for (int i = 0; i < fleet.size(); i++) {
+                cout << i << ": Tail Number: " << fleet[i].get_tail() << 
+                " Location: " << fleet[i].get_location() << endl; // get tail number
+            } 
             cout << "Enter tail number: ";
             cin >> tail;
 
@@ -141,6 +228,7 @@ int main() {
                     cout << "Model: " << fleet[i].get_model() << endl;
                     cout << "Location: " << fleet[i].get_location() << endl;
                     cout << "Flight Hours: " << fleet[i].get_hours() << endl;
+                    cout << "Fuel Left: " << fleet[i].get_fuel() << endl;
                     cout << "Available: " << (fleet[i].available() ? "Yes" : "No") << endl;
                     found = true;
                     break;

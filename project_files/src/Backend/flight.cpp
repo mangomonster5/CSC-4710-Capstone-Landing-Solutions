@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cmath>
 #include "flight.h"
+#include "airline.h"
 
 using namespace std;
 
@@ -30,10 +31,13 @@ double flight::base_time(double miles, double speed_kmh)
 {
     double km = miles * 1.60934;
     if (speed_kmh == 0) return 0;
-    return km / speed_kmh;
+
+    double hours = km / speed_kmh;
+    return hours * 60.0;   // returns in minutes
 }
 
-double flight::heading_adjust(double time_hr, double heading_deg)
+
+double flight::heading_adjust(double time_min, double heading_deg)
 {
     // Normalize heading
     while (heading_deg < 0) heading_deg += 360;
@@ -41,15 +45,15 @@ double flight::heading_adjust(double time_hr, double heading_deg)
 
     // Due East (~270°)
     if (heading_deg >= 260 && heading_deg <= 280)
-        return time_hr * (1.0 + EastFactor);
+        return time_min * (1.0 + EastFactor);
 
     // Due West (~90°)
     if (heading_deg >= 80 && heading_deg <= 100)
-        return time_hr * (1.0 + WestFactor);
+        return time_min * (1.0 + WestFactor);
 
     // Partial adjustment
     double factor = (90.0 - heading_deg) / 90.0;
-    return time_hr * (1.0 + (factor * WestFactor));
+    return time_min * (1.0 + (factor * WestFactor));
 }
 
 
@@ -94,7 +98,7 @@ double flight::descent_time(int cruise_alt_ft)
 //
 
 
-double flight::flight_time(double miles, double max_kmh, double heading_deg, double altitude)
+double flight::flying_time(double miles, double max_kmh, double heading_deg, double altitude)
 {
 
     const double accel_rate = 25.0; // kt/min
@@ -109,7 +113,7 @@ double flight::flight_time(double miles, double max_kmh, double heading_deg, dou
     double accel_time_min = (speed - 280.0) / accel_rate;
     double decel_time_min = (speed - 250.0) / decel_rate;
 
-    time += (accel_time_min + decel_time_min + climb + descent) / 60.0;
+    time += (accel_time_min + decel_time_min + climb + descent); //aLready in minutes
 
     return heading_adjust(time, heading_deg);
 }
@@ -140,22 +144,29 @@ double flight::taxi(int pop, bool hub)
 // o_hub: true if origin is a hub
 // d_pop: destination airport population
 // d_hub: true if destination is a hub
-double flight::gate_time(double mi, double spd, double hdg, bool intl,
-                         int o_pop, bool o_hub, int d_pop, bool d_hub)
+// needFuel: true if fuel was needed, adding 10 minutes to flight time
+double flight::flight_time(double mi, double spd, double hdg, bool intl,
+                         int o_pop, bool o_hub, int d_pop, bool d_hub,
+                        bool needFuel)
 {
     double total = 0;  // accumulator for total time
     
     total += taxi(o_pop, o_hub);  // origin taxi time
     total += 1;  // takeoff: 1 min on runway (spec page 7)
-    
+
     int alt = cruise_altitude(intl, mi);  // get cruise altitude
     total += climb_time(alt);  // time to climb
-    total += flight_time(mi, spd, hdg, alt) * 60;  // cruise time (convert hrs to min)
+
+    total += flying_time(mi, spd, hdg, alt);  // cruise time 
+
     total += descent_time(alt);  // time to descend
     
     total += 2;  // landing: 2 min on runway (spec page 7)
+
     total += taxi(d_pop, d_hub);  // destination taxi time
     
+    total += turn(needFuel); //turnAround Time
+
     return total;  // total time in minutes
 }
 
@@ -204,7 +215,7 @@ double flight::hdg(double lat1, double lon1, double lat2, double lon2)
 // fuel rates in gallons per mile by aircraft type is returned
 // mi: flight distance in miles
 // model: aircraft model string
-double flight::fuel(double mi, string model)
+double flight::fuelNeeded(double mi, string model)
 {
     double rate;  // gal per mile
     
@@ -218,11 +229,19 @@ double flight::fuel(double mi, string model)
     return mi * rate;  // total gallons
 }
 
-// refueling check 
-// flights over 1000 miles need refuel
-bool flight::refuel(double mi)
+// refuels flight if needed
+//returns the fuel amount to be passed into update_fuel()
+double flight::refuel(string model)
 {
-    return mi > 1000;
+    if(model == "Boeing 737-600" || model == "Boeing 737-800"){
+        return 6785;
+    }else if(model == "Airbus A220-100"){
+        return 5760;
+    }else if(model == "Airbus A220-300"){
+        return 5681;
+    }else{
+        return -1;
+    }  
 }
 
 // turnaround time

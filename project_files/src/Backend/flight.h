@@ -50,7 +50,7 @@ class flight {
         double heading_adjust(double time_hr, double heading_deg);
 
         // Full flight time calculation
-        double flight_time(double miles, double max_kmh, double heading_deg, double altitude);
+        double flying_time(double miles, double max_kmh, double heading_deg, double altitude);
 
         // Climb time (minutes)
         double climb_time(int altitude_ft);
@@ -62,8 +62,8 @@ class flight {
         double taxi(int pop, bool hub);
 
         // Total gate-to-gate time calculation
-        double gate_time(double mi, double spd, double hdg, bool intl,
-                        int o_pop, bool o_hub, int d_pop, bool d_hub);
+        double flight_time(double mi, double spd, double hdg, bool intl,
+                        int o_pop, bool o_hub, int d_pop, bool d_hub, bool needFuel);
 
         // Distance between two coordinates (miles)
         double dist(double lat1, double lon1, double lat2, double lon2);
@@ -72,10 +72,10 @@ class flight {
         double hdg(double lat1, double lon1, double lat2, double lon2);
 
         // Fuel required for flight based on distance and aircraft model
-        double fuel(double mi, string model);
+        double fuelNeeded(double mi, string model);
 
-        // Determine whether refueling is required
-        bool refuel(double mi);
+        //refuels the plane
+        double refuel(string model);
 
         // Turnaround time based on refueling requirement
         int turn(bool gas);
