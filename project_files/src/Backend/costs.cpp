@@ -86,7 +86,7 @@ double costs::lease(int n1, int n2, int n3, int n4)
 //   If flight costs $50,000 to operate
 //   Ticket price = $50,000 / 48.6 = $1,028.81 per ticket
 //
-// If you actually get 75% full (goal from spec), you make extra profit: 75% of 162 = 121 passengers
+// If you actually get 75% full you make extra profit (75% of 162 = 121 passengers)
 //   Revenue = 121 * $1,028.81 = $124,485
 //   Profit = $124,485 - $50,000 = $74,485
 double costs::ticket_price(double op_cost, int seats)
