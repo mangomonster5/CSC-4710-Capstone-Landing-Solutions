@@ -73,7 +73,7 @@ class Airport {
 
     // Fly airline to destination
     static flyAircraft(plane, destCode) {
-        let fromCode = plane.get_location();
+        let fromCode = plane.getLocation();
 
         if (!(fromCode in Airport.airports)) {
             console.error("Current airport " + fromCode + " not found!");
@@ -97,7 +97,4 @@ class Airport {
     }
 }
 
-// Export for use in other files
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Airport;
-}
+export default Airport;
