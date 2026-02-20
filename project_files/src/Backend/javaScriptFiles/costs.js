@@ -3,7 +3,7 @@ const EUR_USD = 1.20;
 
 //ops is lease amount
 
-class costs {
+class Costs {
     constructor() {
         this.GalPriceUS = 6.19; // US fuel fixed at $6.19 a gallon
         this.LitrPriceEU = 1.97; // Paris fuel is EUR 1.97 a liter
@@ -57,8 +57,8 @@ class costs {
     // from_eu: true if departing from Paris; to_eu: true if arriving at Paris
     // Returns: total cost in USD (fuel + airport fees)
     // Total flight operating cost
-    // The number is used later for ticket_price() which is two functions below
-    flight_cost(gal, intl, from_eu, to_eu) {
+    // The number is used later for ticketPrice() which is two functions below
+    flightCost(gal, intl, from_eu, to_eu) {
         let c = 0; // c = total cost accumulator
         
         if(intl && to_eu){
@@ -93,11 +93,11 @@ class costs {
     }
 
     // Calculate ticket price based on 30% load factor
-    // op_cost: operating cost of the flight (from flight_cost)
+    // op_cost: operating cost of the flight (from flightCost)
     // seats: total passenger capacity of aircraft
     // Returns: price per ticket in USD
     // Ticket pricing based on 30% load factor
-    // op_cost: operating cost from flight_cost() (ex: $50,000)
+    // op_cost: operating cost from flightCost() (ex: $50,000)
     // seats: aircraft capacity (ex: 162 for 737-800)
     // 
     // Example calculation:
@@ -109,7 +109,7 @@ class costs {
     // If you actually get 75% full you make extra profit (75% of 162 = 121 passengers)
     //   Revenue = 121 * $1,028.81 = $124,485
     //   Profit = $124,485 - $50,000 = $74,485
-    ticket_price(op_cost, seats) {
+    ticketPrice(op_cost, seats) {
         let pax = seats * 0.30; // pax = passengers (30% load factor)
         if(pax === 0) return 0; // avoid divide by zero
         return op_cost / pax; // dividing the cost by expected passengers
@@ -119,7 +119,7 @@ class costs {
     // pax - number of passengers (short for "passengers"); price - ticket price per passenger
     // Returns: total revenue in USD
     // Revenue calculation (pax=passengers)
-    // price: ticket price from ticket_price()
+    // price: ticket price from ticketPrice()
     // Example: 100 passengers * $500/ticket = $50,000 revenue
     revenue(pax, price) {
         return pax * price; // passengers times ticket price
@@ -138,6 +138,4 @@ class costs {
 }
 
 // Export for use in other files
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = costs;
-}
+export default Costs;
