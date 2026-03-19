@@ -4,6 +4,8 @@ import AllFlightsPage from './Frontend/Pages/AllFlightsPage';
 import LoginPage from './Frontend/Pages/Global/LoginPage';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import MainLayout from "./Frontend/Layouts/MainLayout";
+import FlightSelectionPage from "./Frontend/Pages/FlightSelectionPage";
+import FlightInfoPage from "./Frontend/Pages/FlightInfoPage";
 
 // Creating a type for protected routes, TypeScript makes you use... types this is defining them
 type ProtectedRouteProps = {
@@ -62,6 +64,20 @@ const App: React.FC = () => {
           <Route path="/all-flights" element={
             <ProtectedRoute user={user} correctRole="employee">
               <AllFlightsPage />
+            </ProtectedRoute>
+          }
+          />
+
+          <Route path="/flight-selection" element={
+            <ProtectedRoute user={user} correctRole="employee">
+              <FlightSelectionPage />
+            </ProtectedRoute>
+          }
+          />
+
+          <Route path="/flight-info" element={
+            <ProtectedRoute user={user} correctRole="employee">
+              <FlightInfoPage />
             </ProtectedRoute>
           }
           />
