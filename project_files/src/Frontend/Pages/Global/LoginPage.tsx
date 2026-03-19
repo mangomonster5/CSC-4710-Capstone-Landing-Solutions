@@ -22,7 +22,6 @@ const LoginPage: React.FC = () => {
             const data = await response.json();
 
             if (data.success) {
-                // Store the role so other pages can use it
                 localStorage.setItem('role', data.role);
                 navigate('/all-flights', { replace: true });
             } else {
@@ -65,7 +64,7 @@ const LoginPage: React.FC = () => {
                     onClick={handleLogin}
                     disabled={loading}
                 >
-                    {loading ? 'Logging in...' : 'Login'}
+                    {loading ? 'Successful' : 'Login'}
                 </button>
             </div>
         </div>
