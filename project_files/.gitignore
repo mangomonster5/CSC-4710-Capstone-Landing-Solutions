@@ -21,3 +21,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+
+# Ignore backend node_modules
+src/backend/node_modules/
+
+# Ignore backend database
+src/backend/landing_solutions.db
+
+# Ignore frontend node_modules
+src/frontend/node_modules/
