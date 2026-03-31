@@ -4,6 +4,12 @@ PRAGMA foreign_keys = ON;
 
 -- Static reference data
 
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY,
+  username TEXT UNIQUE,
+  password TEXT
+);
+
 CREATE TABLE IF NOT EXISTS airport (
   airport_id        INTEGER PRIMARY KEY,
   iata_code         TEXT    NOT NULL UNIQUE CHECK (length(iata_code) = 3),
