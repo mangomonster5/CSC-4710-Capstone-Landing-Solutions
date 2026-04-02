@@ -14,11 +14,16 @@ class Airport {
     getPopulation() { return this.population; }
 
     distanceTo(other) {
+
+        //converts all degrees into radians
+
         let lat1 = this.latitude * Math.PI / 180.0;
         let lon1 = this.longitude * Math.PI / 180.0;
         let lat2 = other.latitude * Math.PI / 180.0;
         let lon2 = other.longitude * Math.PI / 180.0;
 
+
+        //calcs angle between 2 points and get miles by multiplying earth radius in miles)
         let angle = Math.acos(
             Math.sin(lat1) * Math.sin(lat2) +
             Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1)
