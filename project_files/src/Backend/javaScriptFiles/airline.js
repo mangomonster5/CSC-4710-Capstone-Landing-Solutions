@@ -33,7 +33,7 @@ class Airline {
     getMaxSpeed() { return this.max_speeds; }
     getFuel() { return this.fuel; }
     getSeats() { return this.seats; }
-    getOps() { return this.ops; }
+    getOps() { return this.ops; } //operations numbers
     getHours() { return this.flight_hours; }
 
     updateFuel(f) {
@@ -90,6 +90,8 @@ class Airline {
 
     // --------------------
     // Static Fleet Loader
+
+    //tail, model, maxSpeed, startingFuel (gal), startAirport, seats, lease
     // --------------------
 
     static preloadFleet() {
@@ -123,6 +125,7 @@ class Airline {
         }
 
         // 12 Airbus A220-100
+         //tail, model, maxSpeed, startingFuel (gal),  startAirport, seats, lease
         for (let i = 0; i < 12; i++) {
             fleet.push(new Airline(
                 `A220-100-${tail++}`,
@@ -148,9 +151,20 @@ class Airline {
             ));
         }
 
+        //1 Airbus A350-1000
+         //tail, model, maxSpeed, startingFuel (gal), startAirport, seats, lease
+        fleet.push(new Airline(
+                `A350-1000-${tail++}`,
+                "Airbus A350-1000",
+                652,
+                44460,
+                "JFK",
+                480,
+                400000
+            ));
+
         return fleet;
     }
 }
 
 export default Airline; // Use this for modules
-// module.exports = Airline; // Use this instead if using CommonJS
