@@ -67,9 +67,9 @@ double costs::flight_cost(double gal, bool intl, bool from_eu, bool to_eu)
 // Monthly lease cost for entire fleet
 // Our fleet is 15+15+12+13 = 55 aircraft total
 // Example: lease(15, 15, 12, 13) = $12,954,000/month
-double costs::lease(int n1, int n2, int n3, int n4)
+double costs::lease(int n1, int n2, int n3, int n4, int n5)
 {
-    return (n1 * 245000) + (n2 * 270000) + (n3 * 192000) + (n4 * 228000);
+    return (n1 * 245000) + (n2 * 270000) + (n3 * 192000) + (n4 * 228000) + (n5 * 400000);
     // n1 = 737-600 at $245k/month
     // n2 = 737-800 at $270k/month  
     // n3 = A220-100 at $192k/month
