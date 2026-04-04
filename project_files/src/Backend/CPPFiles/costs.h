@@ -48,7 +48,7 @@ class costs{
         // n3: number of Airbus A220-100 aircraft ($192,000/month each)
         // n4: number of Airbus A220-300 aircraft ($228,000/month each)
         // Returns: total monthly lease cost in USD
-        double lease(int n1, int n2, int n3, int n4);
+        double lease(int n1, int n2, int n3, int n4, int n5);
 
         // Calculate ticket price based on 30% load factor
         // op_cost: operating cost of the flight (from flight_cost)
