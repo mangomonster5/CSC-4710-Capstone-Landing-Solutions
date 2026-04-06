@@ -138,7 +138,7 @@ class Flight {
     }
 
     // --------------------------
-    // Gate-to-gate flight time
+    // Gate-to-gate flight time RETURNS IN MINUTES
     // --------------------------
     flightTime(mi, spd, hdg, intl,
                oPop, oHub, dPop, dHub,
@@ -162,7 +162,7 @@ class Flight {
 
         total += this.turn(needFuel);
 
-        return total;
+        return total; //MINUTES
     }
 
     // --------------------------
@@ -230,7 +230,9 @@ class Flight {
             return 5760;
         else if (model === "Airbus A220-300")
             return 5681;
-        else
+        else if (model == "Airbus A350-1000")
+	    return 44460;
+	else
             return -1;
     }
 

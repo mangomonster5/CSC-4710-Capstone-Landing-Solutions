@@ -42,38 +42,133 @@ class Airport {
     POP
     */
 
+    // static loadAirports() {
+    //     Airport.airports["ATL"] = new Airport("ATL", 33.6324, -84.4333, 6411149);
+    //     Airport.airports["DFW"] = new Airport("DFW", 32.8922, -97.0391, 8344032);
+    //     Airport.airports["DEN"] = new Airport("DEN", 39.8563, -104.6764, 3052498);
+    //     Airport.airports["ORD"] = new Airport("ORD", 41.9803, -87.9090, 9408576);
+    //     Airport.airports["LAX"] = new Airport("LAX", 33.9422, -118.4036, 12927614);
+    //     Airport.airports["JFK"] = new Airport("JFK", 40.6446, -73.7797, 19940274);
+    //     Airport.airports["CLT"] = new Airport("CLT", 35.2163, -80.9539, 2883370);
+    //     Airport.airports["LAS"] = new Airport("LAS", 36.0831, -115.1482, 2398871);
+    //     Airport.airports["MCO"] = new Airport("MCO", 28.4244, -81.3105, 2940513);
+    //     Airport.airports["MIA"] = new Airport("MIA", 25.7923, -80.2823, 6457988);
+    //     Airport.airports["PHX"] = new Airport("PHX", 33.4352, -112.0101, 5186958);
+    //     Airport.airports["SEA"] = new Airport("SEA", 47.4484, -122.3086, 4145494);
+    //     Airport.airports["SFO"] = new Airport("SFO", 37.6191, -122.3816, 4648486);
+    //     Airport.airports["EWR"] = new Airport("EWR", 40.6885, -74.1769, 19940274);
+    //     Airport.airports["IAH"] = new Airport("IAH", 29.9931, -95.3416, 7796182);
+    //     Airport.airports["BOS"] = new Airport("BOS", 42.3656, -71.0096, 5025517);
+    //     Airport.airports["MSP"] = new Airport("MSP", 44.8851, -93.2144, 3757952);
+    //     Airport.airports["FLL"] = new Airport("FLL", 26.0732, -80.1512, 6457988);
+    //     Airport.airports["LGA"] = new Airport("LGA", 40.7766, -73.8742, 19940274);
+    //     Airport.airports["DTW"] = new Airport("DTW", 42.2132, -83.3525, 4400578);
+    //     Airport.airports["PHL"] = new Airport("PHL", 39.8730, -75.2437, 6330422);
+    //     Airport.airports["SLC"] = new Airport("SLC", 40.7903, -111.9771, 1300762);
+    //     Airport.airports["BWI"] = new Airport("BWI", 39.1774, -76.6684, 2859024);
+    //     Airport.airports["IAD"] = new Airport("IAD", 38.9522, -77.4579, 6436489);
+    //     Airport.airports["SAN"] = new Airport("SAN", 32.7379, -117.1897, 3298799);
+    //     Airport.airports["DCA"] = new Airport("DCA", 38.8501, -77.0392, 6436489);
+    //     Airport.airports["TPA"] = new Airport("TPA", 27.9769, -82.5303, 3424560);
+    //     Airport.airports["BNA"] = new Airport("BNA", 36.1249, -86.6762, 2150553);
+    //     Airport.airports["AUS"] = new Airport("AUS", 30.1941, -97.6711, 2550637);
+    //     Airport.airports["HNL"] = new Airport("HNL", 21.3187, -157.9254, 998747);
+    //     Airport.airports["CDG"] = new Airport("CDG", 49.0079, 2.5508, 13171056);
+    // }
+
     static loadAirports() {
-        Airport.airports["ATL"] = new Airport("ATL", 33.6324, -84.4333, 6411149);
-        Airport.airports["DFW"] = new Airport("DFW", 32.8922, -97.0391, 8344032);
-        Airport.airports["DEN"] = new Airport("DEN", 39.8563, -104.6764, 3052498);
-        Airport.airports["ORD"] = new Airport("ORD", 41.9803, -87.9090, 9408576);
-        Airport.airports["LAX"] = new Airport("LAX", 33.9422, -118.4036, 12927614);
-        Airport.airports["JFK"] = new Airport("JFK", 40.6446, -73.7797, 19940274);
-        Airport.airports["CLT"] = new Airport("CLT", 35.2163, -80.9539, 2883370);
-        Airport.airports["LAS"] = new Airport("LAS", 36.0831, -115.1482, 2398871);
-        Airport.airports["MCO"] = new Airport("MCO", 28.4244, -81.3105, 2940513);
-        Airport.airports["MIA"] = new Airport("MIA", 25.7923, -80.2823, 6457988);
-        Airport.airports["PHX"] = new Airport("PHX", 33.4352, -112.0101, 5186958);
-        Airport.airports["SEA"] = new Airport("SEA", 47.4484, -122.3086, 4145494);
-        Airport.airports["SFO"] = new Airport("SFO", 37.6191, -122.3816, 4648486);
-        Airport.airports["EWR"] = new Airport("EWR", 40.6885, -74.1769, 19940274);
-        Airport.airports["IAH"] = new Airport("IAH", 29.9931, -95.3416, 7796182);
-        Airport.airports["BOS"] = new Airport("BOS", 42.3656, -71.0096, 5025517);
-        Airport.airports["MSP"] = new Airport("MSP", 44.8851, -93.2144, 3757952);
-        Airport.airports["FLL"] = new Airport("FLL", 26.0732, -80.1512, 6457988);
-        Airport.airports["LGA"] = new Airport("LGA", 40.7766, -73.8742, 19940274);
-        Airport.airports["DTW"] = new Airport("DTW", 42.2132, -83.3525, 4400578);
-        Airport.airports["PHL"] = new Airport("PHL", 39.8730, -75.2437, 6330422);
-        Airport.airports["SLC"] = new Airport("SLC", 40.7903, -111.9771, 1300762);
-        Airport.airports["BWI"] = new Airport("BWI", 39.1774, -76.6684, 2859024);
-        Airport.airports["IAD"] = new Airport("IAD", 38.9522, -77.4579, 6436489);
-        Airport.airports["SAN"] = new Airport("SAN", 32.7379, -117.1897, 3298799);
-        Airport.airports["DCA"] = new Airport("DCA", 38.8501, -77.0392, 6436489);
-        Airport.airports["TPA"] = new Airport("TPA", 27.9769, -82.5303, 3424560);
-        Airport.airports["BNA"] = new Airport("BNA", 36.1249, -86.6762, 2150553);
-        Airport.airports["AUS"] = new Airport("AUS", 30.1941, -97.6711, 2550637);
-        Airport.airports["HNL"] = new Airport("HNL", 21.3187, -157.9254, 998747);
-        Airport.airports["CDG"] = new Airport("CDG", 49.0079, 2.5508, 13171056);
+        Airport.airports["Hartsfield-Jackson Atlanta International Airport"] =
+            new Airport("ATL", 33.6324, -84.4333, 6411149);
+
+        Airport.airports["Dallas/Fort Worth International Airport"] =
+            new Airport("DFW", 32.8922, -97.0391, 8344032);
+
+        Airport.airports["Denver International Airport"] =
+            new Airport("DEN", 39.8563, -104.6764, 3052498);
+
+        Airport.airports["O'Hare International Airport"] =
+            new Airport("ORD", 41.9803, -87.9090, 9408576);
+
+        Airport.airports["Los Angeles International Airport"] =
+            new Airport("LAX", 33.9422, -118.4036, 12927614);
+
+        Airport.airports["John F. Kennedy International Airport"] =
+            new Airport("JFK", 40.6446, -73.7797, 19940274);
+
+        Airport.airports["Charlotte Douglas International Airport"] =
+            new Airport("CLT", 35.2163, -80.9539, 2883370);
+
+        Airport.airports["Harry Reid International Airport"] =
+            new Airport("LAS", 36.0831, -115.1482, 2398871);
+
+        Airport.airports["Orlando International Airport"] =
+            new Airport("MCO", 28.4244, -81.3105, 2940513);
+
+        Airport.airports["Miami International Airport"] =
+            new Airport("MIA", 25.7923, -80.2823, 6457988);
+
+        Airport.airports["Phoenix Sky Harbor International Airport"] =
+            new Airport("PHX", 33.4352, -112.0101, 5186958);
+
+        Airport.airports["Seattle-Tacoma International Airport"] =
+            new Airport("SEA", 47.4484, -122.3086, 4145494);
+
+        Airport.airports["San Francisco International Airport"] =
+            new Airport("SFO", 37.6191, -122.3816, 4648486);
+
+        Airport.airports["Newark Liberty International Airport"] =
+            new Airport("EWR", 40.6885, -74.1769, 19940274);
+
+        Airport.airports["George Bush Intercontinental Airport"] =
+            new Airport("IAH", 29.9931, -95.3416, 7796182);
+
+        Airport.airports["Logan International Airport"] =
+            new Airport("BOS", 42.3656, -71.0096, 5025517);
+
+        Airport.airports["Minneapolis–Saint Paul International Airport"] =
+            new Airport("MSP", 44.8851, -93.2144, 3757952);
+
+        Airport.airports["Fort Lauderdale-Hollywood International Airport"] =
+            new Airport("FLL", 26.0732, -80.1512, 6457988);
+
+        Airport.airports["LaGuardia Airport"] =
+            new Airport("LGA", 40.7766, -73.8742, 19940274);
+
+        Airport.airports["Detroit Metropolitan Wayne County Airport"] =
+            new Airport("DTW", 42.2132, -83.3525, 4400578);
+
+        Airport.airports["Philadelphia International Airport"] =
+            new Airport("PHL", 39.8730, -75.2437, 6330422);
+
+        Airport.airports["Salt Lake City International Airport"] =
+            new Airport("SLC", 40.7903, -111.9771, 1300762);
+
+        Airport.airports["Baltimore/Washington International Airport"] =
+            new Airport("BWI", 39.1774, -76.6684, 2859024);
+
+        Airport.airports["Washington Dulles International Airport"] =
+            new Airport("IAD", 38.9522, -77.4579, 6436489);
+
+        Airport.airports["San Diego International Airport"] =
+            new Airport("SAN", 32.7379, -117.1897, 3298799);
+
+        Airport.airports["Ronald Reagan Washington National Airport"] =
+            new Airport("DCA", 38.8501, -77.0392, 6436489);
+
+        Airport.airports["Tampa International Airport"] =
+            new Airport("TPA", 27.9769, -82.5303, 3424560);
+
+        Airport.airports["Nashville International Airport"] =
+            new Airport("BNA", 36.1249, -86.6762, 2150553);
+
+        Airport.airports["Austin-Bergstrom International Airport"] =
+            new Airport("AUS", 30.1941, -97.6711, 2550637);
+
+        Airport.airports["Daniel K. Inouye International Airport"] =
+            new Airport("HNL", 21.3187, -157.9254, 998747);
+
+        Airport.airports["Charles de Gaulle Airport"] =
+            new Airport("CDG", 49.0079, 2.5508, 13171056);
     }
 
     // Fly airline to destination
@@ -89,6 +184,8 @@ class Airport {
             return -1;
         }
 
+
+	//states distance between from and to code (2 differnet objects)    
         let dist = Airport.airports[fromCode].distanceTo(Airport.airports[destCode]);
 
         if (dist <= 150) {
@@ -96,7 +193,7 @@ class Airport {
             return -1;
         }
 
-        plane.fly(dist / 500.0, destCode); // approx flight hours at 500 mph
+       // plane.fly(dist / 500.0, destCode); // approx flight hours at 500 mph
         
         return dist;
     }
