@@ -61,9 +61,18 @@ function flyPlane() {
                 return menu();
             }
 
+            //sets if its an international flight
+            const intl = (from == "CDG" || dest == "CDG");
+
             const selected = fleet.find(p =>
-                p.getLocation() === from && p.available()
+                p.getLocation() == from && p.available()
             );
+
+            //,MAKE IT SO IT AUTO ASSIGNS THE PRIMARY INTL PLANE HERE IF INTL == TRUE
+            // if(int){
+            //     selected = 
+            // }
+            //NEED TO DO 
 
             if (!selected) {
                 console.log("No available plane at this airport.");
@@ -89,7 +98,6 @@ function flyPlane() {
             const fromAirport = Airport.airports[from];
             const destAirport = Airport.airports[dest];
 
-            const intl = (from === "CDG" || dest === "CDG");
 
             const heading = flight.hdg(
                 fromAirport.getLatitude(),
@@ -115,6 +123,9 @@ function flyPlane() {
                 needFuel
             );
 
+
+	
+
             // ✅ Use instance 'costs' instead of class
             const flightCost = costs.flightCost(
                 fuelNeed,
@@ -136,11 +147,59 @@ function flyPlane() {
             console.log(`Fuel used: ${fuelNeed.toFixed(2)} gallons`);
             console.log(`Cost: $${flightCost.toFixed(2)}`);
             console.log(`Ticket Price: $${ticketPrice.toFixed(2)} per seat`);
+            
+            //sets plane to have updated values
+            selected.setLocation(dest);
+            console.log(flightTime);
+            selected.updateHours(flightTime);           
 
-            menu();
-        });
-    });
-}
+            //check if plane needs to go into maintence
+            let hours = selected.getHours();
+            console.log(hours);
+
+            if(hours >= 200){
+                console.log(`*** Aircraft ${selected.getTail()} needs to be sent for maintence***`);
+
+                if(selected.getLocation == selected.getHub){
+                    console.log("Placing aircraft in maintence area.");
+                    selected.setUnavailable();
+                }else{
+                    console.log("Flying plane back to hub");
+
+                    from = selected.getLocation();
+                    dest = selected.getHub();
+
+                    // Fly plane
+                        const miles = Airport.flyAircraft(selected, dest);
+                        const fuelNeed = flight.fuelNeeded(miles, selected.getModel());
+
+                        let needFuel = false;
+
+                        if (selected.getFuel() < fuelNeed) {
+                            needFuel = true;
+                            // add fuel to reach full capacity, not just overwrite
+                            const refueled = flight.refuel(selected.getModel());
+                            console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
+                            selected.updateFuel(refueled);
+                        }
+
+                        selected.updateFuel(selected.getFuel() - fuelNeed);
+
+                        console.log("\n=== Flight Information ===");
+                        console.log(`Aircraft ${selected.getTail()} flew from ${from} to ${dest}`)
+
+                        console.log("Placing aircraft in maintence area.");
+                        selected.setUnavailable();
+
+                        menu();
+                    }
+            }else
+                menu();
+
+                });
+            });
+
+} //end of flying the plane
 
 // -------------------------
 // CHECK STATUS

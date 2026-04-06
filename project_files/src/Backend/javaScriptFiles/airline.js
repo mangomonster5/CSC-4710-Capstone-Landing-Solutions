@@ -16,6 +16,7 @@ class Airline {
 
         // State
         this.current_airport = startAirport;
+        this.hub = startAirport;
         this.flight_hours = 0.0;
 
         // Maintenance
@@ -30,11 +31,30 @@ class Airline {
     getTail() { return this.tail_number; }
     getModel() { return this.model; }
     getLocation() { return this.current_airport; }
+    getHub() {return this.hub}
     getMaxSpeed() { return this.max_speeds; }
     getFuel() { return this.fuel; }
     getSeats() { return this.seats; }
     getOps() { return this.ops; } //operations numbers
     getHours() { return this.flight_hours; }
+
+
+    /// -------
+    // Setters
+    // ---------
+
+    setLocation(loc){
+        this.current_airport = loc;
+    }
+
+    setUnavailable(){
+        this.in_maintenance = true;
+    }
+
+    //MUST TAKE IN MINUTES
+    updateHours(time){ 
+        this.flight_hours = time / 60;
+    }
 
     updateFuel(f) {
         this.fuel = f;
