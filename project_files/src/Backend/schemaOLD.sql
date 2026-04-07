@@ -1,4 +1,3 @@
--- SQLite database schema for CSC4710 Airline Simulation
 PRAGMA foreign_keys = ON;
 
 
