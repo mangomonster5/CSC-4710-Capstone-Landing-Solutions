@@ -8,25 +8,33 @@ import Airport from './airport.js';
 import readline from 'readline';
 
 // connect to the server
-const sendFlight = async (from, to) => {
-    try {
-        const res = await fetch('http://localhost:5001/api/flights', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                from_airport: from,
-                to_airport: to,
-                flight_number: Math.floor(Math.random() * 10000)
-            })
-        });
+// const sendFlight = async (from, to) => {
+//     try {
+//         const res = await fetch('http://localhost:3000/test', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({
+//                 from_airport: from,
+//                 to_airport: to,
+//                 flight_number: Math.floor(Math.random() * 10000)
+//             })
+//         });
 
-        const data = await res.json();
-        console.log("Flight sent:", data);
+//         const data = await res.json();
+//         console.log("Flight sent:", data);
 
-    } catch (err) {
-        console.error("Error:", err);
-    }
-};
+//     } catch (err) {
+//         console.error("Error:", err);
+//     }
+// };
+
+
+
+// import the precomputed routes from demand.js
+import { routes } from './demand.js';
+
+// now you can use `routes` immediately
+//console.log(routes); // top 10 routes
 
 // -------------------------
 // INIT SYSTEM
@@ -49,7 +57,7 @@ const rl = readline.createInterface({
 // -------------------------
 function menu() {
     console.log("\n=== Airline Menu ===");
-    console.log("1. Fly a plane");
+    console.log("1. Book a flight today");
     console.log("2. Check plane status");
     console.log("3. Fleet locations");
     console.log("0. Exit");
