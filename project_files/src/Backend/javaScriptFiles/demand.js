@@ -1,5 +1,10 @@
 // demand A-B = PopA * Travel Rate * Market Share * (PopB/Total Pop)
 
+//import airport information
+import Airport from './airport.js';
+
+Airport.loadAirports(); // make sure Airport.airports is populated
+
 // all the airports and their populations
 const airports = [
   { code: "ATL", population: 6411149 },
@@ -35,6 +40,12 @@ const airports = [
   { code: "CDG", population: 13171056 }
 ];
 
+function distanceBetween(from, to){
+  const fromAirport = Airport.airports[from];
+
+  return fromAirport.distanceTo(to);
+}
+
 // constants given
 const TRAVEL_RATE = 0.005;   // 0.5%
 const MARKET_SHARE = 0.02;   // 2%
@@ -57,9 +68,12 @@ function generatePassengerDemandRoutes(airports, travelRate, marketShare) {
 
     for (const destination of reachableDestinations) {
     // Only allow JFK <-> CDG
+    //only allow flights greater than 150 mi
+    //Airport.airports[fromCode].distanceTo(Airport.airports[destCode])
       if (
         (origin.code === "CDG" && destination.code !== "JFK") ||
-        (destination.code === "CDG" && origin.code !== "JFK")
+        (destination.code === "CDG" && origin.code !== "JFK") ||
+        (distanceBetween(origin.code, destination.code) < 150)
       ) {
         continue;
       }
@@ -79,10 +93,10 @@ function generatePassengerDemandRoutes(airports, travelRate, marketShare) {
 // sorts routes
   routes.sort((a, b) => b.demand - a.demand);
   return routes;
+
+  
 }
-// runs the function
-const routes = generatePassengerDemandRoutes(
-  airports,
-  TRAVEL_RATE,
-  MARKET_SHARE
-);
+
+
+// minimal export: already computed routes
+export const routes = generatePassengerDemandRoutes(airports, TRAVEL_RATE, MARKET_SHARE);
