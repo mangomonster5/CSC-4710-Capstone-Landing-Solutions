@@ -60,6 +60,37 @@ app.post('/api/login', (req, res) => {
     );
 });
 
+// ADD FLIGHT (finley)
+app.post('/api/flights', (req, res) => {
+    const { from_airport, to_airport, flight_number } = req.body;
+
+    db.run(
+        `INSERT INTO flights (from_airport, to_airport, flight_number)
+         VALUES (?, ?, ?)`,
+        [from_airport, to_airport, flight_number],
+        function (err) {
+            if (err) {
+                console.error("Insert error:", err.message);
+                return res.status(500).json({ success: false });
+            }
+
+            res.json({ success: true });
+        }
+    );
+});
+
+// GET FLIGHTS (finley)
+app.get('/api/flights', (req, res) => {
+    db.all('SELECT * FROM flights', [], (err, rows) => {
+        if (err) {
+            console.error("Fetch error:", err.message);
+            return res.status(500).json([]);
+        }
+
+        res.json(rows);
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

@@ -7,6 +7,27 @@ import Costs from './costs.js';
 import Airport from './airport.js';
 import readline from 'readline';
 
+// connect to the server
+const sendFlight = async (from, to) => {
+    try {
+        const res = await fetch('http://localhost:5001/api/flights', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                from_airport: from,
+                to_airport: to,
+                flight_number: Math.floor(Math.random() * 10000)
+            })
+        });
+
+        const data = await res.json();
+        console.log("Flight sent:", data);
+
+    } catch (err) {
+        console.error("Error:", err);
+    }
+};
+
 // -------------------------
 // INIT SYSTEM
 // -------------------------
