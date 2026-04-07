@@ -56,6 +56,13 @@ function generatePassengerDemandRoutes(airports, travelRate, marketShare) {
       origin.population * travelRate * marketShare;
 
     for (const destination of reachableDestinations) {
+    // Only allow JFK <-> CDG
+      if (
+        (origin.code === "CDG" && destination.code !== "JFK") ||
+        (destination.code === "CDG" && origin.code !== "JFK")
+      ) {
+        continue;
+      }
       const destinationShare =
         destination.population / totalReachablePopulation;
 
