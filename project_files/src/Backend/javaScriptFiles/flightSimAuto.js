@@ -178,7 +178,7 @@ function flyPlane() {
             selected.getSeats()
         );
 
-        console.log("\n=== Flight Information ===");
+        console.log("\n=== Flight #", i, "Information ===");        
         console.log(`Aircraft ${selected.getTail()} flew from ${from} to ${dest}`);
         console.log(`Distance: ${miles.toFixed(2)} miles`);
         console.log(`Cruise altitude: ${cruiseAlt} ft`);
