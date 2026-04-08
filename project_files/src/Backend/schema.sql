@@ -64,3 +64,10 @@ CREATE TABLE all_flights (
     FOREIGN KEY (aircraft_id)
         REFERENCES aircraft(aircraft_id)
 );
+
+-- User Table
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY,
+  username TEXT UNIQUE,
+  password TEXT
+);
