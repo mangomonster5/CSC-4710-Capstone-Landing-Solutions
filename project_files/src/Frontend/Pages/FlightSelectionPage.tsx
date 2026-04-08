@@ -1,56 +1,19 @@
 import { useState } from "react";
-import ModalComponent from "../GlobalComponents/ModalComponent";
 
 
-// type flightDirection = {
-//     airportCode: string;
-//     city: string;
-//     time: string;
-//     flightNumber: string;
-//     gate: string;
-//     status: string;
-// };
+type flightDirection = {
+    airportCode: string;
+    city: string;
+    time: string;
+    flightNumber: string;
+    gate: string;
+    status: string;
+};
 
 
 
 const FlightSelectionPage: React.FC = () => {
     // selection for which table we display
-
-    const airports = [
-        { code: "ATL", name: "Hartsfield-Jackson Atlanta International", city: "Atlanta, GA" },
-        { code: "DFW", name: "Dallas/Fort Worth International", city: "Dallas/Fort Worth, TX" },
-        { code: "DEN", name: "Denver International", city: "Denver, CO" },
-        { code: "ORD", name: "O'Hare International", city: "Chicago, IL" },
-        { code: "LAX", name: "Los Angeles International", city: "Los Angeles, CA" },
-        { code: "JFK", name: "John F. Kennedy International", city: "New York, NY" },
-        { code: "CLT", name: "Charlotte Douglas International", city: "Charlotte, NC" },
-        { code: "LAS", name: "McCarran International", city: "Las Vegas, NV" },
-        { code: "MCO", name: "Orlando International", city: "Orlando, FL" },
-        { code: "MIA", name: "Miami International", city: "Miami, FL" },
-        { code: "PHX", name: "Phoenix Sky Harbor International", city: "Phoenix, AZ" },
-        { code: "SEA", name: "Seattle-Tacoma International", city: "Seattle, WA" },
-        { code: "SFO", name: "San Francisco International", city: "San Francisco, CA" },
-        { code: "EWR", name: "Newark Liberty International", city: "Newark, NJ" },
-        { code: "IAH", name: "George Bush Intercontinental", city: "Houston, TX" },
-        { code: "BOS", name: "Logan International", city: "Boston, MA" },
-        { code: "MSP", name: "Minneapolis-Saint Paul International", city: "Minneapolis, MN" },
-        { code: "FLL", name: "Fort Lauderdale-Hollywood International", city: "Fort Lauderdale, FL" },
-        { code: "LGA", name: "LaGuardia", city: "New York, NY" },
-        { code: "DTW", name: "Detroit Metropolitan Wayne County", city: "Detroit, MI" },
-        { code: "PHL", name: "Philadelphia International", city: "Philadelphia, PA" },
-        { code: "SLC", name: "Salt Lake City International", city: "Salt Lake City, UT" },
-        { code: "BWI", name: "Baltimore/Washington International", city: "Baltimore, MD" },
-        { code: "IAD", name: "Washington Dulles International", city: "Dulles, VA" },
-        { code: "SAN", name: "San Diego International", city: "San Diego, CA" },
-        { code: "DCA", name: "Ronald Reagan Washington National", city: "Arlington, VA" },
-        { code: "TPA", name: "Tampa International", city: "Tampa, FL" },
-        { code: "BNA", name: "Nashville International", city: "Nashville, TN" },
-        { code: "AUS", name: "Austin-Bergstrom International", city: "Austin, TX" },
-        { code: "HNL", name: "Daniel K. Inouye International", city: "Honolulu, HI" },
-        { code: "CDG", name: "Charles de Gaulle", city: "Paris, France" }
-    ];
-
-    const [modalIsOpen, setModalIsOpen] = useState(false)
 
     return (
         <div className="d-flex flex-column gap-5" style={{ paddingLeft: '18vw', paddingRight: '18vw', marginTop: '12vh', marginBottom: '12vh' }}>
@@ -69,56 +32,16 @@ const FlightSelectionPage: React.FC = () => {
 
                 <div className="w-25">
                     <div>From</div>
-                    <div className="dropdown ">
-                        <div
-                            className="card d-flex flex-column gap-1 dropdown-toggle"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            style={{ cursor: 'pointer' }}
-                        >
-                            <div className="fw-semibold">O'Hare International</div>
-                            <div>[ORD] - Chicago, IL</div>
-                        </div>
-
-                        <ul
-                            className="dropdown-menu p-0"
-                            style={{ maxHeight: '200px', overflowY: 'auto' }}
-                        >
-                            {airports.map((airport) => (
-                                <li key={airport.code}>
-                                    <div className="dropdown-item">
-                                        <span className="fw-bold">[{airport.code}]</span> {airport.name}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                    <div className="card d-flex flex-column gap-1">
+                        <div className="fw-semibold">O'Hare International</div>
+                        <div>[ORD] - Chicago, IL</div>
                     </div>
                 </div>
                 <div className="w-25">
                     <div>To</div>
-                    <div className="dropdown ">
-                        <div
-                            className="card d-flex flex-column gap-1 dropdown-toggle"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            style={{ cursor: 'pointer' }}
-                        >
-                            <div className="fw-semibold">JFK International</div>
-                            <div>[JFK] - New York, NY</div>
-                        </div>
-
-                        <ul
-                            className="dropdown-menu p-0"
-                            style={{ maxHeight: '200px', overflowY: 'auto' }}
-                        >
-                            {airports.map((airport) => (
-                                <li key={airport.code}>
-                                    <div className="dropdown-item">
-                                        <span className="fw-bold">[{airport.code}]</span> {airport.name}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                    <div className="card d-flex flex-column gap-1">
+                        <div className="fw-semibold">JFK International</div>
+                        <div>[JFK] - New York, NY</div>
                     </div>
                 </div>
                 <div className="w-25">
@@ -141,7 +64,7 @@ const FlightSelectionPage: React.FC = () => {
 
             <div>
                 {/* header */}
-                <div className="d-flex bg-primary-blue-500 border-black text-white py-3 px-3 fw-medium rounded-top">
+                <div className="d-flex bg-primary-blue-500  text-white py-3 px-3 fw-medium rounded-top">
                     <div className="fw-semibold" style={{ width: '500px' }}>Origin</div>
                     <div className="fw-semibold" style={{ width: '350px' }}>Flight Number</div>
                     <div className="fw-semibold" style={{ width: '200px' }}>Seats</div>
@@ -153,7 +76,7 @@ const FlightSelectionPage: React.FC = () => {
                     <div className="text-muted" style={{ width: '350px' }}>PCA807</div>
                     <div className="text-muted" style={{ width: '200px' }}>40 / 180</div>
                     <div className="text-muted text-center" style={{ width: '200px' }}>
-                        <button className="rounded border" onClick={() => setModalIsOpen(true)}>View</button>
+                        <button className="rounded border">View</button>
                     </div>
                 </div>
 
@@ -168,19 +91,6 @@ const FlightSelectionPage: React.FC = () => {
             </div>
 
 
-
-            <ModalComponent
-                isOpen={modalIsOpen}
-                setIsOpen={setModalIsOpen}
-                title="My Modal"
-                body={<p>This is the modal content!</p>}
-                footer={
-                    <>
-                        <button className="btn btn-secondary" onClick={() => setModalIsOpen(false)}>Cancel</button>
-                        <button className="btn btn-success">Confirm</button>
-                    </>
-                }
-            />
 
         </div>
     );

@@ -7,10 +7,6 @@
 }
 
 
-  .dropdown-toggle::after {
-    display: none;
-  }
-
 
 .no-i-cursor {
   cursor: default;
