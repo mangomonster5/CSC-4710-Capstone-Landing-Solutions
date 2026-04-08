@@ -55,31 +55,40 @@ const rl = readline.createInterface({
 // -------------------------
 // MENU
 // -------------------------
-function menu() {
-    console.log("\n=== Airline Menu ===");
-    console.log("1. PICK THIS TO SEE SIMULATED FLIGHTS");
-    console.log("2. Check plane status");
-    console.log("3. Fleet locations");
-    console.log("0. Exit");
+// function menu() {
+//     console.log("\n=== Airline Menu ===");
+//     console.log("1. PICK THIS TO SEE SIMULATED FLIGHTS");
+//     console.log("2. Check plane status");
+//     console.log("3. Fleet locations");
+//     console.log("0. Exit");
 
-    rl.question("Choice: ", (choice) => {
-        if (choice === "1") flyPlane();
-        else if (choice === "2") checkStatus();
-        else if (choice === "3") fleetLocations();
-        else {
-            console.log("Exiting system.");
-            rl.close();
-        }
-    });
-}
+//     rl.question("Choice: ", (choice) => {
+//         if (choice === "1") flyPlane();
+//         else if (choice === "2") checkStatus();
+//         else if (choice === "3") fleetLocations();
+//         else {
+//             console.log("Exiting system.");
+//             rl.close();
+//         }
+//     });
+// }
 
 // -------------------------
 // FLY PLANE
 // -------------------------
 function flyPlane() {
 
-    for(let i = 0; i < 5; i++){
-        console.log("=== NEW FLIGHT ===");
+    for(let i = 0; i < 10; i++){
+        console.log("\n \n === NEW FLIGHT ===");
+
+        //makes it so only flights starting where the planes are can be createad and ran
+        
+        const locations = [...new Set(fleet.map(p => p.getLocation()))];
+
+        
+        if (!locations.includes(routes[i].from)) {
+            continue;
+        }
 
         let flyingPlane = routes[i];
         let from = flyingPlane.from;
@@ -100,7 +109,7 @@ function flyPlane() {
         if(intl){
             selected = fleet.find(p => p.getModel() === "Airbus A350-1000");
         }else{
-            selected = fleet.find(p =>p.available());
+            selected = fleet.find(p => p.available() && p.getLocation() == from);
         }
 
         if (!selected) {
@@ -138,8 +147,8 @@ function flyPlane() {
 
         const cruiseAlt = flight.cruiseAltitude(intl, miles);
 
-        const fromHub = ["DCA","DFW","LAX","JFK"].includes(from);
-        const destHub = ["DCA","DFW","LAX","JFK"].includes(dest);
+        const fromHub = ["ORD","DFW","LAX","JFK"].includes(from);
+        const destHub = ["ORD","DFW","LAX","JFK"].includes(dest);
 
         const flightTime = flight.flightTime(
             miles,
@@ -274,4 +283,4 @@ function fleetLocations() {
 }
 
 // -------------------------
-menu();
+flyPlane();
