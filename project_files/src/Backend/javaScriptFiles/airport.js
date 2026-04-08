@@ -77,21 +77,9 @@ class Airport {
     }
 
     // Fly airline to destination
-    static flyAircraft(plane, destCode) {
-        let fromCode = plane.getLocation();
-
-        if (!(fromCode in Airport.airports)) {
-            console.error("Current airport " + fromCode + " not found!");
-            return -1;
-        }
-        if (!(destCode in Airport.airports)) {
-            console.error("Destination airport " + destCode + " not found!");
-            return -1;
-        }
-
-
-	//states distance between from and to code (2 differnet objects)    
-        let dist = Airport.airports[fromCode].distanceTo(Airport.airports[destCode]);
+    static flyAircraft(from, destCode) {
+	    //states distance between from and to code (2 differnet objects)    
+        let dist = Airport.airports[from].distanceTo(Airport.airports[destCode]);
 
         if (dist <= 150) {
             console.error("Unable to fly, too close together");
