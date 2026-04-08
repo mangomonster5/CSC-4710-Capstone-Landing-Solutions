@@ -7,6 +7,9 @@ import MainLayout from "./Frontend/Layouts/MainLayout";
 import FlightSelectionPage from "./Frontend/Pages/FlightSelectionPage";
 import FlightInfoPage from "./Frontend/Pages/FlightInfoPage";
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 // Creating a type for protected routes, TypeScript makes you use... types this is defining them
 type ProtectedRouteProps = {
   user: User;
