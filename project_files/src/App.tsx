@@ -6,6 +6,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from
 import MainLayout from "./Frontend/Layouts/MainLayout";
 import FlightSelectionPage from "./Frontend/Pages/FlightSelectionPage";
 import FlightInfoPage from "./Frontend/Pages/FlightInfoPage";
+import AdminPage from "./Frontend/Pages/AdminPage";
 
 // Creating a type for protected routes, TypeScript makes you use... types this is defining them
 type ProtectedRouteProps = {
@@ -71,6 +72,13 @@ const App: React.FC = () => {
           <Route path="/flight-selection" element={
             <ProtectedRoute user={user} correctRole="employee">
               <FlightSelectionPage />
+            </ProtectedRoute>
+          }
+          />
+
+          <Route path="/admin" element={
+            <ProtectedRoute user={user} correctRole="employee">
+              <AdminPage />
             </ProtectedRoute>
           }
           />

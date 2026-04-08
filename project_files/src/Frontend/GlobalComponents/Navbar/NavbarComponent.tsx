@@ -16,7 +16,9 @@ const NavBarComponent: React.FC = () => {
             {/* We will either render and empty div */}
             {/* <div></div> */}
             {/* or render the admin link depending on the sign in creds */}
-            <div className="text-muted no-i-cursor">Admin</div>
+            {/* <div className="text-muted no-i-cursor">Admin</div> */}
+            <Link className={`text-black ${location.pathname ==='/admin' ? 'navItemUnderline fw-semibold' : 'text-decoration-none'} `} to="/admin">Admin</Link>
+
         </div>
     );
 }
