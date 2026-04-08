@@ -101,7 +101,7 @@ function generatePassengerDemandRoutes(airports, travelRate, marketShare) {
 
   // sorts routes
   routes.sort((a, b) => b.demand - a.demand);
-  console.log(routes);
+  //console.log(routes);
   return routes;
 }
 
