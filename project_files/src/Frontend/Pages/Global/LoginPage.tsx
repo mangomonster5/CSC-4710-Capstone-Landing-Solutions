@@ -83,7 +83,7 @@ const LoginPage: React.FC = () => {
                 </button>
             </div>
 
-            <div className="px-3 fw-semibold" onClick={handleTestClick}>Test API Button</div>
+            <div className="px-3 fw-semibold bg-secondary text-white rounded py-1" onClick={handleTestClick}>Test API Button</div>
         </div>
     );
 };
