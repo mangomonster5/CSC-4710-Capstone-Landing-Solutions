@@ -34,6 +34,21 @@ const LoginPage: React.FC = () => {
         }
     };
 
+    const handleTestClick = async () => {
+
+        try {
+            const response = await fetch('http://localhost:5001/api/test', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            const data = await response.json();
+            console.log(data)
+        } catch (err) {
+            console.log('ERROR: ', err)
+        };
+    };
+
     return (
         <div className="w-100 mt-5 d-flex flex-column align-items-center gap-3">
             <h1 className="text-center">Login</h1>
@@ -67,6 +82,8 @@ const LoginPage: React.FC = () => {
                     {loading ? 'Successful' : 'Login'}
                 </button>
             </div>
+
+            <div className="px-3 fw-semibold" onClick={handleTestClick}>Test API Button</div>
         </div>
     );
 };
