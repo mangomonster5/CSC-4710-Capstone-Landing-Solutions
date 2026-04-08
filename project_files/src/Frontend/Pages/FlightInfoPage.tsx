@@ -24,8 +24,8 @@ const FlightInfoPage: React.FC = () => {
             </div>
 
             <div className="d-flex w-100">
-                <div className="border border-end-0 rounded-start w-75 ps-3 py-3">Search by flight number, route, or aircraft…</div>
-                <div className="w-25 border border-start-0 rounded-end py-3 text-center fw-medium" style={{color: 'white', background: '#167ED9'}}>View Flight Info</div>
+                <input className="border border-end-0 rounded-start w-75 ps-3 py-3" placeholder="Search by flight number, route, or aircraft…"></input>
+                <button className="w-25 border border-start-0 rounded-end py-3 text-center fw-medium" style={{color: 'white', background: '#167ED9'}}>View Flight Info</button>
             </div>
 
 

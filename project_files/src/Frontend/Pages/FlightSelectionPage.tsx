@@ -1,19 +1,26 @@
 import { useState } from "react";
+import ModalComponent from "../GlobalComponents/ModalComponent";
+import FlightSelectionDropdown from "../GlobalComponents/FlightSelectionDropdown";
 
 
-type flightDirection = {
-    airportCode: string;
-    city: string;
-    time: string;
-    flightNumber: string;
-    gate: string;
-    status: string;
-};
+// type flightDirection = {
+//     airportCode: string;
+//     city: string;
+//     time: string;
+//     flightNumber: string;
+//     gate: string;
+//     status: string;
+// };
 
 
 
 const FlightSelectionPage: React.FC = () => {
     // selection for which table we display
+
+    const [modalIsOpen, setModalIsOpen] = useState(false)
+
+    const [from, setFrom] = useState<{ code: string, name: string, city: string } | null>(null)
+    const [to, setTo] = useState<{ code: string, name: string, city: string } | null>(null)
 
     return (
         <div className="d-flex flex-column gap-5" style={{ paddingLeft: '18vw', paddingRight: '18vw', marginTop: '12vh', marginBottom: '12vh' }}>
@@ -30,32 +37,60 @@ const FlightSelectionPage: React.FC = () => {
             <div className="d-flex justify-content-between gap-3">
 
 
-                <div className="w-25">
+                <div style={{ width: '350px' }}>
                     <div>From</div>
-                    <div className="card d-flex flex-column gap-1">
-                        <div className="fw-semibold">O'Hare International</div>
-                        <div>[ORD] - Chicago, IL</div>
-                    </div>
+                    <FlightSelectionDropdown
+                        handleSelection={(selection: any) => { setFrom(selection) }}
+                        body={
+                            <>
+                                {from ?
+                                    (
+                                        <>
+                                            <div className="fw-semibold">{from?.name}</div>
+                                            <div>[{from?.code}] - {from?.city}</div>
+                                        </>
+                                    ) :
+                                    (
+                                        <div className="d-flex align-items-center" style={{height: '54px'}}>Please Select an Airport</div>
+                                    )
+                                }
+                            </>
+                        }
+                    />
                 </div>
-                <div className="w-25">
+                <div style={{ width: '350px' }}>
                     <div>To</div>
-                    <div className="card d-flex flex-column gap-1">
-                        <div className="fw-semibold">JFK International</div>
-                        <div>[JFK] - New York, NY</div>
-                    </div>
+                    <FlightSelectionDropdown
+                        handleSelection={(selection: any) => { setTo(selection) }}
+                        body={
+                            <>
+                                {to ?
+                                    (
+                                        <>
+                                            <div className="fw-semibold">{to?.name}</div>
+                                            <div>[{to?.code}] - {to?.city}</div>
+                                        </>
+                                    ) :
+                                    (
+                                        <div className="d-flex align-items-center" style={{height: '54px'}}>Please Select an Airport</div>
+                                    )
+                                }
+
+                            </>
+                        }
+                    />
                 </div>
-                <div className="w-25">
+
+                <div style={{ width: '110px' }}>
                     <div>Departure</div>
-                    <div className="card d-flex flex-column gap-1">
+                    <div className="card d-flex flex-column align-items-center justify-content-center" style={{ height: '80px' }}>
                         <div className="fw-semibold">Feb, 20th</div>
-                        <div>Friday, 2026</div>
                     </div>
                 </div>
-                <div className="w-25">
+                <div style={{ width: '110px' }}>
                     <div>Return</div>
-                    <div className="card d-flex flex-column gap-1">
+                    <div className="card d-flex flex-column align-items-center justify-content-center" style={{ height: '80px' }}>
                         <div className="fw-semibold">Mar, 1st</div>
-                        <div>Sunday, 2026</div>
                     </div>
                 </div>
 
@@ -64,7 +99,7 @@ const FlightSelectionPage: React.FC = () => {
 
             <div>
                 {/* header */}
-                <div className="d-flex bg-primary-blue-500  text-white py-3 px-3 fw-medium rounded-top">
+                <div className="d-flex bg-primary-blue-500 border-black text-white py-3 px-3 fw-medium rounded-top">
                     <div className="fw-semibold" style={{ width: '500px' }}>Origin</div>
                     <div className="fw-semibold" style={{ width: '350px' }}>Flight Number</div>
                     <div className="fw-semibold" style={{ width: '200px' }}>Seats</div>
@@ -76,7 +111,7 @@ const FlightSelectionPage: React.FC = () => {
                     <div className="text-muted" style={{ width: '350px' }}>PCA807</div>
                     <div className="text-muted" style={{ width: '200px' }}>40 / 180</div>
                     <div className="text-muted text-center" style={{ width: '200px' }}>
-                        <button className="rounded border">View</button>
+                        <button className="rounded border" onClick={() => setModalIsOpen(true)}>View</button>
                     </div>
                 </div>
 
@@ -85,12 +120,35 @@ const FlightSelectionPage: React.FC = () => {
                     <div className="text-muted" style={{ width: '350px' }}>PCA908</div>
                     <div className="text-muted" style={{ width: '200px' }}>12 / 246</div>
                     <div className="text-muted text-center" style={{ width: '200px' }}>
-                        <button className="rounded border">View</button>
+                        <button className="rounded border" onClick={() => setModalIsOpen(true)}>View</button>
                     </div>
                 </div>
             </div>
 
 
+
+            <ModalComponent
+                isOpen={modalIsOpen}
+                setIsOpen={setModalIsOpen}
+                title="[ORD] - Chicago, IL"
+                body={
+                    <div className="text-center">
+                        <div>BOOKING INFO</div>
+                        <div>BOOKING INFO</div>
+                        <div>BOOKING INFO</div>
+                        <div>BOOKING INFO</div>
+                        <div>BOOKING INFO</div>
+                        <div>BOOKING INFO</div>
+                        <div>BOOKING INFO</div>
+                    </div>
+                }
+                footer={
+                    <>
+                        <button className="btn btn-secondary" onClick={() => setModalIsOpen(false)}>Cancel</button>
+                        <button className="btn btn-success">Buy Flight</button>
+                    </>
+                }
+            />
 
         </div>
     );
