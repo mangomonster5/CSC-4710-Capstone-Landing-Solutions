@@ -104,31 +104,27 @@ const AllFlightsPage: React.FC = () => {
                 {flightDirection === 'arrival' ? (<h5>Arrivals</h5>) : (<h5>Departures</h5>)}
 
                 <div className="d-flex bg-primary-blue-500  text-white py-3 px-3 fw-medium rounded-top">
-                    <div className="fw-semibold" style={{ width: '450px' }}>Origin</div>
-                    <div className="fw-semibold" style={{ width: '150px' }}>Time</div>
+                    <div className="fw-semibold" style={{ width: '400px' }}>Origin</div>
+                    <div className="fw-semibold" style={{ width: '250px' }}>Time</div>
                     <div className="fw-semibold" style={{ width: '250px' }}>Flight Number</div>
-                    <div className="fw-semibold" style={{ width: '200px' }}>Gate</div>
-                    <div className="fw-semibold" style={{ width: '250px' }}>Status</div>
-                    <div className="fw-semibold" style={{ width: '150px' }}></div>
+                    <div className="fw-semibold" style={{ width: '250px' }}>Gate</div>
+                    <div className="fw-semibold" style={{ width: '300px' }}>Status</div>
                 </div>
 
                 {flightDirection === 'arrival' ? (
                     <>
                         {arrivalsList.map((flight, i) => (
                             <div className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium ${arrivalsList.length - 1 === i && 'rounded-bottom'}`}>
-                                <div className="text-muted" style={{ width: '450px' }}>{'[' + flight.airportCode + '] - ' + flight.city}</div>
-                                <div className="text-muted fw-normal" style={{ width: '150px' }}>{flight.time}</div>
+                                <div className="text-muted" style={{ width: '400px' }}>{'[' + flight.airportCode + '] - ' + flight.city}</div>
+                                <div className="text-muted fw-normal" style={{ width: '250px' }}>{flight.time}</div>
                                 <div className="text-muted fw-normal" style={{ width: '250px' }}>{flight.flightNumber}</div>
-                                <div className="text-muted fw-normal" style={{ width: '200px' }}>{flight.gate}</div>
-                                <div className="text-muted d-flex align-items-center gap-2" style={{ width: '250px' }}>
+                                <div className="text-muted fw-normal" style={{ width: '250px' }}>{flight.gate}</div>
+                                <div className="text-muted d-flex align-items-center gap-2" style={{ width: '300px' }}>
                                     <div
                                         className={`rounded-circle border border-dark`}
                                         style={{ width: '10px', height: '10px', background: statusColorMap[flight.status] ?? '' }}
                                     ></div>
                                     <div>{flight.status}</div>
-                                </div>
-                                <div className="text-muted text-center" style={{ width: '150px' }}>
-                                    <button className="rounded border">View</button>
                                 </div>
                             </div>
                         ))}
@@ -137,19 +133,16 @@ const AllFlightsPage: React.FC = () => {
                     <>
                         {departuresList.map((flight, i) => (
                             <div className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium ${arrivalsList.length - 1 === i && 'rounded-bottom'}`}>
-                                <div className="text-muted" style={{ width: '450px' }}>{'[' + flight.airportCode + '] - ' + flight.city}</div>
-                                <div className="text-muted fw-normal" style={{ width: '150px' }}>{flight.time}</div>
+                                <div className="text-muted" style={{ width: '400px' }}>{'[' + flight.airportCode + '] - ' + flight.city}</div>
+                                <div className="text-muted fw-normal" style={{ width: '250px' }}>{flight.time}</div>
                                 <div className="text-muted fw-normal" style={{ width: '250px' }}>{flight.flightNumber}</div>
-                                <div className="text-muted fw-normal" style={{ width: '200px' }}>{flight.gate}</div>
-                                <div className="text-muted d-flex align-items-center gap-2" style={{ width: '250px' }}>
+                                <div className="text-muted fw-normal" style={{ width: '250px' }}>{flight.gate}</div>
+                                <div className="text-muted d-flex align-items-center gap-2" style={{ width: '300px' }}>
                                     <div
                                         className={`rounded-circle border border-dark`}
                                         style={{ width: '10px', height: '10px', background: statusColorMap[flight.status] ?? '' }}
                                     ></div>
                                     <div>{flight.status}</div>
-                                </div>
-                                <div className="text-muted text-center" style={{ width: '150px' }}>
-                                    <button className="rounded border">View</button>
                                 </div>
                             </div>
                         ))}
