@@ -23,10 +23,11 @@ type ProtectedRouteProps = {
  * Redirects unauthorized users to the login page.
  *
  * Props:
- * - user: the current user object, containing authentication status and role
- * - correctRole: the role required to access the route
- * - children: the protected page(s) to render
+ * user: the current user object, containing authentication status and role
+ * correctRole: the role required to access the route
+ * children: the protected page(s) to render
  */
+
 
 const ProtectedRoute = ({ user, correctRole, children }: ProtectedRouteProps) => {
   const navigate = useNavigate();
