@@ -8,25 +8,19 @@ import Airport from './airport.js';
 import readline from 'readline';
 
 // connect to the server
-// const sendFlight = async (from, to) => {
-//     try {
-//         const res = await fetch('http://localhost:3000/all-flights', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({
-//                 from_airport: from,
-//                 to_airport: to,
-//                 flight_number: Math.floor(Math.random() * 10000)
-//             })
-//         });
+const sendFlight = async (from, to) => {
+    try {
+        const res = await fetch('http://localhost:5001/api/test', {
+            method: 'GET',
+            })
 
-//         const data = await res.json();
-//         console.log("Flight sent:", data);
+        const data = await res.json();
+        console.log("Flight sent:", data);
 
-//     } catch (err) {
-//         console.error("Error:", err);
-//     }
-// };
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
 
 
 
@@ -79,7 +73,6 @@ const rl = readline.createInterface({
 function flyPlane() {
 
     for(let i = 0; i < 10; i++){
-        console.log("\n \n === NEW FLIGHT ===");
 
         //makes it so only flights starting where the planes are can be createad and ran
         
