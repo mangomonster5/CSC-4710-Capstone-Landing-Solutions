@@ -23,7 +23,23 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+
+    "setup": "npm install --prefix src/Backend && npm install --prefix src/Frontend && npm install",
+
+    "docker:build": "docker build -t landing-solutions-dev .",
+
+    "frontend:mac": "docker start landing-frontend || docker run -d -p 3000:3000 -v $(pwd):/app -v /app/node_modules --name landing-frontend landing-solutions-dev",
+
+    "frontend:win": "docker start landing-frontend || docker run -d -p 3000:3000 -v %cd%:/app -v /app/node_modules --name landing-frontend landing-solutions-dev",
+
+    "backend": "npm run start --prefix src/Backend",
+
+    "dev:mac": "concurrently \"npm run frontend:mac\" \"npm run backend\"",
+
+    "dev:win": "concurrently \"npm run frontend:win\" \"npm run backend\"",
+
+    "clean": "docker rm -f landing-frontend"
   },
   "eslintConfig": {
     "extends": [
@@ -42,5 +58,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
