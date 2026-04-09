@@ -5,6 +5,13 @@ const cors = require('cors');
 const app = express();
 const PORT = 5001;
 
+//stuff IM STUFF jonathan
+const bcrypt = require('bcrypt'); 
+
+
+
+app.use(cors());
+app.use(express.json());
 
 app.use(cors());
 app.use(express.json());
@@ -30,30 +37,25 @@ app.get('/api/test', (req, res) => {
 
 
 
-
-// Check User Auth
+//u auth
 app.post('/api/login', (req, res) => {
-    // Extract the username and password from request body
     const { username, password } = req.body;
-
-    // send a get request to the database
+    //!== case sens
     db.get(
-        // Select all rows from users where the username and password = req.body
-        'SELECT * FROM users WHERE username = ? AND password = ?',
-        [username, password],
-        // Handle err
-        (err, row) => {
-            // If err, throw response code 500
+        'SELECT * FROM users WHERE username = ?',
+        [username], //username spec
+        async (err, row) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-
-            // No error
-            if (row) {
-                // If the user exists, respond with json obj
-                res.json({ success: true, user: row });
+            if (!row) {
+                return res.status(401).json({ success: false, message: 'Invalid credentials' });
+            }
+            //pass hash spec
+            const match = await bcrypt.compare(password, row.password);
+            if (match) {
+                res.json({ success: true, role: row.role, user: row });
             } else {
-                // If the user does not exist respond with json obj, failed
                 res.status(401).json({ success: false, message: 'Invalid credentials' });
             }
         }
@@ -63,7 +65,6 @@ app.post('/api/login', (req, res) => {
 // ADD FLIGHT (finley)
 app.post('/api/flights', (req, res) => {
     const { from_airport, to_airport, flight_number } = req.body;
-
     db.run(
         `INSERT INTO flights (from_airport, to_airport, flight_number)
          VALUES (?, ?, ?)`,
@@ -73,7 +74,6 @@ app.post('/api/flights', (req, res) => {
                 console.error("Insert error:", err.message);
                 return res.status(500).json({ success: false });
             }
-
             res.json({ success: true });
         }
     );
@@ -86,11 +86,9 @@ app.get('/api/flights', (req, res) => {
             console.error("Fetch error:", err.message);
             return res.status(500).json([]);
         }
-
         res.json(rows);
     });
 });
-
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
