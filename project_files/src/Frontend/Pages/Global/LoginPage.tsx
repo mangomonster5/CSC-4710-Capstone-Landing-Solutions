@@ -64,7 +64,7 @@ const LoginPage: React.FC = () => {
                 <input
                     className="form-control"
                     type="password"
-                    placeholder="baba"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
