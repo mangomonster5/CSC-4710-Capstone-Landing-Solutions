@@ -6,12 +6,41 @@ class Airport {
         this.latitude = latitude;
         this.longitude = longitude;
         this.population = population;
+
+        //SET IF THE AIRPORT IS HUB
+        if( this.code === "ORD" || 
+            this.code === "DFW" ||
+            this.code === "JFK" ||
+            this.code === "LAX"   ){
+            this.isHub = true;
+        }else{
+            this.isHub = false;
+        }
+        
+        this.setGates();
     }
 
     getCode() { return this.code; }
     getLatitude() { return this.latitude; }
     getLongitude() { return this.longitude; }
     getPopulation() { return this.population; }
+    getGates() { return this.numOfGates; }
+
+    //SETS THE GATES BASED ON REQUIREMENTS OF 1 GATE PER 1MIL POP (with restrictions)
+    // setGates() {
+    //     let gates = Math.floor(this.population / 1000000);
+
+    //     if (this.isHub) {
+    //         this.numOfGates = Math.min(gates, 11);
+    //     } else {
+    //         this.numOfGates = Math.min(gates, 5);
+    //     }
+    // }
+
+    //TESTING WITH SETGATES
+    setGates(){
+        this.numOfGates = 15;
+    }
 
     distanceTo(other) {
 
