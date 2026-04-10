@@ -3,6 +3,8 @@
  * Tracks speed, hours, maintenance, and location
  */
 
+import { start } from "repl";
+
 class Airline {
 
     constructor(tail, model, maxSpeed, startingFuel, startAirport, seats, lease) {
@@ -21,7 +23,10 @@ class Airline {
 
         // Maintenance
         this.in_maintenance = false;
-        this.maintenance_hours_left = 0;
+        this.maintenanceDay = null;
+        this.endMaintenanceDay = null;
+
+    
     }
 
     // --------------------
@@ -37,6 +42,16 @@ class Airline {
     getSeats() { return this.seats; }
     getOps() { return this.ops; } //operations numbers
     getHours() { return this.flight_hours; }
+    getMaintenanceDay() {return this.maintenanceDay; }
+    getEndMaintenanceDay() {return this.endMaintenanceDay; }
+
+    available() {
+        if(this.in_maintenance){
+            return false;
+        }else{
+            return true;
+        }
+    }
 
 
     /// -------
@@ -53,16 +68,16 @@ class Airline {
 
     //MUST TAKE IN MINUTES
     updateHours(time){ 
-        this.flight_hours = time / 60;
+        this.flight_hours += time / 60;
     }
 
     updateFuel(f) {
         this.fuel = f;
     }
 
-    available() {
-        return !this.in_maintenance;
-    }
+    
+
+    setMain
 
     // --------------------
     // Flight Operations
@@ -88,15 +103,9 @@ class Airline {
         return this.flight_hours >= 200.0;
     }
 
-    startMaintenance(isHub, hubActive) {
-        if (!isHub) return false;
-        if (hubActive >= 3) return false;
-        if (!this.needsMaintenance()) return false;
-
-        this.in_maintenance = true;
-        this.maintenance_hours_left = 36;
-        this.flight_hours = 0.0;
-        return true;
+    startMaintenance(startDay){
+        this.maintenanceDay = startDay;
+        this.endMaintenanceDay = startDay += 2;
     }
 
     advanceHour() {
@@ -106,6 +115,15 @@ class Airline {
                 this.in_maintenance = false;
             }
         }
+    }
+
+    resetMaintenance(){
+        this.in_maintenance = false;
+        this.maintenanceDay = null;
+        this.endMaintenanceDay = null;
+        this.flight_hours = 0.0;
+
+
     }
 
     // --------------------

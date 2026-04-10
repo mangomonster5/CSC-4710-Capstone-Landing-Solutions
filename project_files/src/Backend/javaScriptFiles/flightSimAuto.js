@@ -1,5 +1,5 @@
-// flightSim3.js
-// Run with: node flightSim3.js
+// flightSimAuto.js
+// Run with: node flightSimAuto.js
 
 import Airline from './airline.js';
 import Flight from './flight.js';
@@ -24,19 +24,18 @@ const sendFlight = async (from, to) => {
 
 
 
-// import the precomputed routes from demand.js
-import { routes } from './demand.js';
+// import the precomputed routes from scores.js
+import { scoredRoutes } from './scores.js';
 
-// now you can use `routes` immediately
-//console.log(routes); // top 10 routes
 
 // -------------------------
-// INIT SYSTEM
+// Intializations for simulation
 // -------------------------
 Airport.loadAirports();
 const fleet = Airline.preloadFleet();
 const flight = new Flight();
 const costs = new Costs();
+let currentDay = 1;
 
 // -------------------------
 // READLINE SETUP
@@ -49,52 +48,86 @@ const rl = readline.createInterface({
 // -------------------------
 // MENU
 // -------------------------
-// function menu() {
-//     console.log("\n=== Airline Menu ===");
-//     console.log("1. PICK THIS TO SEE SIMULATED FLIGHTS");
-//     console.log("2. Check plane status");
-//     console.log("3. Fleet locations");
-//     console.log("0. Exit");
+function menu() {
+    console.log("\n=== Airline Menu ===");
+    console.log("1. Simulate Current Day: ", currentDay);
+    console.log("2. Increase day");
+    //console.log("3. Decrease Day");
+    console.log("4. Check plane locations");
+    console.log("0. Exit");
 
-//     rl.question("Choice: ", (choice) => {
-//         if (choice === "1") flyPlane();
-//         else if (choice === "2") checkStatus();
-//         else if (choice === "3") fleetLocations();
-//         else {
-//             console.log("Exiting system.");
-//             rl.close();
-//         }
-//     });
-// }
+    rl.question("Choice: ", (choice) => {
+        if (choice === "1") flyPlane();
+        else if (choice === "2") increaseDay();
+        //else if (choice === "3") decreaseDay();
+        else if(choice == "4") fleetLocations();
+        else {
+            console.log("Exiting system.");
+            rl.close();
+        }
+    });
+}
 
 // -------------------------
 // FLY PLANE
 // -------------------------
 function flyPlane() {
 
-    for(let i = 0; i < 10; i++){
+    //set to only fly the current day of flights
+    const currentDayRoutes = scoredRoutes.filter(r => r.day === currentDay);
+    let i = 0;
 
-        //makes it so only flights starting where the planes are can be createad and ran
-        
+    //sets used planes to a set so that we can keep using new planes for each flight
+    const usedPlanes = new Set();
+
+
+    //TESTING CHANGES
+    while(i < 10){
+        //start day by taking planes OUT of maintenance if the correct day:
+        fleet.forEach(p => {
+            if (!p.available() ) {
+                if (currentDay >= p.getEndMaintenanceDay()) {
+                    console.log(`*** ${p.getTail()} is out of maintenance ***`);
+                    
+                    p.resetMaintenance();
+                }
+            }
+        });
+
+
+        //makes it so it only picks a flight to "fly" if a plane exists there
         const locations = [...new Set(fleet.map(p => p.getLocation()))];
-
-        
-        if (!locations.includes(routes[i].from)) {
+        if (!locations.includes(currentDayRoutes[i].from)) {
+            i++;
             continue;
         }
 
-        let flyingPlane = routes[i];
+
+
+
+
+        //set the next plane to the current planned flight
+        let flyingPlane = currentDayRoutes[i];        
         let from = flyingPlane.from;
         let dest = flyingPlane.to;
 
-        if (!Airport.airports[from] || !Airport.airports[dest]) {
-            console.log("Invalid airport.");
-            return menu();
+        const fromAirport = Airport.airports[from];
+        const destAirport = Airport.airports[dest];
+
+        //MAKE SURE THERES ENOUGH GATES TO LAND, IF NOT SKIP  FLIGHT
+        let gateCount = fleet.filter(p => p.getLocation() === dest).length;
+
+        console.log(gateCount);
+
+        if(gateCount > destAirport.getGates()){
+            console.log("********************SKIPPING THIS FLIGHT****************");
+            continue;
         }
 
         //sets if its an international flight
         const intl = (from === "CDG" || dest === "CDG");
 
+        ///PLANE SELECTION
         let selected; 
 
         //makes it set to designsted intl plane for the trip
@@ -102,22 +135,36 @@ function flyPlane() {
         if(intl){
             selected = fleet.find(p => p.getModel() === "Airbus A350-1000");
         }else{
-            selected = fleet.find(p => p.available() && p.getLocation() == from);
+            //makes sure the plane is at the right location, available, and no previously used
+            selected = fleet.find(p => p.available() && 
+            p.getLocation() === from && 
+            !usedPlanes.has(p));
         }
 
-        if (!selected) {
-            console.log("No available plane at this airport.");
-            return menu();
+        if(!selected){
+            //if no plane unused, just pick the first best one
+            selected = fleet.find(p => p.available() && 
+            p.getLocation() === from);
         }
 
-        // Fly plane
-        //NEED TO CHANGE THIS TO FLY BASED ON FROM/TO NOT SELECTED/DEST **************88
+        if(!selected){
+            i++;
+            continue;
+        }
+
+        // Fly plane and set it to "used"
         const miles = Airport.flyAircraft(from, dest);
         const fuelNeed = flight.fuelNeeded(miles, selected.getModel());
+        usedPlanes.add(selected);
+        
+        // Generate random 3 or 4 digit flight number
+        const flightNumber = Math.floor(Math.random() * (9999 - 100 + 1)) + 100;
 
         let needFuel = false;
         let refueled;
 
+
+        //FUELING PART
         if (selected.getFuel() < fuelNeed) {
             needFuel = true;
             // add fuel to reach full capacity, not just overwrite
@@ -127,9 +174,8 @@ function flyPlane() {
 
         selected.updateFuel(selected.getFuel() - fuelNeed);
 
-        const fromAirport = Airport.airports[from];
-        const destAirport = Airport.airports[dest];
 
+        //FLYING INFORMAITON
 
         const heading = flight.hdg(
             fromAirport.getLatitude(),
@@ -142,6 +188,7 @@ function flyPlane() {
 
         const fromHub = ["ORD","DFW","LAX","JFK"].includes(from);
         const destHub = ["ORD","DFW","LAX","JFK"].includes(dest);
+
 
         const flightTime = flight.flightTime(
             miles,
@@ -158,7 +205,7 @@ function flyPlane() {
 
 
 
-        // ✅ Use instance 'costs' instead of class
+        //COST SECTION
         const flightCost = costs.flightCost(
             fuelNeed,
             intl,
@@ -171,27 +218,34 @@ function flyPlane() {
             selected.getSeats()
         );
 
-        console.log("\n=== Flight #", i, "Information ===");        
+       
+
+        //PRINT OF ALL INFO
+
+        console.log("\n=== Flight #", i, "Information ==="); 
+        console.log("Flight Number:", flightNumber);       
         console.log(`Aircraft ${selected.getTail()} flew from ${from} to ${dest}`);
         console.log(`Distance: ${miles.toFixed(2)} miles`);
         console.log(`Cruise altitude: ${cruiseAlt} ft`);
         console.log(`Flight time: ${Math.floor(flightTime / 60)}h ${Math.floor(flightTime % 60)}m`);
         console.log(`Fuel used: ${fuelNeed.toFixed(2)} gallons`);
-        //console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
+        console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
         console.log(`Cost: $${flightCost.toFixed(2)}`);
         console.log(`Ticket Price: $${ticketPrice.toFixed(2)} per seat`);
         
+        
         //sets plane to have updated values
         selected.setLocation(dest);
-        selected.updateHours(flightTime);           
+        selected.updateHours(flightTime);  
+        
+        //MAINTENANCE SECTION
 
         //check if plane needs to go into maintence
-        let hours = selected.getHours();
-
-        if(hours >= 200){
+        if(selected.needsMaintenance()){
             console.log(`*** Aircraft ${selected.getTail()} needs to be sent for maintence***`);
 
-            if(selected.getLocation == selected.getHub){
+            // gets the plane back to the hub if not already
+            if(selected.getLocation() === selected.getHub()){
                 console.log("Placing aircraft in maintence area.");
                 selected.setUnavailable();
             }else{
@@ -201,7 +255,7 @@ function flyPlane() {
                 dest = selected.getHub();
 
                 // Fly plane
-                    const miles = Airport.flyAircraft(selected, dest);
+                    const miles = Airport.flyAircraft(from, dest);
                     const fuelNeed = flight.fuelNeeded(miles, selected.getModel());
 
                     let needFuel = false;
@@ -219,11 +273,19 @@ function flyPlane() {
                     console.log("\n=== Flight Information ===");
                     console.log(`Aircraft ${selected.getTail()} flew from ${from} to ${dest}`)
 
+                    selected.setLocation(dest);
+
                     console.log("Placing aircraft in maintence area.");
+
+                    //sets the plane unavailable and maintenance days
                     selected.setUnavailable();
+                    selected.startMaintenance(currentDay)
                 }
         }
-    }
+        i++; //increase i in order to go to the next flight
+    } //end maintenance stuff
+
+
     menu();
 
 } //end of flying the plane
@@ -251,20 +313,33 @@ function checkStatus() {
 
         menu();
     });
-}
+} //end of status
 
 // -------------------------
 // FLEET LOCATIONS
 // -------------------------
 function fleetLocations() {
-    const locations = {};
+    const locations = [];
+    const unavailable = [];
+
+    //finds and groups plane based on location OR availability
 
     fleet.forEach(p => {
-        if (!locations[p.getLocation()]) locations[p.getLocation()] = [];
-        if (p.available()) locations[p.getLocation()].push(p);
+        if (p.available()) {
+            // group available planes by location
+            if (!locations[p.getLocation()]) {
+                locations[p.getLocation()] = [];
+            }
+            locations[p.getLocation()].push(p);
+        } else {
+            // collect unavailable planes
+            unavailable.push(p);
+        }
     });
 
+    //prints those groups
     console.log("\nFleet at:");
+
     for (let loc in locations) {
         console.log(loc + ":");
         locations[loc].forEach(p =>
@@ -272,8 +347,48 @@ function fleetLocations() {
         );
     }
 
+
+    //print unavailable planes
+    console.log("\nUnavailable Aircraft:");
+    if (unavailable.length === 0) {
+        console.log("  None");
+    } else {
+        unavailable.forEach(p =>
+            console.log(`  ${p.getTail()} (${p.getModel()}) - Days left in maintenance: ${p.getEndMaintenanceDay() - currentDay}`)
+        );
+    }
+
     menu();
 }
 
+
+function increaseDay(){
+    if(currentDay === 14){
+        console.log("Unable to increase day further");
+        menu();
+    }else{
+        currentDay++;
+        console.log("=== Increasing Day ===");
+        console.log("Current day: ", currentDay);
+        menu();
+    }
+
+}//end of increaseDay
+
+function decreaseDay(){
+    console.log("=== Decreasing Day ===");
+    if(currentDay === 1){
+        console.log("Unable to decrease day further");
+        menu();
+    }else{
+        console.log("=== Decreasing Day ===");        
+        currentDay--;
+        console.log("Current day: ", currentDay);
+        menu();
+
+    }
+
+}//end of increaseDay
+
 // -------------------------
-flyPlane();
+menu();
