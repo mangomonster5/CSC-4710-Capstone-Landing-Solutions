@@ -5,13 +5,8 @@ const cors = require('cors');
 const app = express();
 const PORT = 5001;
 
-//stuff IM STUFF jonathan
+//OG encrypt attempt
 const bcrypt = require('bcrypt'); 
-
-
-
-app.use(cors());
-app.use(express.json());
 
 app.use(cors());
 app.use(express.json());
@@ -40,10 +35,10 @@ app.get('/api/test', (req, res) => {
 //u auth
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
-    //!== case sens
     db.get(
         'SELECT * FROM users WHERE username = ?',
-        [username], //username spec
+        //the spec
+        [username], 
         async (err, row) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
