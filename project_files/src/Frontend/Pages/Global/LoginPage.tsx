@@ -108,7 +108,7 @@ const LoginPage: React.FC = () => {
                     onClick={handleLogin}
                     disabled={loading}
                 >
-                    {loading ? 'Logging in...' : 'Login'}
+                    {loading ? 'Sucsess' : 'Login'}
                 </button>
             </div>
         </div>
