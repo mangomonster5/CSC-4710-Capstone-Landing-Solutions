@@ -5,9 +5,13 @@ const cors = require('cors');
 const app = express();
 const PORT = 5001;
 
-//OG encrypt attempt
+// *
+//OG encrypt func
+// *
 const bcrypt = require('bcrypt'); 
-
+//* 
+// allows port comms and json translation
+// *
 app.use(cors());
 app.use(express.json());
 
@@ -31,22 +35,45 @@ app.get('/api/test', (req, res) => {
 });
 
 
-
-//u auth
+// *
+// my endpoint thing looking for post
+// *
 app.post('/api/login', (req, res) => {
+    
+    // *
+    // pulls data out of the req
+    // *
     const { username, password } = req.body;
     db.get(
+        
+        // *
+        // pre selected query with ? placeholder
+        // *
         'SELECT * FROM users WHERE username = ?',
-        //the spec
         [username], 
+
+        // *
+        // after db runs error loop
+        // * 
         async (err, row) => {
             if (err) {
+                
+                // *
+                // in case jack or myself broke something
+                // * 
                 return res.status(500).json({ error: err.message });
             }
             if (!row) {
+                
+                //*
+                // incorrect login
+                // *
                 return res.status(401).json({ success: false, message: 'Invalid credentials' });
             }
-            //pass hash spec
+            
+            // *
+            // users found and salt occurs to ensure correct password
+            // * 
             const match = await bcrypt.compare(password, row.password);
             if (match) {
                 res.json({ success: true, role: row.role, user: row });
