@@ -1,4 +1,4 @@
- /* 
+/* 
  REACT
  store and update values, run code when the component loads or when something changes, store a function so 
  it doesn't get recreated every render
@@ -12,12 +12,13 @@ import { useNavigate } from "react-router-dom";
 // *
 const INACTIVITY_LIMIT = 15 * 60 * 1000; 
 
-//*
+// *
 // REACT func for login
 // * 
 const LoginPage: React.FC = () => {
-    //*
+    // *
     // REACT vars that automatically update, storing user input
+    // *
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -44,15 +45,18 @@ const LoginPage: React.FC = () => {
         // *
         localStorage.setItem('inactivity_timeout', String(timeout));
     }, [navigate]);
+
     // * 
     // some react dependency, primary actions that count as activity 
+    //*
     useEffect(() => {
         const events = ['mousemove', 'keydown', 'click', 'scroll'];
         events.forEach(e => window.addEventListener(e, resetTimer));
         resetTimer();
         return () => {
             // * 
-            // when user leaves page, clear listener to prevent ml 
+            // when user leaves page, clear listener to prevent ml
+            // * 
             events.forEach(e => window.removeEventListener(e, resetTimer));
         };
     }, [resetTimer]);
@@ -170,11 +174,11 @@ const LoginPage: React.FC = () => {
                     onKeyDown={handleKeyDown}
                 />
                 {error && (
-                    {/* only show the error message if error arises */}
+                    // only show the error message if error arises
                     <p className="text-danger text-center mb-0">{error}</p>
                 )}
+                {/* button grayed out while loading */}
                 <button
-                     {/* button grayed out while loading */}
                     className="btn text-white mt-1"
                     style={{ background: '#8C52FF' }}
                     onClick={handleLogin}
