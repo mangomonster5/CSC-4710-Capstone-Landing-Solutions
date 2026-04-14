@@ -1,7 +1,7 @@
 const EARTH_RADIUS_MI = 3958.8;
 
 class Airport {
-    constructor(code = '', latitude = 0, longitude = 0, population = 0) {
+    constructor(code, latitude, longitude, population) {
         this.code = code;
         this.latitude = latitude;
         this.longitude = longitude;

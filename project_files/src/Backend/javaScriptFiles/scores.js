@@ -52,4 +52,10 @@ const baseScoredRoutes = buildBaseScoredRoutes(routes);
 // expands across 14 days
 export const scoredRoutes = expandRoutesAcrossDays(baseScoredRoutes, 14);
 
-console.log(scoredRoutes);
+
+// for(let i = 0; i < scoredRoutes.length; i++){
+//     if(scoredRoutes[i].from == "CDG"){
+//       console.log(scoredRoutes[i]);
+//     }
+// }
+

@@ -1,5 +1,5 @@
-// flightSimAuto.js
-// Run with: node flightSimAuto.js
+// flightSim3.js
+// Run with: node flightSim3.js
 
 import Airline from './airline.js';
 import Flight from './flight.js';
@@ -75,6 +75,8 @@ function flyPlane() {
 
     //set to only fly the current day of flights
     const currentDayRoutes = scoredRoutes.filter(r => r.day === currentDay);
+
+    //console.log(currentDayRoutes);
     let i = 0;
 
     //sets used planes to a set so that we can keep using new planes for each flight
@@ -82,7 +84,7 @@ function flyPlane() {
 
 
     //TESTING CHANGES
-    while(i < 10){
+    while(i < currentDayRoutes.length){ //currentDayRoutes.length
         //start day by taking planes OUT of maintenance if the correct day:
         fleet.forEach(p => {
             if (!p.available() ) {
@@ -114,12 +116,13 @@ function flyPlane() {
         const fromAirport = Airport.airports[from];
         const destAirport = Airport.airports[dest];
 
-        //MAKE SURE THERES ENOUGH GATES TO LAND, IF NOT SKIP  FLIGHT
-        let gateCount = fleet.filter(p => p.getLocation() === dest).length;
+       // MAKE SURE THERES ENOUGH GATES TO LAND, IF NOT SKIP  FLIGHT
+       //chceks how many flights are at the current location
+        let flightCount = fleet.filter(p => p.getLocation() === dest).length;
 
-        console.log(gateCount);
+        console.log(flightCount); //16
 
-        if(gateCount > destAirport.getGates()){
+        if(flightCount > destAirport.getGates()){
             console.log("********************SKIPPING THIS FLIGHT****************");
             continue;
         }
@@ -229,7 +232,7 @@ function flyPlane() {
         console.log(`Cruise altitude: ${cruiseAlt} ft`);
         console.log(`Flight time: ${Math.floor(flightTime / 60)}h ${Math.floor(flightTime % 60)}m`);
         console.log(`Fuel used: ${fuelNeed.toFixed(2)} gallons`);
-        console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
+        //console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
         console.log(`Cost: $${flightCost.toFixed(2)}`);
         console.log(`Ticket Price: $${ticketPrice.toFixed(2)} per seat`);
         
