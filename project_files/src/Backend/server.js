@@ -8,7 +8,8 @@ const PORT = 5001;
 // *
 //OG encrypt func
 // *
-const bcrypt = require('bcrypt'); 
+const bcrypt = require('bcrypt');
+
 //* 
 // allows port comms and json translation
 // *
