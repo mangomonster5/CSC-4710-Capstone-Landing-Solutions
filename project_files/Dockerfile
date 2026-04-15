@@ -1,13 +1,13 @@
 FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/Frontend
 
 # Copy package files and install dependencies
-COPY package*.json ./
+COPY Frontend/package*.json ./
 RUN npm install
 
 # Copy the rest of your code
-COPY . .
+COPY Frontend/ .
 
 EXPOSE 3000
 
