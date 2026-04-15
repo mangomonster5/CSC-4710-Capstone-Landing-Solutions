@@ -12,13 +12,14 @@ function getDistance(from, to) {
   
   return origin.distanceTo(destination);
 }
-// build the scoring
+// build the scoring for the routes
 function buildBaseScoredRoutes(routeList) {
   return routeList
     .map((route) => {
       const distance = getDistance(route.from, route.to);
+// calculate score (demand / distance)
       const score = route.demand / distance;
-
+// return new route object with added values
       return {
         routeId: route.routeId,
         from: route.from,
@@ -28,11 +29,13 @@ function buildBaseScoredRoutes(routeList) {
         score: Number(score.toFixed(6))
       };
     })
-    .sort((a, b) => b.score - a.score); //sort the values high to low
+//sort the values high to low
+    .sort((a, b) => b.score - a.score); 
 }
 
-// creates multiple days and duplicates it across
+// creates multiple days and duplicates it across days
 function expandRoutesAcrossDays(baseRoutes, totalDays = 14) {
+// creates expanded array
   const expanded = [];
 // loop creating the days
   for (let day = 1; day <= totalDays; day++) {
@@ -47,7 +50,7 @@ function expandRoutesAcrossDays(baseRoutes, totalDays = 14) {
   return expanded;
 }
 
-// create base scoring routs
+// create base scoring routes
 const baseScoredRoutes = buildBaseScoredRoutes(routes);
 // expands across 14 days
 export const scoredRoutes = expandRoutesAcrossDays(baseScoredRoutes, 14);
