@@ -24,7 +24,7 @@ class Airport {
     getLatitude() { return this.latitude; }
     getLongitude() { return this.longitude; }
     getPopulation() { return this.population; }
-    getGates() { return this.numOfGates; }
+    getGates() { return this.numofGates; }
 
     //SETS THE GATES BASED ON REQUIREMENTS OF 1 GATE PER 1MIL POP (with restrictions)
     // setGates() {
@@ -39,7 +39,7 @@ class Airport {
 
     //TESTING WITH SETGATES
     setGates(){
-        this.numOfGates = 15;
+        this.numofGates = 15;
     }
 
     distanceTo(other) {
@@ -64,6 +64,15 @@ class Airport {
     // Static property for storing all airports
     static airports = {};
 
+    // Static lookup: pass in airport code, get gate count back
+    // usage: let x = Airport.getNumGates("LAX");
+    static getNumGates(code) {
+        if (!Airport.airports[code]) {
+            console.error(`Airport ${code} not found`);
+            return -1;
+        }
+        return Airport.airports[code].numOfGates;
+    }
     /*====NOTES=====
     STRING
     LAT
