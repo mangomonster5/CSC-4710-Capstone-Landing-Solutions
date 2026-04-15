@@ -9,6 +9,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './variables.css'
 import './index.css';
 
+import { AllStateProvider }from './Providers/AllStateProvider';
+
 const rootElement = document.getElementById('root');
 
 if (!rootElement) throw new Error("Failed to find the root element");
@@ -17,7 +19,10 @@ const root = ReactDOM.createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
-    <App />
+    {/* Rendering global state across the app via AllStateProvider */}
+    <AllStateProvider>
+      <App />
+    </AllStateProvider>
   </React.StrictMode>
 );
 
