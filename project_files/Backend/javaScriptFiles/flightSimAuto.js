@@ -116,14 +116,16 @@ function flyPlane() {
         const fromAirport = Airport.airports[from];
         const destAirport = Airport.airports[dest];
 
-       // MAKE SURE THERES ENOUGH GATES TO LAND, IF NOT SKIP  FLIGHT
-       //chceks how many flights are at the current location
-        let flightCount = fleet.filter(p => p.getLocation() === dest).length;
+        // MAKE SURE THERES ENOUGH GATES TO LAND, IF NOT SKIP  FLIGHT
+        //chceks how many flights are at the current location
+        // (planes in maintenance dont take a gate)
+        let planesAtDest = fleet.filter(p => p.getLocation() === dest && p.available()).length;
 
-        console.log(flightCount); //16
+        let gatesAvailable = Airport.getNumGates(dest);
 
-        if(flightCount > destAirport.getGates()){
-            console.log("********************SKIPPING THIS FLIGHT****************");
+        if(planesAtDest >= gatesAvailable){
+            console.log(`*** SKIPPING: ${dest} full (${planesAtDest}/${gatesAvailable} gates) ***`);
+            i++;  // CRITICAL: increment or we infinite loop
             continue;
         }
 
