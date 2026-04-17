@@ -123,6 +123,7 @@ function simluateCurrentDay() {
 
         let gatesAvailable = Airport.getNumGates(dest);
 
+
         if(planesAtDest >= gatesAvailable){
             console.log(`*** SKIPPING: ${dest} full (${planesAtDest}/${gatesAvailable} gates) ***`);
             i++;  // CRITICAL: increment or we infinite loop
@@ -237,6 +238,9 @@ function simluateCurrentDay() {
         //console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
         console.log(`Cost: $${flightCost.toFixed(2)}`);
         console.log(`Ticket Price: $${ticketPrice.toFixed(2)} per seat`);
+        console.log("planes:  ", planesAtDest);
+        console.log("gates: ", gatesAvailable);
+        console.log("Dest: ", dest);
         
         
         //sets plane to have updated values
