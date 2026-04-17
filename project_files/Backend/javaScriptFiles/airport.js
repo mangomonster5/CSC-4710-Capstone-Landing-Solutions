@@ -38,8 +38,15 @@ class Airport {
     // }
 
     //TESTING WITH SETGATES
-    setGates(){
-        this.numofGates = 15;
+    setGates() {
+        let gates = Math.floor(this.population / 1000000);
+        if (gates < 1) gates = 1;  // every airport needs at least 1 gate
+
+        if (this.isHub) {
+            this.numOfGates = Math.min(gates, 11);
+        } else {
+            this.numOfGates = Math.min(gates, 5);
+        }
     }
 
     distanceTo(other) {
