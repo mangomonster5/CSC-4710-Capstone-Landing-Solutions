@@ -57,7 +57,7 @@ function menu() {
     console.log("0. Exit");
 
     rl.question("Choice: ", (choice) => {
-        if (choice === "1") flyPlane();
+        if (choice === "1") simluateCurrentDay();
         else if (choice === "2") increaseDay();
         //else if (choice === "3") decreaseDay();
         else if(choice == "4") fleetLocations();
@@ -71,7 +71,7 @@ function menu() {
 // -------------------------
 // FLY PLANE
 // -------------------------
-function flyPlane() {
+function simluateCurrentDay() {
 
     //set to only fly the current day of flights
     const currentDayRoutes = scoredRoutes.filter(r => r.day === currentDay);
