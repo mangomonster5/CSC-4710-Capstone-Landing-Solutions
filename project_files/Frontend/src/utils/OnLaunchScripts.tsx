@@ -11,9 +11,6 @@ const OnLaunchScripts = () => {
         const AllFlights = GetAllFlights()
         localStorage.setItem("AllFlightsArray", JSON.stringify(AllFlights));
         setAllFlights(AllFlights)
-
-
-        
     }, [])
 
 

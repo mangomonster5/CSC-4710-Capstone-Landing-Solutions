@@ -112,6 +112,7 @@ const LoginPage: React.FC = () => {
             // waiting for server conf
             // *
             const data = await response.json();
+            console.log(data)
 
             /*
             func for data match 

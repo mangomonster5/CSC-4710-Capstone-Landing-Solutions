@@ -54,8 +54,8 @@ const ProtectedRoute = ({ user, correctRole, children }: ProtectedRouteProps) =>
 const App: React.FC = () => {
 
   const { user, setUser } = useAllStateContext();
-  
-  OnLaunchScripts();
+
+  OnLaunchScripts(); // runs once
 
   return (
     <BrowserRouter>
