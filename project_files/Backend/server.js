@@ -36,42 +36,54 @@ app.get('/api/test', (req, res) => {
 });
 
 
+// Frontend enpoint to get all flights
+app.get('/GetAllFlights', (req, res) => {
+    db.all('SELECT * FROM all_flights', [], (err, rows) => {
+        if (err) {
+            console.error("Fetch error:", err.message);
+            return res.status(500).json([]);
+        }
+        res.json(rows);
+    });
+})
+
+
 // *
 // my endpoint thing looking for post
 // *
 app.post('/api/login', (req, res) => {
-    
+
     // *
     // pulls data out of the req
     // *
     const { username, password } = req.body;
     db.get(
-        
+
         // *
         // pre selected query with ? placeholder
         // *
         'SELECT * FROM users WHERE username = ?',
-        [username], 
+        [username],
 
         // *
         // after db runs error loop
         // * 
         async (err, row) => {
             if (err) {
-                
+
                 // *
                 // in case jack or myself broke something
                 // * 
                 return res.status(500).json({ error: err.message });
             }
             if (!row) {
-                
+
                 //*
                 // incorrect login
                 // *
                 return res.status(401).json({ success: false, message: 'Invalid credentials' });
             }
-            
+
             // *
             // users found and salt occurs to ensure correct password
             // * 

@@ -1,4 +1,4 @@
-// src/types.d.ts
+//types.d.ts
 
 export { };
 
@@ -12,6 +12,7 @@ declare global {
   }
 
   type AllFlights = Flight[][];
+
 
   interface Flight {
     flight_id: number;
