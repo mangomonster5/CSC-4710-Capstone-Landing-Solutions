@@ -130,6 +130,8 @@ function AllStateProvider({ children }: { children: any }) {
             }
         ]
     ]);
+
+    
     const [user, setUser] = useState<User>({
         isAuthenticated: true,
         role: 'employee'

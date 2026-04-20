@@ -8,6 +8,7 @@ import FlightSelectionPage from "./Pages/FlightSelectionPage";
 import FlightInfoPage from "./Pages/FlightInfoPage";
 import AdminPage from "./Pages/AdminPage";
 import useAllStateContext from "./context/useAllStateContext";
+import OnLaunchScripts from "./utils/OnLaunchScripts";
 
 // Creating a type for protected routes, TypeScript makes you use... types this is defining them
 type ProtectedRouteProps = {
@@ -52,7 +53,9 @@ const ProtectedRoute = ({ user, correctRole, children }: ProtectedRouteProps) =>
 
 const App: React.FC = () => {
 
-  const {user, setUser} = useAllStateContext();
+  const { user, setUser } = useAllStateContext();
+  
+  OnLaunchScripts();
 
   return (
     <BrowserRouter>
