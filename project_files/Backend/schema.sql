@@ -31,7 +31,7 @@ CREATE TABLE all_flights (
     flight_id INTEGER PRIMARY KEY AUTOINCREMENT,
     flight_num TEXT NOT NULL,
     sim_day INTEGER NOT NULL,
-    
+
     origin_airport_id INTEGER NOT NULL,
     destination_airport_id INTEGER NOT NULL,
     aircraft_id INTEGER NOT NULL,
@@ -50,7 +50,6 @@ CREATE TABLE all_flights (
     departure_fee REAL,
     arrival_fee REAL,
     fuel_burned REAL,
-    fuel_cost REAL,
     operating_cost REAL,
     ticket_price REAL,
 
