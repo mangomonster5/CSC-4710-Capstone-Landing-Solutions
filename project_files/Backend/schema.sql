@@ -31,8 +31,7 @@ CREATE TABLE all_flights (
     flight_id INTEGER PRIMARY KEY AUTOINCREMENT,
     flight_num TEXT NOT NULL,
     sim_day INTEGER NOT NULL,
-    flight_date TEXT NOT NULL,
-
+    
     origin_airport_id INTEGER NOT NULL,
     destination_airport_id INTEGER NOT NULL,
     aircraft_id INTEGER NOT NULL,
