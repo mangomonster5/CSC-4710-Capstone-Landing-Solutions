@@ -6,6 +6,14 @@ import Flight from './flight.js';
 import Costs from './costs.js';
 import Airport from './airport.js';
 import readline from 'readline';
+import sqlite3 from 'sqlite3';
+
+const db = new sqlite3.Database('../landing_solutions.db', (err) => {  if (err) {
+    console.error("DB connection error:", err.message);
+  } else {
+    console.log("Connected to SQLite database.");
+  }
+});
 
 // connect to the server
 const sendFlight = async (from, to) => {
@@ -22,7 +30,85 @@ const sendFlight = async (from, to) => {
     }
 }
 
+const airportIdMap = {
+  ATL: 1, DFW: 2, DEN: 3, ORD: 4, LAX: 5, JFK: 6, CLT: 7,
+  LAS: 8, MCO: 9, MIA: 10, PHX: 11, SEA: 12, SFO: 13,
+  EWR: 14, IAH: 15, BOS: 16, MSP: 17, FLL: 18, LGA: 19,
+  DTW: 20, PHL: 21, SLC: 22, BWI: 23, IAD: 24, SAN: 25,
+  DCA: 26, TPA: 27, BNA: 28, AUS: 29, HNL: 30, CDG: 31
+};
+let aircraftIdMap = {};
 
+function loadAircraftMap() {
+  return new Promise((resolve, reject) => {
+    db.all("SELECT aircraft_id, tail_num FROM aircraft", [], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        rows.forEach(row => {
+          aircraftIdMap[row.tail_num] = row.aircraft_id;
+        });
+        resolve();
+      }
+    });
+  });
+}
+
+function insertFlight(record) {
+  const sql = `
+    INSERT INTO all_flights (
+      flight_num,
+      sim_day,
+      origin_airport_id,
+      destination_airport_id,
+      aircraft_id,
+      scheduled_depart,
+      scheduled_arrival,
+      actual_depart,
+      actual_arrival,
+      passenger_count,
+      flight_status,
+      delay_minutes,
+      gate,
+      flight_distance,
+      departure_fee,
+      arrival_fee,
+      fuel_burned,
+      fuel_cost,
+      operating_cost,
+      ticket_price
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const values = [
+    record.flight_num,
+    record.sim_day,
+    record.origin_airport_id,
+    record.destination_airport_id,
+    record.aircraft_id,
+    record.scheduled_depart,
+    record.scheduled_arrival,
+    record.actual_depart,
+    record.actual_arrival,
+    record.passenger_count,
+    record.flight_status,
+    record.delay_minutes,
+    record.gate,
+    record.flight_distance,
+    record.departure_fee,
+    record.arrival_fee,
+    record.fuel_burned,
+    record.fuel_cost,
+    record.operating_cost,
+    record.ticket_price
+  ];
+
+  db.run(sql, values, function (err) {
+    if (err) {
+      console.error("Insert error:", err.message);
+    }
+  });
+}
 
 // import the precomputed routes from scores.js
 import { scoredRoutes } from './scores.js';
@@ -297,6 +383,8 @@ function simluateCurrentDay() {
             continue;
         }
 
+        console.log("\n=== Flight #", i, "Information ===");
+
 
         //COST SECTION
         const flightCost = costs.flightCost(
@@ -331,11 +419,52 @@ function simluateCurrentDay() {
         console.log("gates: ", gatesAvailable);
         console.log("Dest: ", dest);
         
-        
+        // INSERT INTO DATABASE
+        const today = `2026-01-${String(currentDay).padStart(2, "0")}`;
+
+        const selectedTail = selected.getTail();
+        const aircraftId = aircraftIdMap[selectedTail];
+
+        if (!aircraftId) {
+        console.error(`No aircraft_id found for tail ${selectedTail}`);
+        i++;
+        continue;
+        }
+
+        const scheduledDepart = `${today} 08:00:00`;
+        const scheduledArrival = `${today} 10:00:00`;
+        const actualDepart = `${today} 08:00:00`;
+        const actualArrival = `${today} 10:00:00`;
+
+        const flightRecord = {
+        flight_num: String(flightNumber),
+        sim_day: currentDay,
+        origin_airport_id: airportIdMap[from],
+        destination_airport_id: airportIdMap[dest],
+        aircraft_id: aircraftId,
+        scheduled_depart: scheduledDepart,
+        scheduled_arrival: scheduledArrival,
+        actual_depart: actualDepart,
+        actual_arrival: actualArrival,
+        passenger_count: selected.getSeats(),
+        flight_status: delayMinutes > 0 ? "Delayed" : "On Time",
+        delay_minutes: delayMinutes,
+        gate: "A1",
+        flight_distance: miles,
+        departure_fee: 2000,
+        arrival_fee: 2000,
+        fuel_burned: fuelNeed,
+        fuel_cost: 0,
+        operating_cost: flightCost,
+        ticket_price: ticketPrice
+        };
+
+        insertFlight(flightRecord);
+                
         //sets plane to have updated values
         selected.setLocation(dest);
         selected.updateHours(finalFlightTime);  
-        
+                
         //MAINTENANCE SECTION
 
         //check if plane needs to go into maintence
@@ -489,4 +618,11 @@ function decreaseDay(){
 }//end of increaseDay
 
 // -------------------------
-menu();
+loadAircraftMap()
+  .then(() => {
+    console.log("Aircraft map loaded.");
+    menu();
+  })
+  .catch(err => {
+    console.error("Failed to load aircraft map:", err);
+  });
