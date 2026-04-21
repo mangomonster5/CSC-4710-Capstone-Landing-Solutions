@@ -246,6 +246,12 @@ class Airline {
         fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "LAS", "DFW", 130, 228000));
         fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "TPA", "JFK", 130, 228000));
 
+
+                //tail, model, maxSpeed, startingFuel (gal), startAirport, hub, seats, lease
+
+        //a350-100
+        fleet.push(new Airline(`A350-1000-${tail++}`, "Airbus A350-1000", 1100, 44460, "JFK", "JFK", 480, 280000));
+
         return fleet;
     }
 }
