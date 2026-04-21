@@ -74,10 +74,9 @@ function insertFlight(record) {
       departure_fee,
       arrival_fee,
       fuel_burned,
-      fuel_cost,
       operating_cost,
       ticket_price
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -98,7 +97,6 @@ function insertFlight(record) {
     record.departure_fee,
     record.arrival_fee,
     record.fuel_burned,
-    record.fuel_cost,
     record.operating_cost,
     record.ticket_price
   ];
@@ -454,7 +452,6 @@ function simluateCurrentDay() {
         departure_fee: 2000,
         arrival_fee: 2000,
         fuel_burned: fuelNeed,
-        fuel_cost: 0,
         operating_cost: flightCost,
         ticket_price: ticketPrice
         };
