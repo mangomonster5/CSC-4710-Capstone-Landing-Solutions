@@ -47,7 +47,7 @@ const ProtectedRoute = ({ user, correctRole, children }: ProtectedRouteProps) =>
   // If the user is not logged in, redirect immediately to the login page
   if (!user.isAuthenticated) return <Navigate to="/login" />;
 
-  console.log('User pushed to: ', location.pathname)
+  // console.log('User pushed to: ', location.pathname)
   return <>{children}</>;
 };
 
@@ -55,7 +55,7 @@ const App: React.FC = () => {
 
   const { user, setUser } = useAllStateContext();
 
-  OnLaunchScripts(); // runs once
+  OnLaunchScripts(); // runs once, this calls all the info from db
 
   return (
     <BrowserRouter>

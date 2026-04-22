@@ -11,6 +11,8 @@ const GetAllFlights = async () => {
 
         const data: Flight[][] = await response.json();
 
+        // console.log(data)
+        // console.log(data.length)
         return data;
     } catch (err) {
         console.error(err);
