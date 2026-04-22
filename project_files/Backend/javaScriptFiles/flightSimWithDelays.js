@@ -153,6 +153,134 @@ function menu() {
 }
 
 // -------------------------
+// TIME / GATE SCHEDULING HELPERS
+// -------------------------
+
+const DAY_START_MINUTES = 5 * 60;             // 5:00 AM
+const LAST_ARRIVAL_MINUTES = 23 * 60 + 30;    // 11:30 PM latest allowed arrival
+const DOOR_CLOSE_BUFFER = 15;                 // door closes 15 min before departure
+const BOARDING_TIME = 15;                     // simple boarding window
+const TURNAROUND_MINUTES = 40;                // minimum turnaround
+const REFUEL_EXTRA_MINUTES = 10;              // extra turnaround if refueling needed
+const TIME_STEP = 5;                          // scheduling search step
+
+function pad(n) {
+  return String(n).padStart(2, "0");
+}
+
+function minutesToDateTime(day, totalMinutes) {
+  const baseDay = new Date(`2026-01-${pad(day)}T00:00:00`);
+  baseDay.setMinutes(totalMinutes);
+
+  const year = baseDay.getFullYear();
+  const month = pad(baseDay.getMonth() + 1);
+  const date = pad(baseDay.getDate());
+  const hour = pad(baseDay.getHours());
+  const minute = pad(baseDay.getMinutes());
+
+  return `${year}-${month}-${date} ${hour}:${minute}:00`;
+}
+
+function overlaps(startA, endA, startB, endB) {
+  return startA < endB && startB < endA;
+}
+
+function buildGatePool(maxGates) {
+  const all = [];
+  for (const letter of ["A", "B", "C", "D"]) {
+    for (let n = 1; n <= 30; n++) {
+      all.push(`${letter}${n}`);
+    }
+  }
+  return all.slice(0, maxGates);
+}
+
+function ensureAirportGateSchedule(schedule, airportCode) {
+  if (!schedule[airportCode]) {
+    schedule[airportCode] = [];
+  }
+}
+
+function findAvailableGate(airportCode, start, end, gateSchedule) {
+  ensureAirportGateSchedule(gateSchedule, airportCode);
+
+  const maxGates = Airport.getNumGates(airportCode);
+  const gatePool = buildGatePool(maxGates);
+
+  for (const gateLabel of gatePool) {
+    const busy = gateSchedule[airportCode].some(entry =>
+      entry.gate === gateLabel &&
+      overlaps(start, end, entry.start, entry.end)
+    );
+
+    if (!busy) return gateLabel;
+  }
+
+  return null;
+}
+
+function reserveGateInterval(schedule, airportCode, gateLabel, start, end) {
+  ensureAirportGateSchedule(schedule, airportCode);
+  schedule[airportCode].push({
+    gate: gateLabel,
+    start,
+    end
+  });
+}
+
+function findFeasibleSlot({
+  origin,
+  destination,
+  targetDepart,
+  flightMinutes,
+  delayMinutes,
+  gateSchedule,
+  needsRefuel
+}) {
+  const turnaround = TURNAROUND_MINUTES + (needsRefuel ? REFUEL_EXTRA_MINUTES : 0);
+
+  for (let departMinute = targetDepart; departMinute <= LAST_ARRIVAL_MINUTES; departMinute += TIME_STEP) {
+    const scheduledDepart = departMinute;
+    const scheduledArrival = scheduledDepart + flightMinutes;
+
+    const actualDepart = scheduledDepart + delayMinutes;
+    const actualArrival = actualDepart + flightMinutes;
+
+    // keep all arrivals on the same day and before 11:30 PM
+    if (actualArrival > LAST_ARRIVAL_MINUTES) {
+      continue;
+    }
+
+    // origin gate occupied before pushback
+    const departureGateStart = scheduledDepart - BOARDING_TIME - DOOR_CLOSE_BUFFER;
+    const departureGateEnd = actualDepart;
+
+    // destination gate occupied once aircraft reaches gate through turnaround
+    const arrivalGateStart = actualArrival;
+    const arrivalGateEnd = actualArrival + turnaround;
+
+    const departureGate = findAvailableGate(origin, departureGateStart, departureGateEnd, gateSchedule);
+    const arrivalGate = findAvailableGate(destination, arrivalGateStart, arrivalGateEnd, gateSchedule);
+
+    if (departureGate && arrivalGate) {
+      reserveGateInterval(gateSchedule, origin, departureGate, departureGateStart, departureGateEnd);
+      reserveGateInterval(gateSchedule, destination, arrivalGate, arrivalGateStart, arrivalGateEnd);
+
+      return {
+        scheduledDepartMinutes: scheduledDepart,
+        scheduledArrivalMinutes: scheduledArrival,
+        actualDepartMinutes: actualDepart,
+        actualArrivalMinutes: actualArrival,
+        departureGate,
+        arrivalGate
+      };
+    }
+  }
+
+  return null;
+}
+
+// -------------------------
 // FLY PLANE
 // -------------------------
 function simluateCurrentDay() {
@@ -202,6 +330,14 @@ function simluateCurrentDay() {
         .map(item => item.route);
 
     const currentDayRoutes = [...requiredCoverageRoutes, ...extraRoutes];
+
+    const gateSchedule = {};
+    let scheduledFlightIndex = 0;
+
+    const spacingMinutes = Math.max(
+    3,
+     Math.floor((LAST_ARRIVAL_MINUTES - DAY_START_MINUTES) / Math.max(1, currentDayRoutes.length))
+    );
 
     //console.log(currentDayRoutes);
     let i = 0;
@@ -265,20 +401,6 @@ function simluateCurrentDay() {
 
         const fromAirport = Airport.airports[from];
         const destAirport = Airport.airports[dest];
-
-        // MAKE SURE THERES ENOUGH GATES TO LAND, IF NOT SKIP  FLIGHT
-        //chceks how many flights are at the current location
-        // (planes in maintenance dont take a gate)
-        let planesAtDest = fleet.filter(p => p.getLocation() === dest && p.available()).length;
-
-        let gatesAvailable = Airport.getNumGates(dest);
-
-
-        if(planesAtDest >= gatesAvailable){
-            console.log(`*** SKIPPING: ${dest} full (${planesAtDest}/${gatesAvailable} gates) ***`);
-            i++;  // CRITICAL: increment or we infinite loop
-            continue;
-        }
 
         //sets if its an international flight
         const intl = (from === "CDG" || dest === "CDG");
@@ -424,7 +546,6 @@ function simluateCurrentDay() {
             continue;
         }
 
-        console.log("\n=== Flight #", i, "Information ===");
 
 
         //COST SECTION
@@ -456,13 +577,8 @@ function simluateCurrentDay() {
         //console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
         console.log(`Cost: $${flightCost.toFixed(2)}`);
         console.log(`Ticket Price: $${ticketPrice.toFixed(2)} per seat`);
-        console.log("planes:  ", planesAtDest);
-        console.log("gates: ", gatesAvailable);
-        console.log("Dest: ", dest);
         
         // INSERT INTO DATABASE
-        const today = `2026-01-${String(currentDay).padStart(2, "0")}`;
-
         const selectedTail = selected.getTail();
         const aircraftId = aircraftIdMap[selectedTail];
 
@@ -472,10 +588,31 @@ function simluateCurrentDay() {
         continue;
         }
 
-        const scheduledDepart = `${today} 08:00:00`;
-        const scheduledArrival = `${today} 10:00:00`;
-        const actualDepart = `${today} 08:00:00`;
-        const actualArrival = `${today} 10:00:00`;
+        const targetDepart = DAY_START_MINUTES + (scheduledFlightIndex * spacingMinutes);
+
+        const slot = findFeasibleSlot({
+        origin: from,
+        destination: dest,
+        targetDepart,
+        flightMinutes: Math.round(finalFlightTime),
+        delayMinutes,
+        gateSchedule,
+        needsRefuel: needFuel
+        });
+
+        if (!slot) {
+        console.log(`*** SKIPPING: no gate/time slot available for ${from} -> ${dest} ***`);
+        i++;
+        continue;
+        }
+
+        const scheduledDepart = minutesToDateTime(currentDay, slot.scheduledDepartMinutes);
+        const scheduledArrival = minutesToDateTime(currentDay, slot.scheduledArrivalMinutes);
+        const actualDepart = minutesToDateTime(currentDay, slot.actualDepartMinutes);
+        const actualArrival = minutesToDateTime(currentDay, slot.actualArrivalMinutes);
+
+        // store departure gate for frontend use
+        const assignedGate = slot.departureGate;
 
         const flightRecord = {
         flight_num: String(flightNumber),
@@ -490,7 +627,7 @@ function simluateCurrentDay() {
         passenger_count: selected.getSeats(),
         flight_status: delayMinutes > 0 ? "Delayed" : "On Time",
         delay_minutes: delayMinutes,
-        gate: "A1",
+        gate: assignedGate,
         flight_distance: miles,
         departure_fee: 2000,
         arrival_fee: 2000,
@@ -500,6 +637,7 @@ function simluateCurrentDay() {
         };
 
         insertFlight(flightRecord);
+        scheduledFlightIndex++;
                 
         //sets plane to have updated values
         selected.setLocation(dest);
