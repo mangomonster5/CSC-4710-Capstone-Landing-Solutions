@@ -1,5 +1,5 @@
-* Tracks speed, hours, maintenance, and location
- */
+/* Tracks speed, hours, maintenance, and location
+*/
 
 import { start } from "repl";
 
