@@ -1,6 +1,17 @@
+import useAllStateContext from "../context/useAllStateContext";
 
 
 const AdminPage: React.FC = () => {
+    const { allAircrafts } = useAllStateContext()
+
+
+
+
+    const calculateHoursTillMaintaince = (aircraftHoursLeft: number) => {
+        const NumberOfMaxHours = 200
+
+        return NumberOfMaxHours - aircraftHoursLeft
+    }
 
     return (
         <div className="d-flex flex-column gap-5" style={{ paddingLeft: '18vw', paddingRight: '18vw', marginTop: '12vh', marginBottom: '12vh' }}>
@@ -44,47 +55,24 @@ const AdminPage: React.FC = () => {
                     <h5>Aircraft Report</h5>
                     {/* header */}
                     <div className="d-flex bg-primary-blue-500 border-black text-white py-3 px-3 fw-medium rounded-top">
-                        <div className="fw-semibold" style={{ width: '160px' }}>Plane #</div>
+                        <div className="fw-semibold" style={{ width: '160px' }}>Tail #</div>
                         <div className="fw-semibold" style={{ width: '200px' }}>Status</div>
                         <div className="fw-semibold" style={{ width: '300px' }}>Needs Maintenance</div>
                         <div className="fw-semibold" style={{ width: '75px' }}></div>
                     </div>
 
-                    <div className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium`}>
-                        <div className="text-muted" style={{ width: '160px' }}>PCA908</div>
-                        <div className="text-muted" style={{ width: '200px' }}>In-Flight</div>
-                        <div className="text-muted" style={{ width: '300px' }}>In 20 Days</div>
-                        <div className="text-muted text-center" style={{ width: '75px' }}>
-                            <button className="rounded border">View</button>
+                    {allAircrafts.map((aircraft: Aircraft) => 
+                        <div className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium`}>
+                            {/* <div className="text-muted" style={{ width: '160px' }}>{aircraft.tail_num}</div> */}
+                            <div className="text-muted" style={{ width: '160px' }}>N1421A</div>
+                            <div className="text-muted" style={{ width: '200px' }}>{aircraft.status}</div>
+                            <div className="text-muted" style={{ width: '300px' }}>in {calculateHoursTillMaintaince(aircraft.hours_since_maint)} hours</div>
+                            <div className="text-muted text-center" style={{ width: '75px' }}>
+                                <button className="rounded border">View</button>
+                            </div>
                         </div>
-                    </div>
-
-                    <div className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium`}>
-                        <div className="text-muted" style={{ width: '160px' }}>PCA771</div>
-                        <div className="text-muted" style={{ width: '200px' }}>Taxing</div>
-                        <div className="text-muted" style={{ width: '300px' }}>In 63 Days</div>
-                        <div className="text-muted text-center" style={{ width: '75px' }}>
-                            <button className="rounded border">View</button>
-                        </div>
-                    </div>
-
-                    <div className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium`}>
-                        <div className="text-muted" style={{ width: '160px' }}>PCA582</div>
-                        <div className="text-muted" style={{ width: '200px' }}>Repair</div>
-                        <div className="text-muted" style={{ width: '300px' }}>In 0 Days</div>
-                        <div className="text-muted text-center" style={{ width: '75px' }}>
-                            <button className="rounded border">View</button>
-                        </div>
-                    </div>
-
-                    <div className={`d-flex border-start border-end border-bottom rounded-bottom border-dark py-3 px-3 fw-medium`}>
-                        <div className="text-muted" style={{ width: '160px' }}>PCA120</div>
-                        <div className="text-muted" style={{ width: '200px' }}>Take-Off</div>
-                        <div className="text-muted" style={{ width: '300px' }}>In 42 Days</div>
-                        <div className="text-muted text-center" style={{ width: '75px' }}>
-                            <button className="rounded border">View</button>
-                        </div>
-                    </div>
+                    )}
+                    
                 </div>
 
             </div>

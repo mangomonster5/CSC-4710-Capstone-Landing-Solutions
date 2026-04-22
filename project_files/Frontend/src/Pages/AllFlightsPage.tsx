@@ -1,3 +1,6 @@
+// Author: Sean Harder
+
+
 import { useState } from "react";
 import ModalComponent from "../GlobalComponents/ModalComponent";
 import FlightSelectionDropdown from "../GlobalComponents/FlightSelectionDropdown";
@@ -27,7 +30,15 @@ const AllFlightsPage: React.FC = () => {
     const [selectedFlightModalObject, setSelectedFlightModalObject] = useState<Flight | undefined>(undefined)
     const [selectedHub, setSelectedHub] = useState<Hub | undefined>(undefined)
 
+
+    // Mapping over the state with all the flights in it, filtering by this
+    // - Get Airport Info for that flight, we put false since we want to display where they came from
+    // - Get all the flights that have the same iata_code as the currently selected hub
     const arrivalsList = allFlights[0].filter((flight: Flight) => GetAirportInfo(allAirports, flight, false)?.iata_code === selectedHub?.code)
+
+    // Mapping over the state with all the flights in it, filtering by this
+    // - Get Airport Info for that flight, we put true since we wnat to display where they are going
+    // - Get all the flights that have the same iata_code as the currently selected hub
     const departuresList = allFlights[0].filter((flight: Flight) => GetAirportInfo(allAirports, flight, true)?.iata_code === selectedHub?.code)
 
     // a status map for indicator color
@@ -44,14 +55,16 @@ const AllFlightsPage: React.FC = () => {
         'Final Call': '#E74C3C',
     };
 
+
+    // This function is called when a user clicks the view flight button
     const handleViewFlightClicked = (passedFlight: Flight) => {
-        console.log(passedFlight)
+        // update the selected flight obj
         setSelectedFlightModalObject(passedFlight)
+        // open the flight modal
         setModalIsOpen(true)
     }
 
-
-
+    // This function just makes it easier to display the time on the board for arrivals
     const displayArrivialFlightTime = (passedFlight: Flight) => {
         if (passedFlight.actual_arrival == null) {
             return passedFlight.scheduled_arrival.substring(11, 16)
@@ -60,7 +73,7 @@ const AllFlightsPage: React.FC = () => {
         }
     }
 
-
+    // This function just makes it easier to display the time on the board for departures
     const displayDepartureFlightTime = (passedFlight: Flight) => {
         if (passedFlight.actual_depart == null) {
             return passedFlight.scheduled_depart.substring(11, 16)
@@ -69,9 +82,11 @@ const AllFlightsPage: React.FC = () => {
         }
     }
 
-
+    // This function is called when the user closes or dismisses the modal
     const handleCloseModal = () => {
+        // Closes the modal
         setModalIsOpen(false)
+        // This reset the selected obj to prevent crashes and reset ui
         setSelectedFlightModalObject(undefined);
     }
 
@@ -84,6 +99,10 @@ const AllFlightsPage: React.FC = () => {
                     <div>View current schedules, departure and arrival times, and aircraft assignments for all flights.</div>
                 </div>
 
+                {/* 
+                    Drop down specifically for this page, 
+                    just allows the user to select their current hub to filter by arrivals and departures 
+                */}
                 <HubDropdown
                     handleSelection={(e) => setSelectedHub(e)}
                     selectedHub={selectedHub}
@@ -106,7 +125,7 @@ const AllFlightsPage: React.FC = () => {
                 {flightDirection === 'arrival' ? (<h5>Arrivals</h5>) : (<h5>Departures</h5>)}
 
                 <div className="d-flex bg-primary-blue-500  text-white py-3 px-3 fw-medium rounded-top border border-black border-bottom-0">
-                    <div className="fw-semibold" style={{ width: '450px' }}>Origin</div>
+                    <div className="fw-semibold" style={{ width: '450px' }}>{flightDirection === 'arrival' ? 'Orgin' : 'Destination'}</div>
                     <div className="fw-semibold" style={{ width: '200px' }}>Time</div>
                     <div className="fw-semibold" style={{ width: '250px' }}>Flight Number</div>
                     <div className="fw-semibold" style={{ width: '150px' }}>Gate</div>
@@ -114,10 +133,15 @@ const AllFlightsPage: React.FC = () => {
                     <div className="fw-semibold" style={{ width: '150px' }}></div>
                 </div>
 
+
+                {/* This is the main content render */}
+                {/* We first check if the segment button is set to arrival or departure */}
                 {flightDirection === 'arrival' ? (
                     <>
+                        {/* After we check if the arrivals list has any flights for that hub */}
                         {arrivalsList.length > 0 ? (
                             <>
+                                {/* If so we display the table with all the flights */}
                                 {arrivalsList.map((flight: Flight, i: any) => (
                                     <div key={i} className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium ${selectedFlightModalObject?.flight_id === flight.flight_id && 'fw-bold'} ${arrivalsList.length - 1 === i && 'rounded-bottom'}`} style={{ background: selectedFlightModalObject?.flight_id === flight.flight_id ? '#cccccc' : '' }}>
                                         <div className="text-muted" style={{ width: '450px' }}>{'[' + GetAirportInfo(allAirports, flight, true)?.iata_code + '] - ' + GetAirportInfo(allAirports, flight, true)?.city}</div>
@@ -138,22 +162,31 @@ const AllFlightsPage: React.FC = () => {
                                 ))}
                             </>
                         ) : (
-                            <div className="py-3 border border-black rounded-bottom text-center fw-medium" style={{ background: '#e6e6e6' }}>
-                                {selectedHub == null ? (
-                                    <div>Please select a hub!</div>
-                                ) : (
-                                    <div className="d-flex flex-column gap-2">
-                                        <div className="fw-semibold">[{selectedHub.code}] {selectedHub.name}</div>
-                                        <div className="fw-normal">Does not have any flights, please select a different hub!</div>
-                                    </div>
-                                )}
-                            </div>
+                            <>
+                                {/* If not, we want to handle empty state */}
+                                {/* This is for clearer UI to not confuse the user */}
+                                {/* If the hub ISNT selected that is why nothing is showing up */}
+                                {/* If the hub IS selected there is a chance the hub has no arrivals */}
+                                <div className="py-3 border border-black rounded-bottom text-center fw-medium" style={{ background: '#e6e6e6' }}>
+                                    {selectedHub == null ? (
+                                        <div>Please select a hub!</div>
+                                    ) : (
+                                        <div className="d-flex flex-column gap-2">
+                                            <div className="fw-semibold">[{selectedHub.code}] {selectedHub.name}</div>
+                                            <div className="fw-normal">Does not have any flights, please select a different hub!</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
                         )}
                     </>
                 ) : (
                     <>
+                        {/* We first check if the segment button is set to arrival or departure */}
+                        {/* After we check if the arrivals list has any flights for that hub */}
                         {departuresList.length > 0 ? (
                             <>
+                                {/* If so we display the table with all the flights */}
                                 {departuresList.map((flight: Flight, i: any) => (
                                     <div key={i} className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium ${selectedFlightModalObject?.flight_id === flight.flight_id && 'fw-bold'} ${arrivalsList.length - 1 === i && 'rounded-bottom'}`} style={{ background: selectedFlightModalObject?.flight_id === flight.flight_id ? '#cccccc' : '' }}>
                                         <div className="text-muted" style={{ width: '450px' }}>{'[' + GetAirportInfo(allAirports, flight, false)?.iata_code + '] - ' + GetAirportInfo(allAirports, flight, false)?.city}</div>
@@ -174,16 +207,22 @@ const AllFlightsPage: React.FC = () => {
                                 ))}
                             </>
                         ) : (
-                            <div className="py-3 border border-black rounded-bottom text-center fw-medium" style={{ background: '#e6e6e6' }}>
-                                {selectedHub == null ? (
-                                    <div>Please select a hub!</div>
-                                ) : (
-                                    <div className="d-flex flex-column gap-2">
-                                        <div className="fw-semibold">[{selectedHub.code}] {selectedHub.name}</div>
-                                        <div className="fw-normal">Does not have any flights, please select a different hub!</div>
-                                    </div>
-                                )}
-                            </div>
+                            <>
+                                {/* If not, we want to handle empty state */}
+                                {/* This is for clearer UI to not confuse the user */}
+                                {/* If the hub ISNT selected that is why nothing is showing up */}
+                                {/* If the hub IS selected there is a chance the hub has no arrivals */}
+                                <div className="py-3 border border-black rounded-bottom text-center fw-medium" style={{ background: '#e6e6e6' }}>
+                                    {selectedHub == null ? (
+                                        <div>Please select a hub!</div>
+                                    ) : (
+                                        <div className="d-flex flex-column gap-2">
+                                            <div className="fw-semibold">[{selectedHub.code}] {selectedHub.name}</div>
+                                            <div className="fw-normal">Does not have any flights, please select a different hub!</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
                         )}
                     </>
                 )}
@@ -193,6 +232,8 @@ const AllFlightsPage: React.FC = () => {
 
 
 
+
+            {/* This is just a modal component for when the user clicks view flight, we show them all the infomation related to that specific flight */}
             <ModalComponent
                 isOpen={modalIsOpen}
                 setIsOpen={setModalIsOpen}
@@ -200,7 +241,10 @@ const AllFlightsPage: React.FC = () => {
                 onDismiss={() => handleCloseModal()}
                 body={
                     <>
+                        {/* Does a check for TypeScript to make sure selectedFlightModalObject is set to something, handles crashes */}
                         {selectedFlightModalObject != null && (
+                            
+                            // This block displays the orgin and destination the IATA_code stacked on top of the city
                             <div className="text-center">
                                 <div className=" d-flex justify-content-center gap-2 align-items-center pt-3">
                                     <div className="d-flex flex-column  w-50">
@@ -220,7 +264,10 @@ const AllFlightsPage: React.FC = () => {
                                     </div>
                                 </div>
 
+                                
+                                
                                 <div className="d-flex justify-content-center gap-2 align-items-center py-3 mb-3 border-bottom">
+                                    {/* This block shows the scheduled time stacked on top of the actual time for departing */}
                                     <div className="d-flex flex-column text-start w-50 px-5">
                                         <div className="d-flex justify-content-between gap-2">
                                             <div className="fw-medium">Scheduled:</div>
@@ -232,7 +279,7 @@ const AllFlightsPage: React.FC = () => {
                                         </div>
                                     </div>
 
-
+                                    {/* This block shows the scheduled time stacked on top of the actual time for arriving */}
                                     <div className="d-flex flex-column text-start w-50 px-5">
                                         <div className="d-flex justify-content-between gap-2">
                                             <div className="fw-medium">Scheduled:</div>
@@ -245,6 +292,8 @@ const AllFlightsPage: React.FC = () => {
                                     </div>
                                 </div>
 
+
+                                {/* This block shows the current status of the plane */}
                                 <div className="d-flex justify-content-center gap-2 align-items-center pb-3 mb-3 border-bottom">
                                     <div className="d-flex flex-column text-start w-50 px-5">
                                         <div className="d-flex justify-content-between gap-2">
@@ -263,6 +312,8 @@ const AllFlightsPage: React.FC = () => {
                                     </div>
                                 </div>
 
+
+                                {/* This block shows the current passanger count and next to it the capacity of the plane */}
                                 <div className="d-flex justify-content-center gap-2 align-items-center pb-3 mb-3 border-bottom">
                                     <div className="d-flex flex-column text-start w-50 px-5">
                                         <div className="d-flex justify-content-between gap-2">

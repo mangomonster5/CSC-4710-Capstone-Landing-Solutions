@@ -55,7 +55,7 @@ const App: React.FC = () => {
 
   const { user, setUser } = useAllStateContext();
 
-  OnLaunchScripts(); // runs once
+  OnLaunchScripts(); // runs once, this calls all the info from db
 
   return (
     <BrowserRouter>
