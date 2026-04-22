@@ -15,6 +15,7 @@ function AllStateProvider({ children }: { children: any }) {
     const [allFlights, setAllFlights] = useState<allFlights>(generateFlights())
 
 
+    // This is a temperary function made by AI to populate our allFlights state while the backend team works on properly generating it
     function generateFlights(): allFlights {
         const days = 14;
         const flightsPerDay = 200;
@@ -83,7 +84,7 @@ function AllStateProvider({ children }: { children: any }) {
     }
 
 
-
+    // This is the user state, after a successful login this gets update allowing us to check roles and authentication status
     const [user, setUser] = useState<User>({
         isAuthenticated: true,
         role: 'employee'
