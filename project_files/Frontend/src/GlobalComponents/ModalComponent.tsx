@@ -6,12 +6,13 @@ interface ModalProps {
   title?: string;
   body: ReactNode;
   footer?: ReactNode;
+  onDismiss: () => void;
 }
 
-const ModalComponent: React.FC<ModalProps> = ({ isOpen, setIsOpen, title = "Modal title", body, footer }) => {
+const ModalComponent: React.FC<ModalProps> = ({ isOpen, setIsOpen, title = "Modal title", body, footer, onDismiss }) => {
   if (!isOpen) return null;
 
-  const handleClose = () => setIsOpen(false);
+  const handleClose = () => onDismiss();
 
   return (
     <div
@@ -28,7 +29,7 @@ const ModalComponent: React.FC<ModalProps> = ({ isOpen, setIsOpen, title = "Moda
             <h1 className="modal-title fs-5">{title}</h1>
             <button type="button" className="btn-close" onClick={handleClose} aria-label="Close"></button>
           </div>
-          <div className="modal-body">{body}</div>
+          <div className="modal-body p-0">{body}</div>
           {footer !== undefined ? (
             <div className="modal-footer">{footer}</div>
           ) : (

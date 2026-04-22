@@ -11,8 +11,41 @@ declare global {
     isAuthenticated: boolean;
   }
 
-  type AllFlights = Flight[][];
+  interface Hub {
+    code: string,
+    name: string,
+    city: string,
+  }
 
+  type allAircrafts = Aircraft[]
+
+  interface Aircraft {
+    aircraft_id: number;
+    tail_num: string;
+    model: string;
+    capacity: number;
+    max_speed: number;
+    current_airport_id: number | null;
+    flight_hours: number;
+    hours_since_maint: number;
+    status: string;
+  }
+
+  type allAirports = Airport[]
+
+  interface Airport {
+    airport_id: number;
+    name: string;
+    iata_code: string;
+    city: string;
+    metro_pop: number;
+    is_hub: number;
+    latitude: number;
+    longitude: number;
+  }
+
+
+  type allFlights = Flight[][];
 
   interface Flight {
     flight_id: number;
@@ -28,6 +61,8 @@ declare global {
     scheduled_arrival: string;
     actual_depart?: string | null;
     actual_arrival?: string | null;
+
+    iata_code: string;
 
     passenger_count: number;
     flight_status: string;

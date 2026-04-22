@@ -166,6 +166,7 @@ const FlightSelectionPage: React.FC = () => {
             <ModalComponent
                 isOpen={modalIsOpen}
                 setIsOpen={setModalIsOpen}
+                onDismiss={() => setModalIsOpen(false)}
                 title="[ORD] - Chicago, IL"
                 body={
                     <div className="text-center">

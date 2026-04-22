@@ -6,16 +6,19 @@
  */
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import useAllStateContext from "../../context/useAllStateContext";
 
 // *
 // 15 min long inactivity timer *CALC*
 // *
-const INACTIVITY_LIMIT = 15 * 60 * 1000; 
+const INACTIVITY_LIMIT = 15 * 60 * 1000;
 
 // *
 // REACT func for login
 // * 
 const LoginPage: React.FC = () => {
+    const { setUser } = useAllStateContext();
+
     // *
     // REACT vars that automatically update, storing user input
     // *
@@ -70,7 +73,7 @@ const LoginPage: React.FC = () => {
         a) if both fields are empty
         b) if username field empty
         c) if password field empty
-        */ 
+        */
         if (!username.trim() && !password.trim()) {
             setError('Username & password are required.');
             return false;
@@ -101,13 +104,13 @@ const LoginPage: React.FC = () => {
             const response = await fetch('http://localhost:5001/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                
+
                 // *
                 // case sensitive comparison handled on backend
                 // *
                 body: JSON.stringify({ username, password }),
             });
-            
+
             // *
             // waiting for server conf
             // *
@@ -120,8 +123,21 @@ const LoginPage: React.FC = () => {
             no backhistory (in lieu testing with timer)
             */
             if (data.success) {
-                localStorage.setItem('role', data.role);
-                navigate('/all-flights', { replace: true });
+                // console.log(data.user)
+                // console.log(data.user.role)
+                const user = {
+                    isAuthenticated: true,
+                    role: data.user.role?? null
+                }
+
+                localStorage.setItem("user", JSON.stringify(user));
+                setUser(user)
+
+                if (data.user.role !== null || data.user.role !== undefined) {
+                    navigate('/all-flights', { replace: true });
+                } 
+                
+                // localStorage.setItem('role', data.role); | REMOVED
             } else {
 
                 // *
@@ -154,7 +170,7 @@ const LoginPage: React.FC = () => {
         // premade REACT spacing
         <div className="w-100 mt-5 d-flex flex-column align-items-center gap-3">
             <h1 className="text-center">Login</h1>
-             {/* holds the inputs and button */}
+            {/* holds the inputs and button */}
             <div className="d-flex flex-column gap-2" style={{ width: '300px' }}>
                 {/* username input box */}
                 <input

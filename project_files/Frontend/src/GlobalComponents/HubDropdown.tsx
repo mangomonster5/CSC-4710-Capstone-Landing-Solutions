@@ -1,12 +1,15 @@
-import React, { ReactNode } from 'react';
+import React, { Dispatch, ReactNode, SetStateAction } from 'react';
 
-interface FlightSelectionDropdownProps {
-    excludeCode?: string; // STILL TESTING 
-    handleSelection: (selection: any) => void
+
+
+interface HubDropdownProps {
+    selectedHub: Hub | undefined;
+    setSelectedHub: Dispatch<SetStateAction<Hub | undefined>>;
+    handleSelection: (selection: any) => void;
     body: ReactNode;
 }
 
-const FlightSelectionDropdown: React.FC<FlightSelectionDropdownProps> = ({ excludeCode, handleSelection, body }) => {
+const HubDropdown: React.FC<HubDropdownProps> = ({ selectedHub, setSelectedHub, handleSelection, body }) => {
 
     const airports = [
         { code: "ATL", name: "Hartsfield-Jackson Atlanta International", city: "Atlanta, GA" },
@@ -43,21 +46,33 @@ const FlightSelectionDropdown: React.FC<FlightSelectionDropdownProps> = ({ exclu
     ];
 
     return (
+        <div className="dropdown d-flex align-items-center">
+            <div
+                className="card d-flex flex-column no-i-cursor gap-1 dropdown-toggle text-wrap p-0 border-0"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                style={{ cursor: 'pointer' }}
+            >
+                {body}
+            </div>
 
-        <>
-            {body}
+            <ul
+                className="dropdown-menu p-0"
+                style={{ maxHeight: '200px', overflowY: 'auto' }}
+            >
+                {airports.map((airport) => (
+                    <li key={airport.code} onClick={() => handleSelection({ code: airport.code, name: airport.name, city: airport.city })} style={{ cursor: "pointer" }}>
+                        <div className={`dropdown-item ${selectedHub && selectedHub.code === airport.code
+                            ? 'bg-primary-blue-500 text-white'
+                            : ''}`}>
+                            <span className="fw-bold">[{airport.code}]</span> {airport.name}
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    )
 
-            {airports.filter((airport) => airport.code !== excludeCode).map((airport) => (
-                <div
-                    key={airport.code}
-                    onClick={() => handleSelection({ code: airport.code, name: airport.name, city: airport.city })}
-                    style={{ cursor: "pointer" }}
-                >
-                    [{airport.code}] {airport.name}
-                </div>
-            ))}
-        </>
-    );
-};
+}
 
-export default FlightSelectionDropdown;
+export default HubDropdown;
