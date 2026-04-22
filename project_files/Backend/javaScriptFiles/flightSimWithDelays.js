@@ -157,8 +157,51 @@ function menu() {
 // -------------------------
 function simluateCurrentDay() {
 
-    //set to only fly the current day of flights
-    const currentDayRoutes = scoredRoutes.filter(r => r.day === currentDay);
+    // Max number of flights per day
+    const MAX_FLIGHTS_PER_DAY = 250;
+
+    const allAirports = [
+        "ATL", "DFW", "DEN", "ORD", "LAX", "JFK", "CLT", "LAS", "MCO", "MIA",
+        "PHX", "SEA", "SFO", "EWR", "IAH", "BOS", "MSP", "FLL", "LGA", "DTW",
+        "PHL", "SLC", "BWI", "IAD", "SAN", "DCA", "TPA", "BNA", "AUS", "HNL", "CDG"
+    ];
+
+    const dayRoutes = scoredRoutes.filter(r => r.day === currentDay);
+
+    const getScore = (r) => r.score;
+
+    // ensures each airport is attempted at least once
+    const requiredCoverageRoutes = [];
+    const usedIndices = new Set();
+
+    for (const airport of allAirports) {
+        let bestIndex = -1;
+        let bestScore = -Infinity;
+        //finds the best route
+        dayRoutes.forEach((r, idx) => {
+            if (!usedIndices.has(idx) && r.to === airport) {
+                const routeScore = getScore(r);
+                if (routeScore > bestScore) {
+                    bestScore = routeScore;
+                    bestIndex = idx;
+                }
+            }
+        });
+        // adds the best route for this airport if one exists
+        if (bestIndex !== -1) {
+            requiredCoverageRoutes.push(dayRoutes[bestIndex]);
+            usedIndices.add(bestIndex);
+        }
+    }
+    // adds highest scoring remaining route up to 250
+    const extraRoutes = dayRoutes
+        .map((r, idx) => ({ route: r, idx }))
+        .filter(item => !usedIndices.has(item.idx))
+        .sort((a, b) => getScore(b.route) - getScore(a.route))
+        .slice(0, Math.max(0, MAX_FLIGHTS_PER_DAY - requiredCoverageRoutes.length))
+        .map(item => item.route);
+
+    const currentDayRoutes = [...requiredCoverageRoutes, ...extraRoutes];
 
     //console.log(currentDayRoutes);
     let i = 0;
