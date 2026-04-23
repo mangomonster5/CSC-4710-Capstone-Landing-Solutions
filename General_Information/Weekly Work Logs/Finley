@@ -1,0 +1,26 @@
+January 12-16:
+This week we received the project and our groups. Once we met with our groups and figured out a general idea of how we want to complete this project, I started to get base code started. I started with the exact numbers we knew such as flight time calculations, airline info, and airport info.
+January 17-23:
+During this period i createad a basic costs.cpp/.h, flight.cpp/.h, and flightTest.cpp file. The costs/flight file were created to calculate costs and flight time at a basic level, and the flightTime file was created to make sure I could import the files corrcetly and the base functions worked. I gave Jimi my costs.cpp/.h file to greatly fix it and re-code it to full calculate all costs needed. Jimi also helped me fix some of the flight.cpp/.h calculation issues I had due to math errors. I continued to work and update each file and by the 23rd i had uploaded a costs.cpp/.h file, flight.cpp/.h, airline.cpp/.h, and airports.cpp/.h file with Jimis help fixing where needed. 
+
+**took a break from the code part here due to nothing needing to be changed yet and the group was focused on starting the front end code/database code**
+
+January 23 - February 10
+During this time, I was not coding but I was helping out with the deliverables, walkthroughs, and focusing on my individual assignments. 
+
+February 11-20
+At this point, Sean advised me it would be easier to connect the code to the front end/database if the language was changed to Javascript. In order to do this, Jimi/I split up the files based on who understood/worked on the file the most. Due to this I took the airline.cpp/.h, flight.c/.h and flightSimu.cpp. With a bit of help from AI due to having to re-learn JS, I converted the code over and re-created a new flightSim.js file. We also cleaned up the github so the files were more organized and we kept the old .cpp/.h files for back up incase of any major issues.
+
+**took another break from the code since we were fully caught up code wise**
+
+February 20 - April 1:
+I was making minor changes to the code on my personal laptop in order to not mess up any changes to the front end code or the database. I was also helping with creating deliverables and walkthroughs at this point.
+
+April 1-14:
+During this period, I was making major changes to the code due to new information we received from the client and new set ups in our personal code. At this point, we turned the code to run automaticaly based on the airplanes we had and auto-create the flight information instead of being made through the terminal. Jack created a demand model that would return flights for each day in the 14 day scheudle. I then took that code and imported it into the flightSim.js file and re-coded the file to loop through each flight per day and increment each day by 1 at the users choice. This took a lot of back/forth changes and a bit of different set ups each day in order to keep changing the flights and making sure it was all calcuated correctly
+
+April 15-20:
+During the last period, I finalized all the JS code to make sure it would run correctly, calculate correctly, but also matched all rules set by the client. Jack also took time to input all the scenario rules for the 14 day simulation so that we could do final tests of all the code to make sure it was 100% ready before we did a final change which is to connect it to the database. 
+
+April 23:
+We met as a group to finalize all files in the github, make sure the website was fully functional, and we were ready for our pitch
