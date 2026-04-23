@@ -13,7 +13,7 @@ import OnLaunchScripts from "./utils/OnLaunchScripts";
 // Creating a type for protected routes, TypeScript makes you use... types this is defining them
 type ProtectedRouteProps = {
   user: User;
-  correctRole: UserRole;
+  correctRole: UserRole[];
   children: React.ReactNode;
 };
 
@@ -35,10 +35,11 @@ const ProtectedRoute = ({ user, correctRole, children }: ProtectedRouteProps) =>
   const navigate = useNavigate();
   const location = useLocation();
 
+
   // useEffect runs when the component mounts and whenever `user` or `correctRole` change.
   // Its purpose is to prevent users with the wrong role from accessing a protected page.
   useEffect(() => {
-    if (user.isAuthenticated && correctRole !== user.role) {
+    if (user.isAuthenticated && !correctRole.includes(user.role)) {
       // If the current user’s role does not match `correctRole`, the effect navigates back
       window.history.back();
     }
@@ -65,28 +66,28 @@ const App: React.FC = () => {
         <Route element={<MainLayout />}>
 
           <Route path="/all-flights" element={
-            <ProtectedRoute user={user} correctRole="employee">
+            <ProtectedRoute user={user} correctRole={["employee", 'admin']}>
               <AllFlightsPage />
             </ProtectedRoute>
           }
           />
 
           <Route path="/flight-selection" element={
-            <ProtectedRoute user={user} correctRole="employee">
+            <ProtectedRoute user={user} correctRole={["employee", 'admin']}>
               <FlightSelectionPage />
             </ProtectedRoute>
           }
           />
 
           <Route path="/admin" element={
-            <ProtectedRoute user={user} correctRole="admin">
+            <ProtectedRoute user={user} correctRole={['admin']}>
               <AdminPage />
             </ProtectedRoute>
           }
           />
 
           <Route path="/flight-info" element={
-            <ProtectedRoute user={user} correctRole="employee">
+            <ProtectedRoute user={user} correctRole={["employee", 'admin']}>
               <FlightInfoPage />
             </ProtectedRoute>
           }

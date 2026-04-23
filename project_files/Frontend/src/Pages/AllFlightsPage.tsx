@@ -6,8 +6,8 @@ import ModalComponent from "../GlobalComponents/ModalComponent";
 import FlightSelectionDropdown from "../GlobalComponents/FlightSelectionDropdown";
 import HubDropdown from "../GlobalComponents/HubDropdown";
 import useAllStateContext from "../context/useAllStateContext";
-import GetAirportInfo from "../utils/GetAirportInfo";
 import GetAircraftInfo from "../utils/GetAircraftInfo";
+import GetAirportInfoFromFlight from "../utils/GetAirportInfoFromFlight";
 
 
 type flightDirection = {
@@ -34,12 +34,12 @@ const AllFlightsPage: React.FC = () => {
     // Mapping over the state with all the flights in it, filtering by this
     // - Get Airport Info for that flight, we put false since we want to display where they came from
     // - Get all the flights that have the same iata_code as the currently selected hub
-    const arrivalsList = allFlights[0].filter((flight: Flight) => GetAirportInfo(allAirports, flight, false)?.iata_code === selectedHub?.code)
+    const arrivalsList = allFlights[0].filter((flight: Flight) => GetAirportInfoFromFlight(allAirports, flight, false)?.iata_code === selectedHub?.code)
 
     // Mapping over the state with all the flights in it, filtering by this
     // - Get Airport Info for that flight, we put true since we wnat to display where they are going
     // - Get all the flights that have the same iata_code as the currently selected hub
-    const departuresList = allFlights[0].filter((flight: Flight) => GetAirportInfo(allAirports, flight, true)?.iata_code === selectedHub?.code)
+    const departuresList = allFlights[0].filter((flight: Flight) => GetAirportInfoFromFlight(allAirports, flight, true)?.iata_code === selectedHub?.code)
 
     // a status map for indicator color
     const statusColorMap: Record<string, string> = {
@@ -144,7 +144,7 @@ const AllFlightsPage: React.FC = () => {
                                 {/* If so we display the table with all the flights */}
                                 {arrivalsList.map((flight: Flight, i: any) => (
                                     <div key={i} className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium ${selectedFlightModalObject?.flight_id === flight.flight_id && 'fw-bold'} ${arrivalsList.length - 1 === i && 'rounded-bottom'}`} style={{ background: selectedFlightModalObject?.flight_id === flight.flight_id ? '#cccccc' : '' }}>
-                                        <div className="text-muted" style={{ width: '450px' }}>{'[' + GetAirportInfo(allAirports, flight, true)?.iata_code + '] - ' + GetAirportInfo(allAirports, flight, true)?.city}</div>
+                                        <div className="text-muted" style={{ width: '450px' }}>{'[' + GetAirportInfoFromFlight(allAirports, flight, true)?.iata_code + '] - ' + GetAirportInfoFromFlight(allAirports, flight, true)?.city}</div>
                                         <div className="text-muted" style={{ width: '200px' }}>{displayArrivialFlightTime(flight)}</div>
                                         <div className="text-muted" style={{ width: '250px' }}>{flight.flight_num}</div>
                                         <div className="text-muted" style={{ width: '150px' }}>{flight.gate}</div>
@@ -189,7 +189,7 @@ const AllFlightsPage: React.FC = () => {
                                 {/* If so we display the table with all the flights */}
                                 {departuresList.map((flight: Flight, i: any) => (
                                     <div key={i} className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium ${selectedFlightModalObject?.flight_id === flight.flight_id && 'fw-bold'} ${arrivalsList.length - 1 === i && 'rounded-bottom'}`} style={{ background: selectedFlightModalObject?.flight_id === flight.flight_id ? '#cccccc' : '' }}>
-                                        <div className="text-muted" style={{ width: '450px' }}>{'[' + GetAirportInfo(allAirports, flight, false)?.iata_code + '] - ' + GetAirportInfo(allAirports, flight, false)?.city}</div>
+                                        <div className="text-muted" style={{ width: '450px' }}>{'[' + GetAirportInfoFromFlight(allAirports, flight, false)?.iata_code + '] - ' + GetAirportInfoFromFlight(allAirports, flight, false)?.city}</div>
                                         <div className="text-muted" style={{ width: '200px' }}>{displayDepartureFlightTime(flight)}</div>
                                         <div className="text-muted" style={{ width: '250px' }}>{flight.flight_num}</div>
                                         <div className="text-muted" style={{ width: '150px' }}>{flight.gate}</div>
@@ -248,8 +248,8 @@ const AllFlightsPage: React.FC = () => {
                             <div className="text-center">
                                 <div className=" d-flex justify-content-center gap-2 align-items-center pt-3">
                                     <div className="d-flex flex-column  w-50">
-                                        <div className="fw-semibold fs-5">{GetAirportInfo(allAirports, selectedFlightModalObject, true)?.iata_code}</div>
-                                        <div>{GetAirportInfo(allAirports, selectedFlightModalObject, true)?.city}</div>
+                                        <div className="fw-semibold fs-5">{GetAirportInfoFromFlight(allAirports, selectedFlightModalObject, true)?.iata_code}</div>
+                                        <div>{GetAirportInfoFromFlight(allAirports, selectedFlightModalObject, true)?.city}</div>
                                     </div>
 
                                     <div>
@@ -259,8 +259,8 @@ const AllFlightsPage: React.FC = () => {
                                     </div>
 
                                     <div className="d-flex flex-column w-50">
-                                        <div className="fw-semibold fs-5">{GetAirportInfo(allAirports, selectedFlightModalObject, false)?.iata_code}</div>
-                                        <div>{GetAirportInfo(allAirports, selectedFlightModalObject, false)?.city}</div>
+                                        <div className="fw-semibold fs-5">{GetAirportInfoFromFlight(allAirports, selectedFlightModalObject, false)?.iata_code}</div>
+                                        <div>{GetAirportInfoFromFlight(allAirports, selectedFlightModalObject, false)?.city}</div>
                                     </div>
                                 </div>
 

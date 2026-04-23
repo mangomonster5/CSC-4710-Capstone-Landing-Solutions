@@ -9,11 +9,23 @@ const FlightsContext = createContext<any>(undefined);
 function AllStateProvider({ children }: { children: any }) {
 
     // Creating global state to pass throughout the app
+
+    // This is the user state, after a successful login this gets update allowing us to check roles and authentication status
+    const localUser = localStorage.getItem("user");
+    const defaultUser = {
+        isAuthenticated: true,
+        role: 'employee'
+    }
+    const [user, setUser] = useState<User>(localUser == null ? defaultUser : JSON.parse(localUser))
+
     // This is where all the flights will be stored allowing us to filter by day
     const [allAirports, setAllAirports] = useState<allAirports | undefined>(undefined)
     const [allAircrafts, setAllAircrafts] = useState<allAircrafts | undefined>(undefined)
     const [allFlights, setAllFlights] = useState<allFlights>(generateFlights())
 
+    if (allFlights !== null) {
+        localStorage.setItem("AllFlightsArray", JSON.stringify(allFlights));
+    }
 
     // This is a temperary function made by AI to populate our allFlights state while the backend team works on properly generating it
     function generateFlights(): allFlights {
@@ -60,7 +72,7 @@ function AllStateProvider({ children }: { children: any }) {
                     actual_depart: null,
                     actual_arrival: null,
 
-                    passenger_count:  40 + Math.floor(Math.random() * (130 - 40 + 1)),
+                    passenger_count: 40 + Math.floor(Math.random() * (130 - 40 + 1)),
                     flight_status: "scheduled",
                     delay_minutes: Math.floor(Math.random() * 20),
                     gate: `A${Math.floor(Math.random() * 20)}`,
@@ -84,11 +96,7 @@ function AllStateProvider({ children }: { children: any }) {
     }
 
 
-    // This is the user state, after a successful login this gets update allowing us to check roles and authentication status
-    const [user, setUser] = useState<User>({
-        isAuthenticated: true,
-        role: 'employee'
-    })
+
 
 
     // ValueToShare definition to pass into provider
