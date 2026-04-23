@@ -3,7 +3,7 @@
 // This function is a simple filtering, we take the flight, and map the entire airports array to find the airport with the origin_airport_id or destination_airport_id
 // Once the airport is found, the entire airport object is returned allowing you to deconstruct values like airport.city
 
-const GetAirportInfo = (airports: Airport[], flight: Flight, useOriginId: boolean): Airport | undefined => {
+const GetAirportInfoFromFlight = (airports: Airport[], flight: Flight, useOriginId: boolean): Airport | undefined => {
     if (airports == null) return;
 
 
@@ -15,4 +15,4 @@ const GetAirportInfo = (airports: Airport[], flight: Flight, useOriginId: boolea
 
 };
 
-export default GetAirportInfo;
+export default GetAirportInfoFromFlight;

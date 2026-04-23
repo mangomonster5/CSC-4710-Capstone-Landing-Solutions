@@ -12,6 +12,10 @@
   user-select: none; /* Standard */
 }
 
+.no-hover {
+  pointer-events: none
+}
+
 .dropdown-toggle::after {
   display: none;
 }
@@ -49,6 +53,12 @@
 .segmentButton.selected {
   background-color: var(--panther-primary-blue-500);
   color: white;
+}
+
+.segmentButton.selected-secondary {
+  background-color: hsl(0, 0%, 80%);
+  color: black;
+  font-weight: 500;
 }
 
 .card {
