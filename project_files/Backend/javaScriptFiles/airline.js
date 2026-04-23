@@ -1,7 +1,13 @@
-/* Tracks speed, hours, maintenance, and location
-*/
+/*
+ * Aircraft operational model
+ * Tracks speed, hours, maintenance, and location
+ */
 
 import { start } from "repl";
+
+//const for the tailCombos
+const usedCombos = [];
+
 
 class Airline {
 
@@ -73,10 +79,24 @@ class Airline {
         this.fuel = f;
     }
 
+    static setTailCode(){
+        const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ"; //minus I and O
+        let tailCode;
     
+        //creates a tailcode and makes sure it isnt already existing, if it is, recreate it.
+        do {
+            tailCode =
+                alphabet[Math.floor(Math.random() * alphabet.length)] +
+                alphabet[Math.floor(Math.random() * alphabet.length)];
+        } while (usedCombos.includes(tailCode));
 
-    setMain
+        usedCombos.push(tailCode);
+        
+        return tailCode;
 
+    }
+
+    
     // --------------------
     // Flight Operations
     // --------------------
@@ -169,14 +189,14 @@ class Airline {
 
     static preloadFleet() {
     const fleet = [];
-    let tail = 1000;
+    let tail = 100;
 
     // =========================
     // B737-600 (15 total)
     // =========================
     for (let i = 0; i < 5; i++) { // ORD → 5
         fleet.push(new Airline(
-            `B737-600-${tail++}`,
+            `N${tail++}${Airline.setTailCode()}`,
             "Boeing 737-600",
             850,
             6785,
@@ -188,26 +208,26 @@ class Airline {
     }
 
     // spread
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "ATL", "JFK", 130, 245000));
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "ATL", "JFK", 130, 245000));
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "ATL", "JFK", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "ATL", "JFK", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "ATL", "JFK", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "ATL", "JFK", 130, 245000));
 
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "DFW", "DFW", 130, 245000));
 
     // fill remaining singles
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "BNA", "DFW", 130, 245000));
-    fleet.push(new Airline(`B737-600-${tail++}`, "Boeing 737-600", 850, 6785, "DTW", "ORD", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "BNA", "DFW", 130, 245000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-600", 850, 6785, "DTW", "ORD", 130, 245000));
 
     // =========================
     // B737-800 (15 total)
     // =========================
     for (let i = 0; i < 7; i++) { // LAX → 7
         fleet.push(new Airline(
-            `B737-800-${tail++}`,
+            `N${tail++}${Airline.setTailCode()}`,
             "Boeing 737-800",
             876,
             6785,
@@ -218,65 +238,65 @@ class Airline {
         ));
     }
 
-    fleet.push(new Airline(`B737-800-${tail++}`, "Boeing 737-800", 876, 6785, "EWR", "LAX", 189, 270000));
-    fleet.push(new Airline(`B737-800-${tail++}`, "Boeing 737-800", 876, 6785, "EWR", "LAX", 189, 270000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-800", 876, 6785, "EWR", "LAX", 189, 270000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-800", 876, 6785, "EWR", "LAX", 189, 270000));
 
-    fleet.push(new Airline(`B737-800-${tail++}`, "Boeing 737-800", 876, 6785, "MIA", "JFK", 189, 270000));
-    fleet.push(new Airline(`B737-800-${tail++}`, "Boeing 737-800", 876, 6785, "MIA", "JFK", 189, 270000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-800", 876, 6785, "MIA", "JFK", 189, 270000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-800", 876, 6785, "MIA", "JFK", 189, 270000));
 
-    fleet.push(new Airline(`B737-800-${tail++}`, "Boeing 737-800", 876, 6785, "PHX", "DFW", 189, 270000));
-    fleet.push(new Airline(`B737-800-${tail++}`, "Boeing 737-800", 876, 6785, "PHX", "DFW", 189, 270000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-800", 876, 6785, "PHX", "DFW", 189, 270000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-800", 876, 6785, "PHX", "DFW", 189, 270000));
 
-    fleet.push(new Airline(`B737-800-${tail++}`, "Boeing 737-800", 876, 6785, "LAS", "DFW", 189, 270000));
-    fleet.push(new Airline(`B737-800-${tail++}`, "Boeing 737-800", 876, 6785, "BWI", "LAX", 189, 270000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-800", 876, 6785, "LAS", "DFW", 189, 270000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Boeing 737-800", 876, 6785, "BWI", "LAX", 189, 270000));
 
     // =========================
     // A220-100 (12 total)
     // =========================
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "LGA", "ORD", 135, 192000));
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "LGA", "ORD", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "LGA", "ORD", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "LGA", "ORD", 135, 192000));
 
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "IAH", "DFW", 135, 192000));
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "IAH", "DFW", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "IAH", "DFW", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "IAH", "DFW", 135, 192000));
 
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "SFO", "ORD", 135, 192000));
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "SFO", "ORD", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "SFO", "ORD", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "SFO", "ORD", 135, 192000));
 
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "SEA", "LAX", 135, 192000));
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "SEA", "LAX", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "SEA", "LAX", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "SEA", "LAX", 135, 192000));
 
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "BOS", "JFK", 135, 192000));
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "PHL", "DFW", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "BOS", "JFK", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "PHL", "DFW", 135, 192000));
 
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "DCA", "JFK", 135, 192000));
-    fleet.push(new Airline(`A220-100-${tail++}`, "Airbus A220-100", 829, 5760, "SAN", "LAX", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "DCA", "JFK", 135, 192000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-100", 829, 5760, "SAN", "LAX", 135, 192000));
 
     // =========================
     // A220-300 (13 total)
     // =========================
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "JFK", "JFK", 130, 228000));
 
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "MCO", "JFK", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "FLL", "JFK", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "IAD", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "MCO", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "FLL", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "IAD", "JFK", 130, 228000));
 
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "DEN", "ORD", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "MSP", "ORD", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "TPA", "JFK", 130, 228000));
-    fleet.push(new Airline(`A220-300-${tail++}`, "Airbus A220-300", 871, 5681, "LAS", "DFW", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "DEN", "ORD", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "MSP", "ORD", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "TPA", "JFK", 130, 228000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A220-300", 871, 5681, "LAS", "DFW", 130, 228000));
 
     // =========================
     // A350
     // =========================
-    fleet.push(new Airline(`A350-1000-${tail++}`, "Airbus A350-1000", 1100, 44460, "JFK", "JFK", 480, 280000));
+    fleet.push(new Airline(`N${tail++}${Airline.setTailCode()}`, "Airbus A350-1000", 1100, 44460, "JFK", "JFK", 480, 280000));
 
     return fleet;
-    
+
     }
 }
 
