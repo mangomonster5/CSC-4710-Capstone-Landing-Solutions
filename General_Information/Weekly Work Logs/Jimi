@@ -1,0 +1,31 @@
+January 12-16:
+This week I met with the group, and we split up the work. Finley had started on the base code and passed me his costs.cpp/.h file to fix up. I went through it and basically coded most of it to make sure it fully calculated all the costs we needed like fuel, airport fees, leasing, ticket prices, revenue, and profit. 
+
+January 17-23:
+During this period, I created the validation.cpp/.h file which handles all the input checking for the simulator. Things like making sure fuel amounts are positive, airport codes are 3 uppercase letters, altitude is in the right range, stuff like that. Finley and I went back and forth frequently during this time, fixing small issues in the cost formulas and ensuring everything matched the project spec page by page. I especially took every turn to make absolutely certain everything added up perfectly.
+
+January 23 - February 10:
+During this time, I wasn't writing new code, but I was helping with the first walkthrough deliverables. I wrote the script for my portion of the presentation covering the functional and non-functional requirements. I also reviewed the other team members' slides and gave feedback before we presented.
+
+February 11-20:
+Sean told us we needed to switch to JavaScript for the frontend connection. Finley and I split the files based on who knew each one best. I took costs.cpp and airport.cpp since I had done the most work on those. I converted both to JavaScript, keeping all the comments and variable names the same, so nothing got lost in translation. During this process, I accidentally changed the EUR_USD exchange rate from 1.09 to 1.20, which I caught later during code review a few hours later. 
+
+February 20 - March 10:
+I was helping with deliverables and walkthroughs during this time. I also started working on the frontend and have a better grasp of it.
+
+March 10-23:
+I created the use case tables for the Software Specification Document. I was assigned three use cases: Log In, Search Flights, and View Flight Details. Each one has the full table with actors, preconditions, flow, exception flow, and postconditions. I also did the Updated Project Schedule and Costs section which tracks every task, who owns it, the dates, and current status.
+
+March 23 - April 1:
+We received the fleet expansion memo from the client, the Airbus A350 to the fleet. I updated costs.cpp, costs.js to support the new aircraft. This included adding the A350 lease rate of $400k/month to the lease function and updating validation to accept the new model name. 
+
+April 1-14:
+During this period, I did a full code review of all the JS files and found several bugs. The exchange rate in costs.js was still 1.20 instead of 1.09. The A350 lease in the lease function was set to 290,000 instead of 400,000. I documented all of these and added them to the fix list. I also helped Finley work through issues with the flightSimAuto.js file, specifically the gate checking logic that was causing an infinite loop because it wasn't incrementing the counter when it skipped a flight.
+
+April 15-20:
+During the last period, I was finalizing all cost calculations and making sure every number on the Flight Info page matched what the functions were outputting. I also prepared my portion of the presentation, which covers airport.js and costs.js in detail, walking through how the distance formula works, how costs are calculated, and how the 30% load factor pricing strategy works.
+
+April 23:
+We met as a group to finalize all files in the github, make sure the website was fully functional, and we were ready for our pitch.\
+
+During this time, I ppitched in a lot for the Final Design Document and the other four deliverables, and also for every walkthrough about different things.
