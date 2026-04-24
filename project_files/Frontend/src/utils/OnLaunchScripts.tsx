@@ -14,7 +14,6 @@ const OnLaunchScripts = () => {
             // Get all flights and save it to local state
             const AllFlights = await GetAllFlights()
             localStorage.setItem("AllFlightsArray", JSON.stringify(AllFlights));
-            console.log(AllFlights)
             setAllFlights(AllFlights)
 
 

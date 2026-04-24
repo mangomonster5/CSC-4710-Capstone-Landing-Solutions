@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalComponent from "../GlobalComponents/ModalComponent";
 import FlightSelectionDropdown from "../GlobalComponents/FlightSelectionDropdown";
 import GetAirportInfoFromFlight from "../utils/GetAirportInfoFromFlight";
@@ -15,11 +15,15 @@ import GetAircraftInfo from "../utils/GetAircraftInfo";
 // };
 
 const FlightSelectionPage: React.FC = () => {
-    const { allAirports, allAircrafts, selectedSimDay, usFormatter, setAllFlights } = useAllStateContext()
+    const { allAirports, allAircrafts, allFlights, usFormatter, setAllFlights, selectedSimDay } = useAllStateContext()
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [from, setFrom] = useState<Airport | null>(null);
     const [to, setTo] = useState<Airport | null>(null);
+
+    // This is the state you will update with filtering
+    const [allFlightsFilteredByUser, setAllFlightsFilteredByUser] = useState([])
+
 
     // *
     // storing selected dates as strings
@@ -39,6 +43,31 @@ const FlightSelectionPage: React.FC = () => {
         const date = new Date(dateStr + 'T00:00:00');
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
+
+
+    const filterFlightArrayByFrom = (passedFromId: Airport) => {
+        let finalFilteredArray = []
+
+        // Remove flights that dont match from
+        finalFilteredArray = allFlights[selectedSimDay].filter((flight: Flight) => flight.origin_airport_id === passedFromId?.airport_id)
+
+        setAllFlightsFilteredByUser(finalFilteredArray)
+    }
+
+
+    const filterFlightArrayByTo = (passedTo: Airport) => {
+        let finalFilteredArray = []
+
+        // Remove flights that dont match from
+        finalFilteredArray = allFlights[selectedSimDay].filter((flight: Flight) => flight.destination_airport_id === passedTo?.airport_id)
+
+        setAllFlightsFilteredByUser(finalFilteredArray)
+    }
+
+
+
+
+
 
 
     // Below is for modals, to view flight and buy a ticket
@@ -76,10 +105,9 @@ const FlightSelectionPage: React.FC = () => {
 
     // This function is called when the user closes or dismisses the view the purchase ticket modal modal (after clicking purchase ticket on a flight view modal)
     const handleCloseTicketModal = () => {
-        // Closes the modal
-        setModalIsOpen(false)
-        // This reset the selected obj to prevent crashes and reset ui
-        setSelectedFlightModalObject(undefined);
+        setNumberOfTicketsToPurchase(0)
+        setPurchaseTicketModalIsOpen(false)
+        setLoadingPurchase('none')
     }
 
 
@@ -174,7 +202,6 @@ const FlightSelectionPage: React.FC = () => {
             });
         });
 
-
     }
 
 
@@ -199,7 +226,7 @@ const FlightSelectionPage: React.FC = () => {
                 <div style={{ width: '350px' }}>
                     <div>From</div>
                     <FlightSelectionDropdown
-                        handleSelection={(selection: any) => { setFrom(selection); }}
+                        handleSelection={(selection: any) => { setFrom(selection); filterFlightArrayByFrom(selection); }}
                         body={
                             <>
                                 {from ? (
@@ -219,7 +246,7 @@ const FlightSelectionPage: React.FC = () => {
                 <div style={{ width: '350px' }}>
                     <div>To</div>
                     <FlightSelectionDropdown
-                        handleSelection={(selection: Airport) => { setTo(selection); }}
+                        handleSelection={(selection: Airport) => { setTo(selection); filterFlightArrayByTo(selection) }}
                         body={
                             <>
                                 {to ? (
@@ -283,28 +310,30 @@ const FlightSelectionPage: React.FC = () => {
             <div>
                 <div className="d-flex bg-primary-blue-500 border-black text-white py-3 px-3 fw-medium rounded-top">
                     <div className="fw-semibold" style={{ width: '500px' }}>Origin</div>
+                    <div className="fw-semibold" style={{ width: '500px' }}>Destination</div>
                     <div className="fw-semibold" style={{ width: '350px' }}>Flight Number</div>
                     <div className="fw-semibold" style={{ width: '200px' }}>Seats</div>
                     <div className="fw-semibold" style={{ width: '200px' }}></div>
                 </div>
-                <div className="d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium">
-                    <div className="text-muted" style={{ width: '500px' }}>[ORD] - Chicago, IL</div>
-                    <div className="text-muted" style={{ width: '350px' }}>PCA807</div>
-                    <div className="text-muted" style={{ width: '200px' }}>40 / 180</div>
-                    <div className="text-muted text-center" style={{ width: '200px' }}>
-                        {/* THis will work when you map over */}
-                        {/* <button className="rounded border" onClick={() => handleViewFlightClicked(flight)}>View</button> */}
-                    </div>
-                </div>
-                <div className="d-flex border-start border-end border-bottom border-dark rounded-bottom py-3 px-3 fw-medium">
-                    <div className="text-muted" style={{ width: '500px' }}>[ORD] - Chicago, IL</div>
-                    <div className="text-muted" style={{ width: '350px' }}>PCA908</div>
-                    <div className="text-muted" style={{ width: '200px' }}>12 / 246</div>
-                    <div className="text-muted text-center" style={{ width: '200px' }}>
-                        {/* THis will work when you map over */}
-                        {/* <button className="rounded border" onClick={() => handleViewFlightClicked(flight)}>View</button> */}
-                    </div>
-                </div>
+                {allFlightsFilteredByUser.length > 0 ? (
+                    <>
+                        {allFlightsFilteredByUser.map((flight: Flight, index: any) => (
+                            <div key={index} className="d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium">
+                                <div className="text-muted" style={{ width: '500px' }}>[{GetAirportInfoFromFlight(allAirports, flight, true)?.iata_code}] - {GetAirportInfoFromFlight(allAirports, flight, true)?.city}</div>
+                                <div className="text-muted" style={{ width: '500px' }}>[{GetAirportInfoFromFlight(allAirports, flight, false)?.iata_code}] - {GetAirportInfoFromFlight(allAirports, flight, false)?.city}</div>
+                                <div className="text-muted" style={{ width: '350px' }}>PCA{flight.flight_num}</div>
+                                <div className="text-muted" style={{ width: '200px' }}>{flight.passenger_count} / {GetAircraftInfo(allAircrafts[selectedSimDay - 1], flight)?.capacity}</div>
+                                <div className="text-muted text-center" style={{ width: '200px' }}>
+                                    <button className="rounded border" onClick={() => handleViewFlightClicked(flight)}>View</button>
+                                </div>
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <div className="py-3 border border-black rounded-bottom text-center fw-medium" style={{ background: '#e6e6e6' }}>
+                        Please select options to find your flight!
+                        </div>
+                )}
             </div>
 
 

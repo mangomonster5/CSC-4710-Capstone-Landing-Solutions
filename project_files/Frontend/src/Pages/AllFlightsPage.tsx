@@ -31,7 +31,7 @@ const AllFlightsPage: React.FC = () => {
 
 
     const [selectedFlightModalObject, setSelectedFlightModalObject] = useState<Flight | undefined>(undefined)
-    const [selectedHub, setSelectedHub] = useState<Hub | undefined>(undefined)
+    const [selectedHub, setSelectedHub] = useState<Airport | undefined>(undefined)
 
 
     const [numberOfTicketsToPurchase, setNumberOfTicketsToPurchase] = useState(0)
@@ -43,7 +43,7 @@ const AllFlightsPage: React.FC = () => {
     // - Get all the flights that have the same iata_code as the currently selected hub
     const arrivalsList = allFlights?.[selectedSimDay - 1]?.filter((flight: Flight) => {
         const airport = GetAirportInfoFromFlight(allAirports, flight, false);
-        return airport?.iata_code === selectedHub?.code;
+        return airport?.iata_code === selectedHub?.iata_code;
     }) ?? [];
 
     // Mapping over the state with all the flights in it, filtering by this
@@ -52,7 +52,7 @@ const AllFlightsPage: React.FC = () => {
     const departuresList =
         allFlights?.[selectedSimDay - 1]?.filter((flight: Flight) => {
             const airport = GetAirportInfoFromFlight(allAirports, flight, true);
-            return airport?.iata_code === selectedHub?.code;
+            return airport?.iata_code === selectedHub?.iata_code;
         }) ?? [];
 
 
@@ -224,7 +224,7 @@ const AllFlightsPage: React.FC = () => {
                     selectedHub={selectedHub}
                     setSelectedHub={setSelectedHub}
                     body={
-                        <div className={`mainButton text-center ${selectedHub === undefined ? '' : 'fw-bold'}`}>{selectedHub === undefined ? 'Select Airport' : selectedHub.code}</div>
+                        <div className={`mainButton text-center ${selectedHub === undefined ? '' : 'fw-bold'}`}>{selectedHub === undefined ? 'Select Airport' : selectedHub.iata_code}</div>
                     }
                 />
 
@@ -288,7 +288,7 @@ const AllFlightsPage: React.FC = () => {
                                         <div>Please select a Airport!</div>
                                     ) : (
                                         <div className="d-flex flex-column gap-2">
-                                            <div className="fw-semibold">[{selectedHub.code}] {selectedHub.name}</div>
+                                            <div className="fw-semibold">[{selectedHub.iata_code}] {selectedHub.name}</div>
                                             <div className="fw-normal">Does not have any flights, please select a different Airport!</div>
                                         </div>
                                     )}
@@ -333,7 +333,7 @@ const AllFlightsPage: React.FC = () => {
                                         <div>Please select a Airport!</div>
                                     ) : (
                                         <div className="d-flex flex-column gap-2">
-                                            <div className="fw-semibold">[{selectedHub.code}] {selectedHub.name}</div>
+                                            <div className="fw-semibold">[{selectedHub.iata_code}] {selectedHub.name}</div>
                                             <div className="fw-normal">Does not have any flights, please select a different Airport!</div>
                                         </div>
                                     )}

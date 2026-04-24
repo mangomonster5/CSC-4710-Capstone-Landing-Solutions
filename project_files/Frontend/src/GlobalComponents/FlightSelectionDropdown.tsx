@@ -27,7 +27,7 @@ const FlightSelectionDropdown: React.FC<FlightSelectionDropdownProps> = ({ handl
                 ) : (
                     <>
                         {allAirports.map((airport: Airport) => (
-                            <li key={airport.iata_code} onClick={() => handleSelection({ iata_code: airport.iata_code, name: airport.name, city: airport.city } as Airport)} style={{ cursor: "pointer" }}>
+                            <li key={airport.iata_code} onClick={() => handleSelection(airport)} style={{ cursor: "pointer" }}>
                                 <div className="dropdown-item">
                                     <span className="fw-bold">[{airport.iata_code}]</span> {airport.name}
                                 </div>
