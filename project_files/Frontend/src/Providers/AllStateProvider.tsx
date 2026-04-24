@@ -23,6 +23,8 @@ function AllStateProvider({ children }: { children: any }) {
     const [allAircrafts, setAllAircrafts] = useState<allAircrafts | undefined>(undefined)
     const [allFlights, setAllFlights] = useState<allFlights>(generateFlights())
 
+    const [selectedSimDay, setSelectedSimDay] = useState(1)
+
     if (allFlights !== null) {
         localStorage.setItem("AllFlightsArray", JSON.stringify(allFlights));
     }
@@ -109,6 +111,9 @@ function AllStateProvider({ children }: { children: any }) {
 
         allAircrafts,
         setAllAircrafts,
+
+        selectedSimDay,
+        setSelectedSimDay,
 
         user,
         setUser,

@@ -1,13 +1,14 @@
 // Author: Sean Harder
 
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ModalComponent from "../GlobalComponents/ModalComponent";
 import FlightSelectionDropdown from "../GlobalComponents/FlightSelectionDropdown";
 import HubDropdown from "../GlobalComponents/HubDropdown";
 import useAllStateContext from "../context/useAllStateContext";
 import GetAircraftInfo from "../utils/GetAircraftInfo";
 import GetAirportInfoFromFlight from "../utils/GetAirportInfoFromFlight";
+
 
 
 type flightDirection = {
@@ -24,22 +25,29 @@ type flightDirection = {
 const AllFlightsPage: React.FC = () => {
     // selection for which table we display
     const [flightDirection, setFlightDirection] = useState('arrival')
-    const { allFlights, allAirports, allAircrafts } = useAllStateContext();
+    const { allFlights, allAirports, allAircrafts, setAllFlights, selectedSimDay } = useAllStateContext();
 
     const [modalIsOpen, setModalIsOpen] = useState(false)
+    const [purchaseTicketModalIsOpen, setPurchaseTicketModalIsOpen] = useState(false)
+
+
     const [selectedFlightModalObject, setSelectedFlightModalObject] = useState<Flight | undefined>(undefined)
     const [selectedHub, setSelectedHub] = useState<Hub | undefined>(undefined)
+
+
+    const [numberOfTicketsToPurchase, setNumberOfTicketsToPurchase] = useState(0)
+    const [loadingPurchase, setLoadingPurchase] = useState<'loading' | 'successful' | 'error' | 'none'>('none')
 
 
     // Mapping over the state with all the flights in it, filtering by this
     // - Get Airport Info for that flight, we put false since we want to display where they came from
     // - Get all the flights that have the same iata_code as the currently selected hub
-    const arrivalsList = allFlights[0].filter((flight: Flight) => GetAirportInfoFromFlight(allAirports, flight, false)?.iata_code === selectedHub?.code)
+    const arrivalsList = allFlights[selectedSimDay - 1].filter((flight: Flight) => GetAirportInfoFromFlight(allAirports, flight, false)?.iata_code === selectedHub?.code)
 
     // Mapping over the state with all the flights in it, filtering by this
     // - Get Airport Info for that flight, we put true since we wnat to display where they are going
     // - Get all the flights that have the same iata_code as the currently selected hub
-    const departuresList = allFlights[0].filter((flight: Flight) => GetAirportInfoFromFlight(allAirports, flight, true)?.iata_code === selectedHub?.code)
+    const departuresList = allFlights[selectedSimDay + 1].filter((flight: Flight) => GetAirportInfoFromFlight(allAirports, flight, true)?.iata_code === selectedHub?.code)
 
     // a status map for indicator color
     const statusColorMap: Record<string, string> = {
@@ -89,6 +97,109 @@ const AllFlightsPage: React.FC = () => {
         // This reset the selected obj to prevent crashes and reset ui
         setSelectedFlightModalObject(undefined);
     }
+
+
+    // This function is called when the user closes or dismisses the modal
+    const handleCloseTicketModal = () => {
+        // Closes the modal
+        setNumberOfTicketsToPurchase(0)
+        setPurchaseTicketModalIsOpen(false)
+        setLoadingPurchase('none')
+    }
+
+    const usFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+    });
+
+
+
+    const handleIncrementNumberOfTickets = () => {
+        if (selectedFlightModalObject?.passenger_count! + numberOfTicketsToPurchase < GetAircraftInfo(allAircrafts, selectedFlightModalObject!)!.capacity!) {
+            setNumberOfTicketsToPurchase(numberOfTicketsToPurchase + 1)
+        }
+    }
+
+    const handleDecrementNumberOfTickets = () => {
+        if (0 < numberOfTicketsToPurchase) {
+            setNumberOfTicketsToPurchase(numberOfTicketsToPurchase - 1)
+        }
+    }
+
+    const handleSuccssfulUpdate = () => {
+
+        setLoadingPurchase("successful");
+        setModalIsOpen(false)
+        setPurchaseTicketModalIsOpen(false)
+        setSelectedFlightModalObject(undefined)
+
+        setAllFlights((prev: Flight[][]) => {
+            const dayIndex = selectedSimDay - 1;
+
+            return prev.map((dayFlights, i) => {
+                if (i !== dayIndex) return dayFlights;
+
+                return dayFlights.map((flight) => {
+                    if (flight.flight_id !== selectedFlightModalObject?.flight_id) {
+                        return flight;
+                    }
+
+                    return {
+                        ...flight,
+                        passenger_count:
+                            flight.passenger_count + numberOfTicketsToPurchase,
+                    };
+                });
+            });
+        });
+
+
+    }
+
+    const handleConfirmPurchase = async () => {
+        setLoadingPurchase("loading");
+
+        if (!selectedFlightModalObject) return;
+
+        const flightId = selectedFlightModalObject.flight_id;
+
+        try {
+            const res = await fetch(
+                `http://localhost:5001/UpdateFlightPassengers/${flightId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        passenger_count: numberOfTicketsToPurchase
+                    })
+                }
+            );
+
+            const data = await res.json();
+
+            console.log(data);
+            setTimeout(() => {
+                handleSuccssfulUpdate()
+
+                setTimeout(() => {
+                    setLoadingPurchase('none')
+                }, 2500);
+            }, 500);
+
+
+        } catch (err) {
+            console.error(err);
+            setLoadingPurchase("error");
+        }
+    };
+
+
+
+
+
 
 
     return (
@@ -243,7 +354,7 @@ const AllFlightsPage: React.FC = () => {
                     <>
                         {/* Does a check for TypeScript to make sure selectedFlightModalObject is set to something, handles crashes */}
                         {selectedFlightModalObject != null && (
-                            
+
                             // This block displays the orgin and destination the IATA_code stacked on top of the city
                             <div className="text-center">
                                 <div className=" d-flex justify-content-center gap-2 align-items-center pt-3">
@@ -264,8 +375,8 @@ const AllFlightsPage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                
-                                
+
+
                                 <div className="d-flex justify-content-center gap-2 align-items-center py-3 mb-3 border-bottom">
                                     {/* This block shows the scheduled time stacked on top of the actual time for departing */}
                                     <div className="d-flex flex-column text-start w-50 px-5">
@@ -364,11 +475,149 @@ const AllFlightsPage: React.FC = () => {
                 }
                 footer={
                     <>
-                        <button className="btn btn-secondary" onClick={() => handleCloseModal()}>Cancel</button>
-                        <button className="btn btn-success">Buy Flight</button>
+                        <button className="btn btn-secondary" onClick={handleCloseModal}>Close</button>
+                        <button className="btn btn-success" onClick={() => setPurchaseTicketModalIsOpen(true)}>Buy Tickets</button>
                     </>
                 }
             />
+
+
+            {/* Buy plane ticket modal */}
+            <ModalComponent
+                isOpen={purchaseTicketModalIsOpen}
+                setIsOpen={setPurchaseTicketModalIsOpen}
+                title={`${selectedFlightModalObject?.flight_num} - Panther Cloud Air`}
+                onDismiss={() => handleCloseTicketModal()}
+                body={
+                    <>
+                        {selectedFlightModalObject != null && (
+
+                            // This block displays the orgin and destination the IATA_code stacked on top of the city
+                            <div className="text-center" style={{ height: '500px' }}>
+                                <div className=" d-flex justify-content-center gap-2 align-items-center pt-3 border-bottom pb-3">
+                                    <div className="d-flex flex-column  w-50">
+                                        <div className="fw-semibold fs-5">{GetAirportInfoFromFlight(allAirports, selectedFlightModalObject, true)?.iata_code}</div>
+                                        <div>{GetAirportInfoFromFlight(allAirports, selectedFlightModalObject, true)?.city}</div>
+                                    </div>
+
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                                        </svg>
+                                    </div>
+
+                                    <div className="d-flex flex-column w-50">
+                                        <div className="fw-semibold fs-5">{GetAirportInfoFromFlight(allAirports, selectedFlightModalObject, false)?.iata_code}</div>
+                                        <div>{GetAirportInfoFromFlight(allAirports, selectedFlightModalObject, false)?.city}</div>
+                                    </div>
+                                </div>
+
+
+
+                                <div className="d-flex justify-content-center gap-2 align-items-center pb-5 mt-5 border-bottom px-5">
+                                    <div className="d-flex flex-column text-start w-25">
+                                        {numberOfTicketsToPurchase > 0 ? (
+                                            <button className="border border-dark rounded" onClick={() => handleDecrementNumberOfTickets()}>-</button>
+                                        ) : (
+                                            <div></div>
+                                        )}
+                                    </div>
+
+                                    <div className="d-flex justify-content-center w-100 text-center w-100">
+                                        <div className="d-flex flex-column">
+                                            <div>Passangers</div>
+                                            <div className="fs-5 d-flex gap-2">
+                                                <span>{selectedFlightModalObject.passenger_count + numberOfTicketsToPurchase}</span>
+                                                <span>/</span>
+                                                <span>{GetAircraftInfo(allAircrafts, selectedFlightModalObject)?.capacity}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="d-flex flex-column text-start w-25">
+                                        {selectedFlightModalObject.passenger_count + numberOfTicketsToPurchase < GetAircraftInfo(allAircrafts, selectedFlightModalObject)?.capacity! ? (
+                                            <button className="border border-dark rounded" onClick={() => handleIncrementNumberOfTickets()}>+</button>
+                                        ) : (
+                                            <div></div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="d-flex justify-content-center gap-2 align-items-center py-3 border-bottom">
+                                    <div className="d-flex flex-column text-start w-50 px-5">
+                                        <div className="d-flex justify-content-between gap-2">
+                                            <div className="fw-medium">Number of Tickets:</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="d-flex flex-column w-50 px-5">
+                                        <div className="d-flex justify-content-end gap-2 align-items-center">
+                                            {numberOfTicketsToPurchase}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="d-flex justify-content-center gap-2 align-items-center py-3 border-bottom">
+                                    <div className="d-flex flex-column text-start w-50 px-5">
+                                        <div className="d-flex justify-content-between gap-2">
+                                            <div className="fw-medium">Ticket Price:</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="d-flex flex-column w-50 px-5">
+                                        <div className="d-flex justify-content-end gap-2 align-items-center">
+                                            {usFormatter.format(selectedFlightModalObject.ticket_price!)} + {numberOfTicketsToPurchase} = {usFormatter.format(numberOfTicketsToPurchase * selectedFlightModalObject.ticket_price!)}
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        )}
+                    </>
+                }
+                footer={
+                    <>
+                        <button className="btn btn-secondary" onClick={() => handleCloseTicketModal()}>Cancel</button>
+                        {loadingPurchase === 'successful' ? (
+                            <div></div>
+                        ) : (
+                            <>
+                                <button className="btn btn-success" style={{ width: '180px', height: '36px' }} onClick={() => handleConfirmPurchase()}>
+                                    {/* <button className="btn btn-success" disabled={numberOfTicketsToPurchase === 0} style={{ width: '180px', height: '36px' }} onClick={() => handleConfirmPurchase()}> */}
+                                    {loadingPurchase === 'loading'
+                                        ? <div className="d-flex gap-4 justify-content-center">
+                                            <div className="spinner-grow" style={{ height: '10px', width: '10px' }} role="status"></div>
+                                            <div className="spinner-grow" style={{ height: '10px', width: '10px' }} role="status"></div>
+                                            <div className="spinner-grow" style={{ height: '10px', width: '10px' }} role="status"></div>
+                                        </div>
+                                        : 'Confirm Purchase'
+                                    }
+                                </button>
+                            </>
+                        )}
+                    </>
+                }
+            />
+
+
+            {loadingPurchase === 'successful' && (
+                <div
+                    className="toast align-items-center text-bg-success  border-0 show position-fixed bottom-0 end-0 m-3"
+                    role="alert"
+                    aria-live="assertive"
+                    aria-atomic="true"
+                >
+                    <div className="d-flex">
+                        <div className="toast-body fw-semibold">
+                            Your purchase was successful!
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
         </div>
     );
 }
