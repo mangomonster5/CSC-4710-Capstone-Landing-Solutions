@@ -584,8 +584,7 @@ const AllFlightsPage: React.FC = () => {
                             <div></div>
                         ) : (
                             <>
-                                <button className="btn btn-success" style={{ width: '180px', height: '36px' }} onClick={() => handleConfirmPurchase()}>
-                                    {/* <button className="btn btn-success" disabled={numberOfTicketsToPurchase === 0} style={{ width: '180px', height: '36px' }} onClick={() => handleConfirmPurchase()}> */}
+                                <button className="btn btn-success" disabled={numberOfTicketsToPurchase === 0} style={{ width: '180px', height: '36px' }} onClick={() => handleConfirmPurchase()}>
                                     {loadingPurchase === 'loading'
                                         ? <div className="d-flex gap-4 justify-content-center">
                                             <div className="spinner-grow" style={{ height: '10px', width: '10px' }} role="status"></div>
