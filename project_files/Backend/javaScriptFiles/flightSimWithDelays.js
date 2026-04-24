@@ -30,6 +30,73 @@ const sendFlight = async (from, to) => {
     }
 }
 
+    // arrival time offset based on timezones
+    const TZ_OFFSET = {
+    ATL: 0,
+    AUS: -1,
+    BNA: -1,
+    BOS: 0,
+    BWI: 0,
+    CDG: 6,
+    CLT: 0,
+    DCA: 0,
+    DEN: -2,
+    DFW: -1,
+    DTW: 0,
+    EWR: 0,
+    FLL: 0,
+    IAD: 0,
+    IAH: -1,
+    JFK: 0,
+    LAS: -3,
+    LAX: -3,
+    LGA: 0,
+    MCO: 0,
+    MIA: 0,
+    MSP: -1,
+    ORD: -1,
+    PHL: 0,
+    PHX: -2,
+    SAN: -3,
+    SEA: -3,
+    SFO: -3,
+    SLC: -2,
+    TPA: 0
+    };
+
+    function toEasternMinutes(airportCode, localMinutes) {
+    return localMinutes - (TZ_OFFSET[airportCode] * 60);
+    }
+
+    function fromEasternMinutes(airportCode, easternMinutes) {
+    return easternMinutes + (TZ_OFFSET[airportCode] * 60);
+    }
+
+    function normalizeMinutes(mins) {
+    const day = 24 * 60;
+    let result = mins % day;
+    if (result < 0) result += day;
+    return result;
+    }
+
+    function isAirportOpen(localMinutes) {
+    const t = normalizeMinutes(localMinutes);
+    return t >= 5 * 60 || t <= 1 * 60;
+    }
+
+    function minutesToLocalDateTime(day, totalMinutes) {
+    const baseDay = new Date(`2026-01-${pad(day)}T00:00:00`);
+    baseDay.setMinutes(totalMinutes);
+
+    const year = baseDay.getFullYear();
+    const month = pad(baseDay.getMonth() + 1);
+    const date = pad(baseDay.getDate());
+    const hour = pad(baseDay.getHours());
+    const minute = pad(baseDay.getMinutes());
+
+    return `${year}-${month}-${date} ${hour}:${minute}:00`;
+    }
+
 const airportIdMap = {
   ATL: 1, DFW: 2, DEN: 3, ORD: 4, LAX: 5, JFK: 6, CLT: 7,
   LAS: 8, MCO: 9, MIA: 10, PHX: 11, SEA: 12, SFO: 13,
@@ -37,22 +104,6 @@ const airportIdMap = {
   DTW: 20, PHL: 21, SLC: 22, BWI: 23, IAD: 24, SAN: 25,
   DCA: 26, TPA: 27, BNA: 28, AUS: 29, HNL: 30, CDG: 31
 };
-let aircraftIdMap = {};
-
-function loadAircraftMap() {
-  return new Promise((resolve, reject) => {
-    db.all("SELECT aircraft_id, tail_num FROM aircraft", [], (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        rows.forEach(row => {
-          aircraftIdMap[row.tail_num] = row.aircraft_id;
-        });
-        resolve();
-      }
-    });
-  });
-}
 
 function insertFlight(record) {
   const sql = `
@@ -74,9 +125,10 @@ function insertFlight(record) {
       departure_fee,
       arrival_fee,
       fuel_burned,
+      fuel_cost,
       operating_cost,
       ticket_price
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -97,6 +149,7 @@ function insertFlight(record) {
     record.departure_fee,
     record.arrival_fee,
     record.fuel_burned,
+    record.fuel_cost,
     record.operating_cost,
     record.ticket_price
   ];
@@ -120,6 +173,18 @@ const fleet = Airline.preloadFleet();
 const flight = new Flight();
 const costs = new Costs();
 let currentDay = 1;
+
+// -------------------------
+// aircraft map id
+// -------------------------
+let aircraftIdMap = {};
+
+function buildAircraftMap() {
+    aircraftIdMap = {};
+    fleet.forEach((plane, index) => {
+        aircraftIdMap[plane.getTail()] = index + 1;
+    });
+}
 
 // -------------------------
 // READLINE SETUP
@@ -157,7 +222,6 @@ function menu() {
 // -------------------------
 
 const DAY_START_MINUTES = 5 * 60;             // 5:00 AM
-const LAST_ARRIVAL_MINUTES = 23 * 60 + 30;    // 11:30 PM latest allowed arrival
 const DOOR_CLOSE_BUFFER = 15;                 // door closes 15 min before departure
 const BOARDING_TIME = 15;                     // simple boarding window
 const TURNAROUND_MINUTES = 40;                // minimum turnaround
@@ -231,7 +295,7 @@ function reserveGateInterval(schedule, airportCode, gateLabel, start, end) {
 function findFeasibleSlot({
   origin,
   destination,
-  targetDepart,
+  targetDepartLocal,
   flightMinutes,
   delayMinutes,
   gateSchedule,
@@ -239,25 +303,34 @@ function findFeasibleSlot({
 }) {
   const turnaround = TURNAROUND_MINUTES + (needsRefuel ? REFUEL_EXTRA_MINUTES : 0);
 
-  for (let departMinute = targetDepart; departMinute <= LAST_ARRIVAL_MINUTES; departMinute += TIME_STEP) {
-    const scheduledDepart = departMinute;
-    const scheduledArrival = scheduledDepart + flightMinutes;
+  // search in ORIGIN local time
+  for (let localDepart = targetDepartLocal; localDepart <= 25 * 60; localDepart += TIME_STEP) {
+    const scheduledDepartLocal = localDepart;
+    const actualDepartLocal = scheduledDepartLocal + delayMinutes;
 
-    const actualDepart = scheduledDepart + delayMinutes;
-    const actualArrival = actualDepart + flightMinutes;
+    // convert departure into shared Eastern/internal reference
+    const scheduledDepartEastern = toEasternMinutes(origin, scheduledDepartLocal);
+    const actualDepartEastern = toEasternMinutes(origin, actualDepartLocal);
 
-    // keep all arrivals on the same day and before 11:30 PM
-    if (actualArrival > LAST_ARRIVAL_MINUTES) {
-      continue;
-    }
+    // add flight time in shared internal reference
+    const scheduledArrivalEastern = scheduledDepartEastern + flightMinutes;
+    const actualArrivalEastern = actualDepartEastern + flightMinutes;
 
-    // origin gate occupied before pushback
-    const departureGateStart = scheduledDepart - BOARDING_TIME - DOOR_CLOSE_BUFFER;
-    const departureGateEnd = actualDepart;
+    // convert arrival into DESTINATION local time
+    const scheduledArrivalLocal = fromEasternMinutes(destination, scheduledArrivalEastern);
+    const actualArrivalLocal = fromEasternMinutes(destination, actualArrivalEastern);
 
-    // destination gate occupied once aircraft reaches gate through turnaround
-    const arrivalGateStart = actualArrival;
-    const arrivalGateEnd = actualArrival + turnaround;
+    // airport hours are checked in LOCAL airport time
+    if (!isAirportOpen(scheduledDepartLocal)) continue;
+    if (!isAirportOpen(actualArrivalLocal)) continue;
+
+    // departure gate usage in ORIGIN local time
+    const departureGateStart = scheduledDepartLocal - BOARDING_TIME - DOOR_CLOSE_BUFFER;
+    const departureGateEnd = actualDepartLocal;
+
+    // arrival gate usage in DESTINATION local time
+    const arrivalGateStart = actualArrivalLocal;
+    const arrivalGateEnd = actualArrivalLocal + turnaround;
 
     const departureGate = findAvailableGate(origin, departureGateStart, departureGateEnd, gateSchedule);
     const arrivalGate = findAvailableGate(destination, arrivalGateStart, arrivalGateEnd, gateSchedule);
@@ -267,10 +340,10 @@ function findFeasibleSlot({
       reserveGateInterval(gateSchedule, destination, arrivalGate, arrivalGateStart, arrivalGateEnd);
 
       return {
-        scheduledDepartMinutes: scheduledDepart,
-        scheduledArrivalMinutes: scheduledArrival,
-        actualDepartMinutes: actualDepart,
-        actualArrivalMinutes: actualArrival,
+        scheduledDepartLocal,
+        scheduledArrivalLocal,
+        actualDepartLocal,
+        actualArrivalLocal,
         departureGate,
         arrivalGate
       };
@@ -280,13 +353,65 @@ function findFeasibleSlot({
   return null;
 }
 
+// put into aircraft table
+
+function insertAircraftSnapshots(simDay) {
+  const sql = `
+    INSERT OR REPLACE INTO aircraft (
+      aircraft_id,
+      sim_day,
+      tail_num,
+      model,
+      capacity,
+      max_speed,
+      current_airport_id,
+      flight_hours,
+      hours_since_maint,
+      hours_until_maint,
+      status
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  fleet.forEach((plane) => {
+    const aircraftId = aircraftIdMap[plane.getTail()];
+    const currentAirportId = airportIdMap[plane.getLocation()] ?? null;
+
+    const flightHours = plane.getHours();
+
+    const hoursSinceMaint = plane.getHours();
+    const hoursUntilMaint = Math.max(0, 200 - hoursSinceMaint);
+
+    const status = plane.available() ? "Available" : "Maintenance";
+
+    const values = [
+      aircraftId,
+      simDay,
+      plane.getTail(),
+      plane.getModel(),
+      plane.getSeats(),
+      plane.getMaxSpeed(),
+      currentAirportId,
+      flightHours,
+      hoursSinceMaint,
+      hoursUntilMaint,
+      status
+    ];
+
+    db.run(sql, values, (err) => {
+      if (err) {
+        console.error(`Aircraft snapshot insert error for ${plane.getTail()}:`, err.message);
+      }
+    });
+  });
+}
+
 // -------------------------
 // FLY PLANE
 // -------------------------
 function simluateCurrentDay() {
 
     // Max number of flights per day
-    const MAX_FLIGHTS_PER_DAY = 250;
+    const MAX_FLIGHTS_PER_DAY = 300;
 
     const allAirports = [
         "ATL", "DFW", "DEN", "ORD", "LAX", "JFK", "CLT", "LAS", "MCO", "MIA",
@@ -329,21 +454,33 @@ function simluateCurrentDay() {
         .slice(0, Math.max(0, MAX_FLIGHTS_PER_DAY - requiredCoverageRoutes.length))
         .map(item => item.route);
 
-    const currentDayRoutes = [...requiredCoverageRoutes, ...extraRoutes];
+    let currentDayRoutes = [...requiredCoverageRoutes, ...extraRoutes];
+    //ensures daily JFK<->CDG flights
+    const parisOutbound = dayRoutes.find(r => r.from === "JFK" && r.to === "CDG");
+    const parisInbound = dayRoutes.find(r => r.from === "CDG" && r.to === "JFK");
+
+    currentDayRoutes = currentDayRoutes.filter(r =>
+    !(r.from === "JFK" && r.to === "CDG") &&
+    !(r.from === "CDG" && r.to === "JFK")
+    );
+
+    const parisRoutes = [];
+    if (parisOutbound) parisRoutes.push(parisOutbound);
+    if (parisInbound) parisRoutes.push(parisInbound);
+
+    currentDayRoutes = [...parisRoutes, ...currentDayRoutes];
 
     const gateSchedule = {};
-    let scheduledFlightIndex = 0;
-
-    const spacingMinutes = Math.max(
-    3,
-     Math.floor((LAST_ARRIVAL_MINUTES - DAY_START_MINUTES) / Math.max(1, currentDayRoutes.length))
-    );
 
     //console.log(currentDayRoutes);
     let i = 0;
 
-    //sets used planes to a set so that we can keep using new planes for each flight
-    const usedPlanes = new Set();
+    // track when each aircraft can be used again during the day
+    const nextAvailableTime = {};
+    fleet.forEach(p => {
+        nextAvailableTime[p.getTail()] = DAY_START_MINUTES;
+    });
+
     let failedPlaneTail = null;
 
 // DAY 11 AIRCRAFT FAILURE
@@ -365,7 +502,7 @@ function simluateCurrentDay() {
 
         failedPlane.setUnavailable();
         failedPlane.startMaintenance(currentDay);
-        usedPlanes.add(failedPlane.getTail());
+        nextAvailableTime[failedPlane.getTail()] = Infinity;
     }
 }
 
@@ -406,34 +543,58 @@ function simluateCurrentDay() {
         const intl = (from === "CDG" || dest === "CDG");
 
         ///PLANE SELECTION
-        let selected; 
+        let candidatePlanes;
 
-        //makes it set to designsted intl plane for the trip
-        //OR picks the next plane
-        if(intl){
-            selected = fleet.find(p => p.getModel() === "Airbus A350-1000");
-        }else{
-            //makes sure the plane is at the right location, available, and no previously used
-            selected = fleet.find(p => p.available() && 
-            p.getLocation() === from && 
-            !usedPlanes.has(p));
+        // Paris flights must use the A350-1000
+        if (
+            (from === "JFK" && dest === "CDG") ||
+            (from === "CDG" && dest === "JFK")
+        ) {
+            candidatePlanes = fleet
+                .filter(p =>
+                    p.getModel() === "Airbus A350-1000" &&
+                    p.getLocation() === from &&
+                    p.available()
+                )
+                .sort((a, b) =>
+                    (nextAvailableTime[a.getTail()] ?? DAY_START_MINUTES) -
+                    (nextAvailableTime[b.getTail()] ?? DAY_START_MINUTES)
+                );
+
+            if (candidatePlanes.length === 0) {
+                console.log(`*** SKIPPING: No available A350 for ${from} -> ${dest} ***`);
+                i++;
+                continue;
+            }
+        } else {
+            candidatePlanes = fleet
+                .filter(p =>
+                    p.getLocation() === from &&
+                    p.available()
+                )
+                .sort((a, b) =>
+                    (nextAvailableTime[a.getTail()] ?? DAY_START_MINUTES) -
+                    (nextAvailableTime[b.getTail()] ?? DAY_START_MINUTES)
+                );
+
+            if (candidatePlanes.length === 0) {
+                i++;
+                continue;
+            }
         }
 
-        if(!selected){
-            //if no plane unused, just pick the first best one
-            selected = fleet.find(p => p.available() && 
-            p.getLocation() === from);
-        }
+        // pick the earliest-ready aircraft at this airport
+        let selected = candidatePlanes[0];
 
-        if(!selected){
-            i++;
-            continue;
-        }
+        // depart as soon as that plane is actually ready
+        const targetDepartLocal = Math.max(
+            DAY_START_MINUTES,
+            nextAvailableTime[selected.getTail()] ?? DAY_START_MINUTES
+        );
 
-        // Fly plane and set it to "used"
+        // Fly plane
         const miles = Airport.flyAircraft(from, dest);
         const fuelNeed = flight.fuelNeeded(miles, selected.getModel());
-        usedPlanes.add(selected);
         
         // Generate random 3 or 4 digit flight number
         const flightNumber = Math.floor(Math.random() * (9999 - 100 + 1)) + 100;
@@ -561,6 +722,17 @@ function simluateCurrentDay() {
             selected.getSeats()
         );
 
+        const fuelCost = from === "CDG"
+        ? costs.fuel_eu(fuelNeed * 3.78541)
+        : costs.fuel_us(fuelNeed);
+
+        const departureFee = from === "CDG"
+        ? costs.airport_eu(1)
+        : costs.airport_us(1);
+
+        const arrivalFee = dest === "CDG"
+        ? costs.airport_eu(1)
+        : costs.airport_us(1);
        
 
         //PRINT OF ALL INFO
@@ -588,12 +760,10 @@ function simluateCurrentDay() {
         continue;
         }
 
-        const targetDepart = DAY_START_MINUTES + (scheduledFlightIndex * spacingMinutes);
-
         const slot = findFeasibleSlot({
         origin: from,
         destination: dest,
-        targetDepart,
+        targetDepartLocal,
         flightMinutes: Math.round(finalFlightTime),
         delayMinutes,
         gateSchedule,
@@ -605,11 +775,10 @@ function simluateCurrentDay() {
         i++;
         continue;
         }
-
-        const scheduledDepart = minutesToDateTime(currentDay, slot.scheduledDepartMinutes);
-        const scheduledArrival = minutesToDateTime(currentDay, slot.scheduledArrivalMinutes);
-        const actualDepart = minutesToDateTime(currentDay, slot.actualDepartMinutes);
-        const actualArrival = minutesToDateTime(currentDay, slot.actualArrivalMinutes);
+        const scheduledDepart = minutesToLocalDateTime(currentDay, slot.scheduledDepartLocal);
+        const scheduledArrival = minutesToLocalDateTime(currentDay, slot.scheduledArrivalLocal);
+        const actualDepart = minutesToLocalDateTime(currentDay, slot.actualDepartLocal);
+        const actualArrival = minutesToLocalDateTime(currentDay, slot.actualArrivalLocal);
 
         // store departure gate for frontend use
         const assignedGate = slot.departureGate;
@@ -629,68 +798,67 @@ function simluateCurrentDay() {
         delay_minutes: delayMinutes,
         gate: assignedGate,
         flight_distance: miles,
-        departure_fee: 2000,
-        arrival_fee: 2000,
+        departure_fee: departureFee,
+        arrival_fee: arrivalFee,
         fuel_burned: fuelNeed,
+        fuel_cost: fuelCost,
         operating_cost: flightCost,
         ticket_price: ticketPrice
         };
 
         insertFlight(flightRecord);
-        scheduledFlightIndex++;
-                
+
         //sets plane to have updated values
         selected.setLocation(dest);
-        selected.updateHours(finalFlightTime);  
-                
-        //MAINTENANCE SECTION
+        selected.updateHours(finalFlightTime);
 
-        //check if plane needs to go into maintence
-        if(selected.needsMaintenance()){
+        // aircraft can be reused after arrival + turnaround
+        const turnaroundMinutes = TURNAROUND_MINUTES + (needFuel ? REFUEL_EXTRA_MINUTES : 0);
+        nextAvailableTime[selected.getTail()] = slot.actualArrivalLocal + turnaroundMinutes;
+                
+        // MAINTENANCE SECTION
+        if (selected.needsMaintenance()) {
             console.log(`*** Aircraft ${selected.getTail()} needs to be sent for maintence***`);
 
-            // gets the plane back to the hub if not already
-            if(selected.getLocation() === selected.getHub()){
+            if (selected.getLocation() === selected.getHub()) {
                 console.log("Placing aircraft in maintence area.");
                 selected.setUnavailable();
-            }else{
+                selected.startMaintenance(currentDay);
+                nextAvailableTime[selected.getTail()] = Infinity;
+
+            } else {
                 console.log("Flying plane back to hub");
 
                 from = selected.getLocation();
                 dest = selected.getHub();
 
-                // Fly plane
-                    const miles = Airport.flyAircraft(from, dest);
-                    const fuelNeed = flight.fuelNeeded(miles, selected.getModel());
+                const miles = Airport.flyAircraft(from, dest);
+                const fuelNeed = flight.fuelNeeded(miles, selected.getModel());
 
-                    let needFuel = false;
-
-                    if (selected.getFuel() < fuelNeed) {
-                        needFuel = true;
-                        // add fuel to reach full capacity, not just overwrite
-                        const refueled = flight.refuel(selected.getModel());
-                        console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
-                        selected.updateFuel(refueled);
-                    }
-
-                    selected.updateFuel(selected.getFuel() - fuelNeed);
-
-                    console.log("\n=== Flight Information ===");
-                    console.log(`Aircraft ${selected.getTail()} flew from ${from} to ${dest}`)
-
-                    selected.setLocation(dest);
-
-                    console.log("Placing aircraft in maintence area.");
-
-                    //sets the plane unavailable and maintenance days
-                    selected.setUnavailable();
-                    selected.startMaintenance(currentDay)
+                if (selected.getFuel() < fuelNeed) {
+                    const refueled = flight.refuel(selected.getModel());
+                    console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
+                    selected.updateFuel(refueled);
                 }
+
+                selected.updateFuel(selected.getFuel() - fuelNeed);
+
+                console.log("\n=== Flight Information ===");
+                console.log(`Aircraft ${selected.getTail()} flew from ${from} to ${dest}`);
+
+                selected.setLocation(dest);
+
+                console.log("Placing aircraft in maintence area.");
+
+                selected.setUnavailable();
+                selected.startMaintenance(currentDay);
+                nextAvailableTime[selected.getTail()] = Infinity;
+            }
         }
         i++; //increase i in order to go to the next flight
     } //end maintenance stuff
 
-
+    insertAircraftSnapshots(currentDay);
     menu();
 
 } //end of flying the plane
@@ -796,11 +964,6 @@ function decreaseDay(){
 }//end of increaseDay
 
 // -------------------------
-loadAircraftMap()
-  .then(() => {
-    console.log("Aircraft map loaded.");
-    menu();
-  })
-  .catch(err => {
-    console.error("Failed to load aircraft map:", err);
-  });
+buildAircraftMap();
+console.log("Aircraft map loaded.");
+menu();

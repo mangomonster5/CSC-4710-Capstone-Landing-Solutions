@@ -150,17 +150,12 @@ class Flight {
         total += 1; //taxi time on dparting runway
 
         const alt = this.cruiseAltitude(intl, mi);
-        total += this.climbTime(alt);
 
         total += this.flyingTime(mi, spd, hdg, alt);
-
-        total += this.descentTime(alt);
 
         total += 2; //taxi time on landing runway
 
         total += this.taxi(dPop, dHub);
-
-        total += this.turn(needFuel);
 
         return total; //MINUTES
     }
