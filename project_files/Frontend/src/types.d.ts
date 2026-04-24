@@ -67,8 +67,6 @@ declare global {
     actual_depart?: string | null;
     actual_arrival?: string | null;
 
-    iata_code: string;
-
     passenger_count: number;
     flight_status: string;
     delay_minutes: number;

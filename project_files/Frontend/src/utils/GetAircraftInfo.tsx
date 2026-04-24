@@ -4,11 +4,9 @@
 // Once the aircraft is found, the entire aircraft object is returned allowing you to deconstruct values like aircraft.capacity
 
 const GetAircraftInfo = (aircrafts: Aircraft[], flight: Flight): Aircraft | undefined => {
-    if (flight == null) return
+    if (flight == null || aircrafts == null) return
 
-    const aircraftId = flight.aircraft_id
-
-    return aircrafts.find(a => a.aircraft_id === aircraftId);
+    return aircrafts.find(a => a.aircraft_id === flight.aircraft_id);
 
 };
 
