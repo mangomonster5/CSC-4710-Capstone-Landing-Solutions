@@ -29,6 +29,18 @@ function AllStateProvider({ children }: { children: any }) {
         localStorage.setItem("AllFlightsArray", JSON.stringify(allFlights));
     }
 
+    const usFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+    });
+
+        const numberFormatter = new Intl.NumberFormat('en-US', {
+        style: 'decimal',
+        maximumFractionDigits: 0
+    });
+
+
 
 
     // ValueToShare definition to pass into provider
@@ -44,6 +56,9 @@ function AllStateProvider({ children }: { children: any }) {
 
         selectedSimDay,
         setSelectedSimDay,
+
+        usFormatter,
+        numberFormatter,
 
         user,
         setUser,
