@@ -313,7 +313,7 @@ const AdminPage: React.FC = () => {
                                 <div>-</div>
 
                                 <div>
-                                    <div className="text-start fw-medium">Departure Fees</div>
+                                    <div className="text-start fw-medium">Arrival Fees</div>
                                     <div className="fw-medium fs-5 text-start text-danger">{departureFee == null ? 'None' : usFormatter.format(departureFee)}</div>
                                 </div>
 
