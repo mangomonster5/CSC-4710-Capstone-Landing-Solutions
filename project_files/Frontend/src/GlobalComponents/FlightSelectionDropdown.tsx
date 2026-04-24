@@ -1,13 +1,10 @@
 import React, { ReactNode } from 'react';
-
 interface FlightSelectionDropdownProps {
-    excludeCode?: string; // STILL TESTING 
     handleSelection: (selection: any) => void
     body: ReactNode;
 }
 
-const FlightSelectionDropdown: React.FC<FlightSelectionDropdownProps> = ({ excludeCode, handleSelection, body }) => {
-
+const FlightSelectionDropdown: React.FC<FlightSelectionDropdownProps> = ({ handleSelection, body }) => {
     const airports = [
         { code: "ATL", name: "Hartsfield-Jackson Atlanta International", city: "Atlanta, GA" },
         { code: "DFW", name: "Dallas/Fort Worth International", city: "Dallas/Fort Worth, TX" },
@@ -41,23 +38,30 @@ const FlightSelectionDropdown: React.FC<FlightSelectionDropdownProps> = ({ exclu
         { code: "HNL", name: "Daniel K. Inouye International", city: "Honolulu, HI" },
         { code: "CDG", name: "Charles de Gaulle", city: "Paris, France" }
     ];
-
+    
     return (
-
-        <>
-            {body}
-
-            {airports.filter((airport) => airport.code !== excludeCode).map((airport) => (
-                <div
-                    key={airport.code}
-                    onClick={() => handleSelection({ code: airport.code, name: airport.name, city: airport.city })}
-                    style={{ cursor: "pointer" }}
-                >
-                    [{airport.code}] {airport.name}
-                </div>
-            ))}
-        </>
-    );
-};
-
+        <div className="dropdown ">
+            <div
+                className="card d-flex flex-column no-i-cursor gap-1 dropdown-toggle text-wrap"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                style={{ cursor: 'pointer' }}
+            >
+                {body}
+            </div>
+            <ul
+                className="dropdown-menu p-0"
+                style={{ maxHeight: '200px', overflowY: 'auto' }}
+            >
+                {airports.map((airport) => (
+                    <li key={airport.code} onClick={() => handleSelection({ code: airport.code, name: airport.name, city: airport.city })} style={{ cursor: "pointer" }}>
+                        <div className="dropdown-item">
+                            <span className="fw-bold">[{airport.code}]</span> {airport.name}
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    )
+}
 export default FlightSelectionDropdown;

@@ -3,7 +3,6 @@
 
 import { useRef, useState } from "react";
 import ModalComponent from "../GlobalComponents/ModalComponent";
-import FlightSelectionDropdown from "../GlobalComponents/FlightSelectionDropdown";
 import HubDropdown from "../GlobalComponents/HubDropdown";
 import useAllStateContext from "../context/useAllStateContext";
 import GetAircraftInfo from "../utils/GetAircraftInfo";
