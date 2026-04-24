@@ -55,7 +55,6 @@ const FlightSelectionPage: React.FC = () => {
                 <div style={{ width: '350px' }}>
                     <div>From</div>
                     <FlightSelectionDropdown
-                        excludeCode={to?.code}
                         handleSelection={(selection: any) => { setFrom(selection); }}
                         body={
                             <>
@@ -76,7 +75,6 @@ const FlightSelectionPage: React.FC = () => {
                 <div style={{ width: '350px' }}>
                     <div>To</div>
                     <FlightSelectionDropdown
-                        excludeCode={from?.code}
                         handleSelection={(selection: any) => { setTo(selection); }}
                         body={
                             <>
