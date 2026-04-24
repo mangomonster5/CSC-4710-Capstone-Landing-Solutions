@@ -41,7 +41,7 @@ const AllFlightsPage: React.FC = () => {
     // Mapping over the state with all the flights in it, filtering by this
     // - Get Airport Info for that flight, we put false since we want to display where they came from
     // - Get all the flights that have the same iata_code as the currently selected hub
-    const arrivalsList = allFlights?.[selectedSimDay]?.filter((flight: Flight) => {
+    const arrivalsList = allFlights?.[selectedSimDay - 1]?.filter((flight: Flight) => {
         const airport = GetAirportInfoFromFlight(allAirports, flight, false);
         return airport?.iata_code === selectedHub?.code;
     }) ?? [];
@@ -50,7 +50,7 @@ const AllFlightsPage: React.FC = () => {
     // - Get Airport Info for that flight, we put true since we wnat to display where they are going
     // - Get all the flights that have the same iata_code as the currently selected hub
     const departuresList =
-        allFlights?.[selectedSimDay]?.filter((flight: Flight) => {
+        allFlights?.[selectedSimDay - 1]?.filter((flight: Flight) => {
             const airport = GetAirportInfoFromFlight(allAirports, flight, true);
             return airport?.iata_code === selectedHub?.code;
         }) ?? [];
@@ -126,7 +126,7 @@ const AllFlightsPage: React.FC = () => {
 
 
     const handleIncrementNumberOfTickets = () => {
-        if (selectedFlightModalObject?.passenger_count! + numberOfTicketsToPurchase < GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject!)!.capacity!) {
+        if (selectedFlightModalObject?.passenger_count! + numberOfTicketsToPurchase < GetAircraftInfo(allAircrafts[selectedSimDay - 1], selectedFlightModalObject!)!.capacity!) {
             setNumberOfTicketsToPurchase(numberOfTicketsToPurchase + 1)
         }
     }
@@ -145,7 +145,7 @@ const AllFlightsPage: React.FC = () => {
         setSelectedFlightModalObject(undefined)
 
         setAllFlights((prev: Flight[][]) => {
-            const dayIndex = selectedSimDay;
+            const dayIndex = selectedSimDay - 1;
 
             return prev.map((dayFlights, i) => {
                 if (i !== dayIndex) return dayFlights;
@@ -446,7 +446,7 @@ const AllFlightsPage: React.FC = () => {
                                         <div className="d-flex justify-content-start gap-2">
                                             <div>{selectedFlightModalObject.passenger_count}</div>
                                             <div>/</div>
-                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.capacity ?? 'N/A'}</div>
+                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay - 1], selectedFlightModalObject)?.capacity ?? 'N/A'}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -460,7 +460,7 @@ const AllFlightsPage: React.FC = () => {
 
                                     <div className="d-flex flex-column text-start w-50 px-5">
                                         <div className="d-flex justify-content-between gap-2">
-                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.model ?? 'N/A'}</div>
+                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay - 1], selectedFlightModalObject)?.model ?? 'N/A'}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -474,7 +474,7 @@ const AllFlightsPage: React.FC = () => {
 
                                     <div className="d-flex flex-column text-start w-50 px-5">
                                         <div className="d-flex justify-content-between gap-2">
-                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.tail_num ?? 'N/A'}</div>
+                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay - 1], selectedFlightModalObject)?.tail_num ?? 'N/A'}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -487,7 +487,7 @@ const AllFlightsPage: React.FC = () => {
                     <>
                         <button className="btn btn-secondary" onClick={handleCloseModal}>Close</button>
                         {!(
-                            GetAircraftInfo(allAircrafts?.[selectedSimDay], selectedFlightModalObject!)
+                            GetAircraftInfo(allAircrafts?.[selectedSimDay - 1], selectedFlightModalObject!)
                                 ?.capacity === selectedFlightModalObject?.passenger_count
                         ) && (
                                 <button
@@ -549,13 +549,13 @@ const AllFlightsPage: React.FC = () => {
                                             <div className="fs-5 d-flex gap-2">
                                                 <span>{selectedFlightModalObject.passenger_count + numberOfTicketsToPurchase}</span>
                                                 <span>/</span>
-                                                <span>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.capacity}</span>
+                                                <span>{GetAircraftInfo(allAircrafts[selectedSimDay - 1], selectedFlightModalObject)?.capacity}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="d-flex flex-column text-start w-25">
-                                        {selectedFlightModalObject.passenger_count + numberOfTicketsToPurchase < GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.capacity! ? (
+                                        {selectedFlightModalObject.passenger_count + numberOfTicketsToPurchase < GetAircraftInfo(allAircrafts[selectedSimDay - 1], selectedFlightModalObject)?.capacity! ? (
                                             <button className="border border-dark rounded" onClick={() => handleIncrementNumberOfTickets()}>+</button>
                                         ) : (
                                             <div></div>
