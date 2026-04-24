@@ -1,0 +1,23 @@
+January 12-17:
+This week we received the project and learned our strengths and weaknesses as a team and divvied up who would be working on what parts on the code based on those strengths. With my background in data science, I took on the database part of this project with its design and implementation. 
+
+January 18-31:
+During this time, I wanted to ensure we all understood the scope of the project, so I created that Canva whiteboard with all information about the project and its vast requirements. This Canva workshop included a high level system architecture, the path of information going from the simulation to the database and then into the front end, as well as all of the specific numbers or cost metrics going forward. I also finalized my initial design of the ERD diagram for our database. This was the more informative database, having a specific table for everything from taxi minutes to passenger information. I would learn later that this approach might have been beyond the scope of the project but this was my rough draft of the database architecture design. 
+
+February 1-14
+These two weeks I was mainly working on deliverables for the project. We had our walkthrough and project plan during this time period, so it was finalizing and presenting that walkthrough of the work we did the first couple of weeks and proposing the project plan. During the walkthrough, I touched on the scope and our understanding of the project as that's what I became very familiar with during the start. Same for the project plan deliverable, I wrote the introduction and project goals and scope. 
+
+February 15-27:
+This week I wrote out the code for the database and all of its tables. I did run into some troubles getting all the tables relationships connected which then later led me to redesigning it but I was still trying to get that table to work. The other week was Spring Break and I didn’t contribute to the project that much, but I made sure I was still working to ensure we were ready for our walkthrough
+
+March 1-14:
+This week we had our second walkthrough and requirements document so I worked on the non-functional requirements for the document and also presented on the relational database as well as some of the connections to the database. I also was finalizing some of the code for that first draft of the database
+
+March 15-28:
+During this time period, I sat with Sean for about 2.5 hours in the lounge to redesign the database so its simpler and matched the scope of the project as well as realigning ourselves with how the rest of the project was going to be finished. How each of our codes would be connected together to reach the final product. We also had our Walkthrough #3 which we showed off some of the front end work of the project. I didn’t have much of that but I still contributed to my team and the project whenever possible. 
+
+March 29-April 11:
+This time period, I ensured that all the tables for the database were correct and connected with Finley and Jimi to start populating the database. I had initially manually uploaded all the airports and airplanes tables and then worked with Finley on outputting the results of the simulation from the terminal to the tables. We then had our first couple of populations of the database, and I made some tweaks like breaking down the costs in the database so the front end could use that breakdown. I also wrote out the code for the passenger demand model and how we would be scoring the various flights too. These became the backbone for our flight scheduler in the simulation. 
+
+April 12-24:
+This time period was our final walk through so presenting the backend code for our project. I talked about the new database code as well as the demand and scoring files. I then worked on finalizing the rest of the project. I helped out with the simulation, adding other features like ensuring planes could be used multiple times in a day, accounting for local timezones when landing, and updating the airplanes table so it reflected what was happening in the simulation, and not just static. Lastly I prepared the pitch to the client. 
