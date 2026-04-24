@@ -717,11 +717,6 @@ function simluateCurrentDay() {
             dest === "CDG"
         );
 
-        const ticketPrice = costs.ticketPrice(
-            flightCost,
-            selected.getSeats()
-        );
-
         const fuelCost = from === "CDG"
         ? costs.fuel_eu(fuelNeed * 3.78541)
         : costs.fuel_us(fuelNeed);
@@ -734,21 +729,6 @@ function simluateCurrentDay() {
         ? costs.airport_eu(1)
         : costs.airport_us(1);
        
-
-        //PRINT OF ALL INFO
-
-        console.log("\n=== Flight #", i, "Information ==="); 
-        console.log("Flight Number:", flightNumber);       
-        console.log(`Aircraft ${selected.getTail()} flew from ${from} to ${dest}`);
-        console.log(`Distance: ${miles.toFixed(2)} miles`);
-        console.log(`Cruise altitude: ${cruiseAlt} ft`);
-        console.log(`Departure delay: ${delayMinutes} minutes`);
-        console.log(`Scenario: ${scenarioNote}`);
-        console.log(`Flight time: ${Math.floor(finalFlightTime / 60)}h ${Math.floor(finalFlightTime % 60)}m`);
-        console.log(`Fuel used: ${fuelNeed.toFixed(2)} gallons`);
-        //console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
-        console.log(`Cost: $${flightCost.toFixed(2)}`);
-        console.log(`Ticket Price: $${ticketPrice.toFixed(2)} per seat`);
         
         // INSERT INTO DATABASE
         const selectedTail = selected.getTail();
@@ -783,6 +763,38 @@ function simluateCurrentDay() {
         // store departure gate for frontend use
         const assignedGate = slot.departureGate;
 
+        // -------------------------
+        // PASSENGER COUNT / PRICING
+        // -------------------------
+
+        const maxSeats = selected.getSeats();
+
+        // random load factor between 90% and 95%
+        const loadFactor = 0.90 + Math.random() * 0.05;
+
+        const passengerCount = Math.round(maxSeats * loadFactor);
+
+        // pricing still assumes 30% full
+        const pricingPassengers = Math.max(1, Math.round(maxSeats * 0.30));
+        const ticketPrice = flightCost / pricingPassengers;
+
+        //PRINT OF ALL INFO
+
+        console.log("\n=== Flight #", i, "Information ==="); 
+        console.log("Flight Number:", flightNumber);       
+        console.log(`Aircraft ${selected.getTail()} flew from ${from} to ${dest}`);
+        console.log(`Distance: ${miles.toFixed(2)} miles`);
+        console.log(`Cruise altitude: ${cruiseAlt} ft`);
+        console.log(`Departure delay: ${delayMinutes} minutes`);
+        console.log(`Scenario: ${scenarioNote}`);
+        console.log(`Flight time: ${Math.floor(finalFlightTime / 60)}h ${Math.floor(finalFlightTime % 60)}m`);
+        console.log(`Fuel used: ${fuelNeed.toFixed(2)} gallons`);
+        //console.log(`Refueling ${selected.getTail()} with ${refueled - selected.getFuel()} gallons`);
+        console.log(`Cost: $${flightCost.toFixed(2)}`);
+        console.log(`Ticket Price: $${ticketPrice.toFixed(2)} per seat`);
+
+        // BUILD RECORD
+
         const flightRecord = {
         flight_num: String(flightNumber),
         sim_day: currentDay,
@@ -793,7 +805,7 @@ function simluateCurrentDay() {
         scheduled_arrival: scheduledArrival,
         actual_depart: actualDepart,
         actual_arrival: actualArrival,
-        passenger_count: selected.getSeats(),
+        passenger_count: passengerCount,
         flight_status: delayMinutes > 0 ? "Delayed" : "On Time",
         delay_minutes: delayMinutes,
         gate: assignedGate,
