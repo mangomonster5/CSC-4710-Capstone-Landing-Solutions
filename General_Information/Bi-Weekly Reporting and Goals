@@ -1,17 +1,78 @@
-1/26/26: Prototype 1 with focus on simulation
+<u>**1/26/26: Prototype 1 with focus on simulation**<u>
 
-2/9/26: Complete database with all tables populated
+The team held its first official meeting on January 13th, establishing roles, team name, and communication infrastructure. Kamryn Wagner was designated Project Leader, Jack Jaramillo as Quality Assurance Manager, Sean Harder as Documentation Specialist, and Finley Myers and Jimi Adegoroye as Principal Developers. GitHub, Discord, Google Calendar, and ClickUp were all configured and shared across the team. Work sessions on January 22nd and 23rd began active development: Finley started building the basic flight simulation including cost and speed outputs, Jimi organized backend files and enhanced cost calculations, Jack began designing the relational database schema targeting the top 30 U.S. airports and one Paris airport, and Sean outlined the frontend architecture and began setting up React routing. Kamryn coordinated all planning, managed the ClickUp schedule, and began work on the Project Plan. By January 26th, the team had completed Prototype 1 with a functional focus on simulation logic, planned all future sprint cycles, and produced a detailed UI wireframe for the client.
 
-2/20/26: Security audit using bcrypt already implemented in server and database
+> Prototype 1 complete (simulation focus) 
+> Team roles, tools, and schedule established
+> Flight simulation prototype running with cost/speed outputs
+> Relational database schema drafted
+> Backend being written in C++ — identified as incompatible with JS/React frontend; decision made to rewrite in JavaScript
+> Airport selection logic and hub assignment still to be finalized
 
-3/2/26: Start Employee Window
+<u>**2/9/26: Complete database with all tables populated**<u>
 
-3/9/26: Start Admin Window
+The team held multiple sessions during this period focused on completing the Project Plan deliverable and continuing backend development. Sean created the full document outline and formatting template for the Project Plan, making it easier for the team to divide and complete sections. Kamryn completed the project goals, schedule, and delivery plan sections. Jack completed the project scope and introduction. Finley completed hardware/software requirements. Jimi completed his work breakdown and contributed to backend risk identification. The Project Plan was submitted by the due date. Jack formally built out the relational database with all tables created in SQLite, though no data was populated yet. The team also joined ClickUp together, adding all group assignments, deliverables, and individual tasks for tracking. A team debrief on February 9th assessed errors in the Project Plan and outlined next steps, specifically that Docker needed to be configured and passenger demand modeling needed to begin.
 
-3/12/26: Add Airbus A350 to fleet with aircraft table updated, lease cost model extended
+> Complete database with all tables populated — February 9, 2026
+> Project Plan submitted on time
+> ClickUp project tracking fully configured
+> All team members aligned on development pipeline
+> Docker configuration not yet complete — assigned as priority for next period
+> Passenger demand model still in planning phase
 
-3/23/26: Complete Employee Window
+<u>**2/20/26: Security audit using bcrypt already implemented in server and database**<u>
 
-4/9/26: Complete Admin Window 
+This period focused on preparation for Walkthrough 2 and internal security planning. On February 17th, the team met to assign walkthrough sections and discuss what needed to be completed before and after spring break. Kamryn led the schedule re-orientation and organized updated task assignments in Discord and ClickUp. The team discussed and formally documented security measures for the login system, specifically outlining rules and regulations for secure login implementation. The high-level system model for Walkthrough 2 was designed in Canva. The requirements document was divided and each member completed their assigned sections. A formal security audit was conducted confirming bcrypt was already implemented in the server and database — fulfilling client requirements from Sarah's February 11th announcement before it was even formally requested.
+
+> Security audit complete — bcrypt already implemented in server.js and database
+> Walkthrough 2 preparation underway
+> Requirements document sections assigned and completed
+> Notebook documentation identified as insufficient — corrective action taken
+> Use case diagrams flagged as missing from prior submission
+
+<u>**3/2/26: Start Employee Window**<u>
+
+The team returned from spring break with momentum on the frontend and documentation. On March 4th and 5th, the team split walkthrough 2 deliverable responsibilities and met with the client to clarify calculation and simulation details, specifically around hub functions. On March 9th, a major client meeting clarified the entire project scope — the Pilot user role was officially removed, leaving only Employee and Admin, and Kamryn was specifically assigned to build the authentication system. The Employee Window frontend work formally began this period. Kamryn started the login page, set up Docker on her local device, and coordinated frontend task assignments with Sean. The team also discussed how to break down the User Manual for future submission. Walkthrough 2 was delivered with the relational database model, system application model, and flight/plane information walkthrough.
+
+> Employee Window (frontend) started 
+> Client clarification: two user types only (Employee, Admin)
+> Kamryn assigned to and began building auth system
+> Walkthrough 2 delivered
+> Docker configuration issues on device — main file not updating in real time; resolved with rebuild commands
+> Pilot user role formally removed from system design
+
+<u>**3/9/26: Start Admin Window**<u>
+
+This was a high-output period for the frontend and documentation. The Admin Window was formally started on March 9th. On March 12th, the client announced the addition of the Airbus A350 to the fleet — the aircraft table was updated and the lease cost model was extended to include the new aircraft type at $290,000/month. The team held meetings on March 17th and 19th to coordinate the User Manual, with Sean creating and sharing the document template and all members contributing their assigned sections. Kamryn completed the bulk of the login page (without endpoint creation at this stage) and reassigned some frontend page responsibilities to ensure coverage. Docker issues were resolved using updated CLI commands shared in Discord. The User Manual was submitted, with team reviewing and providing critique of other members' sections before final submission. The team also discussed ticket pricing logic and how it would be displayed in the simulation.
+
+> Admin Window started 
+> Airbus A350 added to fleet model — March 12, 2026
+> User Manual submitted
+> Login page bulk complete
+> Docker live update issue — resolved with rebuild commands and scripting 
+> User Manual required additional images of UI screens
+
+<u>**3/12/26: Add Airbus A350 to fleet with aircraft table updated, lease cost model extended**<u>
+
+The Employee Window was completed by March 23rd, encompassing the Flight Info page, Flight Selection page, and login functionality. The team held meetings on March 26th and 30th to review UI progress, connect backend and frontend systems, and prepare for Walkthrough 3. Sean was tasked with setting up API request handling on the server side, while Kamryn researched Docker and further developed the login system. On March 30th the team began building Walkthrough 3 together, with all members contributing ideas. The client installation was confirmed for April 8th. On April 7th the team met to clarify simulation algorithms, fix a GitHub merge error, and establish task deadlines before installation. The Admin Window was completed by April 9th.
+
+> Employee Window soon to be complete 
+> Admin Window soon to be complete 
+> Client installation prep
+> GitHub merge error resolved
+> Walkthrough 3 delivered
+> Backend and frontend connection still being finalized
+> Greedy algorithm flagged by client for potential investigation
+
+<u>**3/23/26: Complete Employee Window**<u>
+**&**
+<u>**4/9/26: Complete Admin Window **<u>
+
+The final period of the project focused on integration, documentation, and simulation validation. Kamryn and Jack met on April 13th to divide final documentation responsibilities and create a comprehensive to-do list for the week. The full team convened on April 16th to begin the Final Design Document together, going through all requirements systematically. Final simulation tests were run to validate all 14 days of data, confirm financial calculations, and ensure the frontend correctly pulled and displayed data across all pages. The Flight Info search, Flight Selection booking flow, and Admin controls were all integration-tested. The final presentation pitch was assembled. All remaining documentation including the Final Design Document was completed and submitted on April 23rd.
+
+> Final integration and documentation complete — April 23, 2026
+> Last simulation tests passed
+> Final Design Document submitted
+> Final pitch presentation assembled
 
 4/23/26: Final Integration and documentation, last simulation tests
