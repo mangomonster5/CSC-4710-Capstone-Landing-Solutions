@@ -357,10 +357,10 @@ const AdminPage: React.FC = () => {
                 <div className="rounded-bottom border-bottom border-black">
                     {allAircrafts != null ? (
                         <>
-                            {allAircrafts[selectedSimDay]
+                            {allAircrafts[selectedSimDay -1]
                                 .sort((aircraftA: Aircraft, aircraftB: Aircraft) => aircraftA.aircraft_id - aircraftB.aircraft_id)
                                 .map((aircraft: Aircraft, index: any) =>
-                                    <div key={index} className={`d-flex border-start border-end ${allAircrafts[selectedSimDay].length - 1 !== index && 'border-bottom'} border-dark py-3 px-3 fw-medium`}>
+                                    <div key={index} className={`d-flex border-start border-end ${allAircrafts[selectedSimDay - 1].length - 1 !== index && 'border-bottom'} border-dark py-3 px-3 fw-medium`}>
                                         <div className="fw-semibold" style={{ width: '75px' }}>{aircraft.aircraft_id}</div>
                                         <div className="text-muted" style={{ width: '160px' }}>{aircraft.tail_num}</div>
                                         <div className="text-muted" style={{ width: '250px' }}>{aircraft.model}</div>
