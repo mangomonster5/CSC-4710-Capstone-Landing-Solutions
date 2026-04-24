@@ -14,8 +14,8 @@ import FlightSelectionDropdown from "../GlobalComponents/FlightSelectionDropdown
 const FlightSelectionPage: React.FC = () => {
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [from, setFrom] = useState<{ code: string, name: string, city: string } | null>(null);
-    const [to, setTo] = useState<{ code: string, name: string, city: string } | null>(null);
+    const [from, setFrom] = useState<Airport | null>(null);
+    const [to, setTo] = useState<Airport | null>(null);
 
     // *
     // storing selected dates as strings
@@ -61,7 +61,7 @@ const FlightSelectionPage: React.FC = () => {
                                 {from ? (
                                     <>
                                         <div className="fw-semibold">{from.name}</div>
-                                        <div>[{from.code}] - {from.city}</div>
+                                        <div>[{from.iata_code}] - {from.city}</div>
                                     </>
                                 ) : (
                                     <div className="d-flex align-items-center" style={{ height: '54px' }}>Please Select an Airport</div>
@@ -75,13 +75,13 @@ const FlightSelectionPage: React.FC = () => {
                 <div style={{ width: '350px' }}>
                     <div>To</div>
                     <FlightSelectionDropdown
-                        handleSelection={(selection: any) => { setTo(selection); }}
+                        handleSelection={(selection: Airport) => { setTo(selection); }}
                         body={
                             <>
                                 {to ? (
                                     <>
                                         <div className="fw-semibold">{to.name}</div>
-                                        <div>[{to.code}] - {to.city}</div>
+                                        <div>[{to.iata_code}] - {to.city}</div>
                                     </>
                                 ) : (
                                     <div className="d-flex align-items-center" style={{ height: '54px' }}>Please Select an Airport</div>
