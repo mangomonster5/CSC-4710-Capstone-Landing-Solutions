@@ -24,7 +24,7 @@ type flightDirection = {
 const AllFlightsPage: React.FC = () => {
     // selection for which table we display
     const [flightDirection, setFlightDirection] = useState('arrival')
-    const { allFlights, allAirports, allAircrafts, setAllFlights, selectedSimDay } = useAllStateContext();
+    const { allFlights, allAirports, allAircrafts, setAllFlights, selectedSimDay, usFormatter} = useAllStateContext();
 
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [purchaseTicketModalIsOpen, setPurchaseTicketModalIsOpen] = useState(false)
@@ -117,11 +117,6 @@ const AllFlightsPage: React.FC = () => {
         setLoadingPurchase('none')
     }
 
-    const usFormatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 0
-    });
 
 
 

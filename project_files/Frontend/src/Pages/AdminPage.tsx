@@ -5,7 +5,7 @@ import GetAirportInfoFromAircraft from "../utils/GetAirportInfoFromAircraft";
 
 
 const AdminPage: React.FC = () => {
-    const { allFlights, allAircrafts, allAirports, selectedSimDay, setSelectedSimDay } = useAllStateContext()
+    const { allFlights, allAircrafts, allAirports, selectedSimDay, setSelectedSimDay, usFormatter, numberFormatter } = useAllStateContext()
 
 
 
@@ -15,19 +15,6 @@ const AdminPage: React.FC = () => {
 
         return numberFormatter.format(NumberOfMaxHours - aircraftHoursLeft)
     }
-
-
-    const usFormatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 0
-    });
-
-
-    const numberFormatter = new Intl.NumberFormat('en-US', {
-        style: 'decimal',
-        maximumFractionDigits: 0
-    });
 
 
     const [selectedRevenue, setSelectedRevenue] = useState<'overall' | 'day' | 'avg flight'>('overall')
