@@ -14,6 +14,8 @@ const HubDropdown: React.FC<HubDropdownProps> = ({ selectedHub, setSelectedHub, 
 
     const {allAirports} = useAllStateContext()
 
+    if (allAirports == null) return
+
     return (
         <div className="dropdown d-flex align-items-center">
             <div

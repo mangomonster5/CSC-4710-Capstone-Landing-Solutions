@@ -262,7 +262,7 @@ const AllFlightsPage: React.FC = () => {
                                     <div key={i} className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium ${selectedFlightModalObject?.flight_id === flight.flight_id && 'fw-bold'} ${arrivalsList.length - 1 === i && 'rounded-bottom'}`} style={{ background: selectedFlightModalObject?.flight_id === flight.flight_id ? '#cccccc' : '' }}>
                                         <div className="text-muted" style={{ width: '450px' }}>{'[' + GetAirportInfoFromFlight(allAirports, flight, true)?.iata_code + '] - ' + GetAirportInfoFromFlight(allAirports, flight, true)?.city}</div>
                                         <div className="text-muted" style={{ width: '200px' }}>{displayArrivialFlightTime(flight)}</div>
-                                        <div className="text-muted" style={{ width: '250px' }}>{flight.flight_num}</div>
+                                        <div className="text-muted" style={{ width: '250px' }}>PCA{flight.flight_num}</div>
                                         <div className="text-muted" style={{ width: '150px' }}>{flight.gate}</div>
                                         <div className="text-muted d-flex align-items-center gap-2  fw-normal" style={{ width: '250px' }}>
                                             <div
@@ -307,7 +307,7 @@ const AllFlightsPage: React.FC = () => {
                                     <div key={i} className={`d-flex border-start border-end border-bottom border-dark py-3 px-3 fw-medium ${selectedFlightModalObject?.flight_id === flight.flight_id && 'fw-bold'} ${arrivalsList.length - 1 === i && 'rounded-bottom'}`} style={{ background: selectedFlightModalObject?.flight_id === flight.flight_id ? '#cccccc' : '' }}>
                                         <div className="text-muted" style={{ width: '450px' }}>{'[' + GetAirportInfoFromFlight(allAirports, flight, false)?.iata_code + '] - ' + GetAirportInfoFromFlight(allAirports, flight, false)?.city}</div>
                                         <div className="text-muted" style={{ width: '200px' }}>{displayDepartureFlightTime(flight)}</div>
-                                        <div className="text-muted" style={{ width: '250px' }}>{flight.flight_num}</div>
+                                        <div className="text-muted" style={{ width: '250px' }}>PCA{flight.flight_num}</div>
                                         <div className="text-muted" style={{ width: '150px' }}>{flight.gate}</div>
                                         <div className="text-muted d-flex align-items-center gap-2 fw-normal" style={{ width: '250px' }}>
                                             <div
@@ -353,7 +353,7 @@ const AllFlightsPage: React.FC = () => {
             <ModalComponent
                 isOpen={modalIsOpen}
                 setIsOpen={setModalIsOpen}
-                title={`${selectedFlightModalObject?.flight_num} - Panther Cloud Air`}
+                title={`PCA${selectedFlightModalObject?.flight_num} - Panther Cloud Air`}
                 onDismiss={() => handleCloseModal()}
                 body={
                     <>
@@ -501,7 +501,7 @@ const AllFlightsPage: React.FC = () => {
             <ModalComponent
                 isOpen={purchaseTicketModalIsOpen}
                 setIsOpen={setPurchaseTicketModalIsOpen}
-                title={`${selectedFlightModalObject?.flight_num} - Panther Cloud Air`}
+                title={`PCA${selectedFlightModalObject?.flight_num} - Panther Cloud Air`}
                 onDismiss={() => handleCloseTicketModal()}
                 body={
                     <>
