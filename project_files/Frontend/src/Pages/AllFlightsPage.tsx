@@ -50,10 +50,10 @@ const AllFlightsPage: React.FC = () => {
     // - Get Airport Info for that flight, we put true since we wnat to display where they are going
     // - Get all the flights that have the same iata_code as the currently selected hub
     const departuresList =
-    allFlights?.[selectedSimDay]?.filter((flight: Flight) => {
-        const airport = GetAirportInfoFromFlight(allAirports, flight, true);
-        return airport?.iata_code === selectedHub?.code;
-    }) ?? [];
+        allFlights?.[selectedSimDay]?.filter((flight: Flight) => {
+            const airport = GetAirportInfoFromFlight(allAirports, flight, true);
+            return airport?.iata_code === selectedHub?.code;
+        }) ?? [];
 
 
 
@@ -446,7 +446,7 @@ const AllFlightsPage: React.FC = () => {
                                         <div className="d-flex justify-content-start gap-2">
                                             <div>{selectedFlightModalObject.passenger_count}</div>
                                             <div>/</div>
-                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.capacity}</div>
+                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.capacity ?? 'N/A'}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -460,7 +460,7 @@ const AllFlightsPage: React.FC = () => {
 
                                     <div className="d-flex flex-column text-start w-50 px-5">
                                         <div className="d-flex justify-content-between gap-2">
-                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.model}</div>
+                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.model ?? 'N/A'}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -474,7 +474,7 @@ const AllFlightsPage: React.FC = () => {
 
                                     <div className="d-flex flex-column text-start w-50 px-5">
                                         <div className="d-flex justify-content-between gap-2">
-                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.tail_num}</div>
+                                            <div>{GetAircraftInfo(allAircrafts[selectedSimDay], selectedFlightModalObject)?.tail_num ?? 'N/A'}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -486,7 +486,17 @@ const AllFlightsPage: React.FC = () => {
                 footer={
                     <>
                         <button className="btn btn-secondary" onClick={handleCloseModal}>Close</button>
-                        <button className="btn btn-success" onClick={() => setPurchaseTicketModalIsOpen(true)}>Buy Tickets</button>
+                        {!(
+                            GetAircraftInfo(allAircrafts?.[selectedSimDay], selectedFlightModalObject!)
+                                ?.capacity === selectedFlightModalObject?.passenger_count
+                        ) && (
+                                <button
+                                    className="btn btn-success"
+                                    onClick={() => setPurchaseTicketModalIsOpen(true)}
+                                >
+                                    Buy Tickets
+                                </button>
+                            )}
                     </>
                 }
             />
