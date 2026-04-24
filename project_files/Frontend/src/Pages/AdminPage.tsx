@@ -366,7 +366,13 @@ const AdminPage: React.FC = () => {
                                         <div className="text-muted" style={{ width: '250px' }}>{aircraft.model}</div>
                                         <div className="text-muted" style={{ width: '150px' }}>{aircraft.capacity}</div>
                                         <div className="text-muted" style={{ width: '200px' }}>{aircraft.status}</div>
-                                        <div className="text-muted" style={{ width: '200px' }}>in {calculateHoursTillMaintaince(aircraft.hours_since_maint)} hours</div>
+                                        <div className="text-muted" style={{ width: '200px' }}>
+                                            {Number(calculateHoursTillMaintaince(aircraft.hours_since_maint)) > 1 ? (
+                                                <span>in {calculateHoursTillMaintaince(aircraft.hours_since_maint)} hours</span>
+                                            ) : (
+                                                <span>In Maintenance</span>
+                                            )}
+                                            </div>
                                         <div className="text-muted text-center" style={{ width: '100px' }}>
                                             <button className="rounded border" onClick={() => [setModalIsOpen(true), setSelectedAircraftModalObject(aircraft)]}>View</button>
                                         </div>
