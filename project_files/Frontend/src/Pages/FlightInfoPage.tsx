@@ -68,7 +68,7 @@ const FlightInfoPage: React.FC = () => {
 
         const q = query.trim().toLowerCase();
 
-        return todaysFlights.filter((f) => {
+        return todaysFlights.filter((f: Flight) => {
             const origin = GetAirportInfoFromFlight(allAirports ?? [], f, true);
             const dest   = GetAirportInfoFromFlight(allAirports ?? [], f, false);
             const ac     = aircraftMap[f.aircraft_id];

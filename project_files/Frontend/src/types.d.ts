@@ -56,7 +56,7 @@ declare global {
     flight_id: number;
     flight_num: string;
     sim_day: number;
-    flight_date: string; // ISO date string
+    // flight_date: string; // ISO date string
 
     origin_airport_id: number;
     destination_airport_id: number;
