@@ -54,9 +54,8 @@ const AdminPage: React.FC = () => {
                     }
                 })
         } else if (passedSelector === 'day') {
-            allFlights
+            allFlights[selectedSimDay - 1]
                 .flat()
-                .filter((flight: Flight) => flight.sim_day === selectedSimDay - 1)
                 .forEach((flight: Flight, index: any) => {
                     if (flight.ticket_price) {
                         revenue += flight.passenger_count * flight.ticket_price
@@ -94,9 +93,8 @@ const AdminPage: React.FC = () => {
                     }
                 })
         } else if (passedSelector === 'day') {
-            allFlights
+            allFlights[selectedSimDay - 1]
                 .flat()
-                .filter((flight: Flight) => flight.sim_day === selectedSimDay - 1)
                 .forEach((flight: Flight, index: any) => {
                     if (flight.fuel_cost) {
                         fuelCosts += flight.fuel_cost
@@ -132,9 +130,8 @@ const AdminPage: React.FC = () => {
                     }
                 })
         } else if (passedSelector === 'day') {
-            allFlights
+            allFlights[selectedSimDay - 1]
                 .flat()
-                .filter((flight: Flight) => flight.sim_day === selectedSimDay - 1)
                 .forEach((flight: Flight, index: any) => {
                     if (flight.departure_fee && flight.arrival_fee) {
                         departureFee += flight.departure_fee
@@ -344,7 +341,7 @@ const AdminPage: React.FC = () => {
                 <div className="rounded-bottom border-bottom border-black">
                     {allAircrafts != null ? (
                         <>
-                            {allAircrafts[selectedSimDay -1]
+                            {allAircrafts[selectedSimDay - 1]
                                 .sort((aircraftA: Aircraft, aircraftB: Aircraft) => aircraftA.aircraft_id - aircraftB.aircraft_id)
                                 .map((aircraft: Aircraft, index: any) =>
                                     <div key={index} className={`d-flex border-start border-end ${allAircrafts[selectedSimDay - 1].length - 1 !== index && 'border-bottom'} border-dark py-3 px-3 fw-medium`}>
@@ -359,7 +356,7 @@ const AdminPage: React.FC = () => {
                                             ) : (
                                                 <span>In Maintenance</span>
                                             )}
-                                            </div>
+                                        </div>
                                         <div className="text-muted text-center" style={{ width: '100px' }}>
                                             <button className="rounded border" onClick={() => [setModalIsOpen(true), setSelectedAircraftModalObject(aircraft)]}>View</button>
                                         </div>
