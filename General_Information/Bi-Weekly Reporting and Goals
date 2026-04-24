@@ -1,0 +1,17 @@
+1/26/26: Prototype 1 with focus on simulation
+
+2/9/26: Complete database with all tables populated
+
+2/20/26: Security audit using bcrypt already implemented in server and database
+
+3/2/26: Start Employee Window
+
+3/9/26: Start Admin Window
+
+3/12/26: Add Airbus A350 to fleet with aircraft table updated, lease cost model extended
+
+3/23/26: Complete Employee Window
+
+4/9/26: Complete Admin Window 
+
+4/23/26: Final Integration and documentation, last simulation tests
