@@ -5,7 +5,7 @@ import GetAirportInfoFromAircraft from "../utils/GetAirportInfoFromAircraft";
 
 
 const AdminPage: React.FC = () => {
-    const { allFlights, allAircrafts, allAirports } = useAllStateContext()
+    const { allFlights, allAircrafts, allAirports, selectedSimDay, setSelectedSimDay } = useAllStateContext()
 
 
 
@@ -38,8 +38,6 @@ const AdminPage: React.FC = () => {
     const [departureFee, setDepartureFee] = useState(0)
 
     const [revenueSelection, setRevenueSelection] = useState<'detailed' | 'simple'>('detailed')
-
-    const [selectedSimDay, setSelectedSimDay] = useState(1)
     const [selectedSimWeek, setSelectedSimWeek] = useState(1)
 
     const [modalIsOpen, setModalIsOpen] = useState(false)

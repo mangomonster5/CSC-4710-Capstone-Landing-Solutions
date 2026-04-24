@@ -67,5 +67,6 @@ CREATE TABLE all_flights (
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY,
   username TEXT UNIQUE,
-  password TEXT
+  password TEXT,
+  role TEXT
 );

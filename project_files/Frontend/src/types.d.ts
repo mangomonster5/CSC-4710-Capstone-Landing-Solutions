@@ -1,9 +1,14 @@
 //types.d.ts
+import "bootstrap";
 
-export { };
+
 
 declare global {
   type UserRole = "admin" | "manager" | "employee";
+
+  interface Window {
+    bootstrap: any;
+  }
 
   interface User {
     id?: string;
@@ -81,3 +86,4 @@ declare global {
 }
 
 
+export { };
