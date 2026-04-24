@@ -36,6 +36,30 @@ app.get('/api/test', (req, res) => {
 });
 
 
+// update flights passanger
+app.put('/UpdateFlightPassengers/:id', (req, res) => {
+    const { id } = req.params;
+    const { passenger_count } = req.body;
+
+    db.run(
+        `UPDATE all_flights 
+         SET passenger_count = passenger_count + ?
+         WHERE flight_id = ?`,
+        [passenger_count, id],
+        function (err) {
+            if (err) {
+                console.error("Update error:", err.message);
+                return res.status(500).json({ error: "Update failed" });
+            }
+
+            res.json({
+                message: "Passenger count updated",
+                changes: this.changes
+            });
+        }
+    );
+});
+
 
 // Frontend enpoint to get all flights
 app.get('/GetAllFlights', (req, res) => {
@@ -47,6 +71,7 @@ app.get('/GetAllFlights', (req, res) => {
         res.json(rows);
     });
 })
+
 
 
 // Frontend enpoint to get all airports
