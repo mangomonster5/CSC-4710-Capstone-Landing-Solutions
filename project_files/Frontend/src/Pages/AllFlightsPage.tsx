@@ -229,7 +229,7 @@ const AllFlightsPage: React.FC = () => {
                     selectedHub={selectedHub}
                     setSelectedHub={setSelectedHub}
                     body={
-                        <div className={`mainButton text-center ${selectedHub === undefined ? '' : 'fw-bold'}`}>{selectedHub === undefined ? 'Select Hub' : selectedHub.code}</div>
+                        <div className={`mainButton text-center ${selectedHub === undefined ? '' : 'fw-bold'}`}>{selectedHub === undefined ? 'Select Airport' : selectedHub.code}</div>
                     }
                 />
 
@@ -290,11 +290,11 @@ const AllFlightsPage: React.FC = () => {
                                 {/* If the hub IS selected there is a chance the hub has no arrivals */}
                                 <div className="py-3 border border-black rounded-bottom text-center fw-medium" style={{ background: '#e6e6e6' }}>
                                     {selectedHub == null ? (
-                                        <div>Please select a hub!</div>
+                                        <div>Please select a Airport!</div>
                                     ) : (
                                         <div className="d-flex flex-column gap-2">
                                             <div className="fw-semibold">[{selectedHub.code}] {selectedHub.name}</div>
-                                            <div className="fw-normal">Does not have any flights, please select a different hub!</div>
+                                            <div className="fw-normal">Does not have any flights, please select a different Airport!</div>
                                         </div>
                                     )}
                                 </div>
@@ -335,11 +335,11 @@ const AllFlightsPage: React.FC = () => {
                                 {/* If the hub IS selected there is a chance the hub has no arrivals */}
                                 <div className="py-3 border border-black rounded-bottom text-center fw-medium" style={{ background: '#e6e6e6' }}>
                                     {selectedHub == null ? (
-                                        <div>Please select a hub!</div>
+                                        <div>Please select a Airport!</div>
                                     ) : (
                                         <div className="d-flex flex-column gap-2">
                                             <div className="fw-semibold">[{selectedHub.code}] {selectedHub.name}</div>
-                                            <div className="fw-normal">Does not have any flights, please select a different hub!</div>
+                                            <div className="fw-normal">Does not have any flights, please select a different Airport!</div>
                                         </div>
                                     )}
                                 </div>
