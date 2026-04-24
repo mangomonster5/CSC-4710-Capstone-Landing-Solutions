@@ -341,7 +341,7 @@ const FlightSelectionPage: React.FC = () => {
             <ModalComponent
                 isOpen={modalIsOpen}
                 setIsOpen={setModalIsOpen}
-                title={`${selectedFlightModalObject?.flight_num} - Panther Cloud Air`}
+                title={`PCA${selectedFlightModalObject?.flight_num} - Panther Cloud Air`}
                 onDismiss={() => handleCloseModal()}
                 body={
                     <>
@@ -489,7 +489,7 @@ const FlightSelectionPage: React.FC = () => {
             <ModalComponent
                 isOpen={purchaseTicketModalIsOpen}
                 setIsOpen={setPurchaseTicketModalIsOpen}
-                title={`${selectedFlightModalObject?.flight_num} - Panther Cloud Air`}
+                title={`PCA${selectedFlightModalObject?.flight_num} - Panther Cloud Air`}
                 onDismiss={() => handleCloseTicketModal()}
                 body={
                     <>
