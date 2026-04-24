@@ -13,7 +13,7 @@ const AdminPage: React.FC = () => {
     const calculateHoursTillMaintaince = (aircraftHoursLeft: number) => {
         const NumberOfMaxHours = 200
 
-        return NumberOfMaxHours - aircraftHoursLeft
+        return numberFormatter.format(NumberOfMaxHours - aircraftHoursLeft)
     }
 
 
@@ -52,6 +52,7 @@ const AdminPage: React.FC = () => {
 
 
     const getRevenue = (passedSelector: 'overall' | 'day' | 'avg flight') => {
+        if (allFlights == null) return
         let revenue = 0;
         let passangerCount = 0;
 
@@ -93,6 +94,7 @@ const AdminPage: React.FC = () => {
     }
 
     const getOperationCost = (passedSelector: 'overall' | 'day' | 'avg flight') => {
+        if (allFlights == null) return
         let fuelCosts = 0;
 
 
@@ -128,6 +130,7 @@ const AdminPage: React.FC = () => {
     }
 
     const getHubFees = (passedSelector: 'overall' | 'day' | 'avg flight') => {
+        if (allFlights == null) return
         let arrivalFee = 0;
         let departureFee = 0;
 
@@ -354,20 +357,21 @@ const AdminPage: React.FC = () => {
                 <div className="rounded-bottom border-bottom border-black">
                     {allAircrafts != null ? (
                         <>
-                            {allAircrafts.map((aircraft: Aircraft, index: any) =>
-                                <div key={index} className={`d-flex border-start border-end ${allAircrafts.length - 1 !== index && 'border-bottom'} border-dark py-3 px-3 fw-medium`}>
-                                    {/* <div className="text-muted" style={{ width: '160px' }}>{aircraft.tail_num}</div> */}
-                                    <div className="fw-semibold" style={{ width: '75px' }}>{aircraft.aircraft_id}</div>
-                                    <div className="text-muted" style={{ width: '160px' }}>N1421A</div>
-                                    <div className="text-muted" style={{ width: '250px' }}>{aircraft.model}</div>
-                                    <div className="text-muted" style={{ width: '150px' }}>{aircraft.capacity}</div>
-                                    <div className="text-muted" style={{ width: '200px' }}>{aircraft.status}</div>
-                                    <div className="text-muted" style={{ width: '200px' }}>in {calculateHoursTillMaintaince(aircraft.hours_since_maint)} hours</div>
-                                    <div className="text-muted text-center" style={{ width: '100px' }}>
-                                        <button className="rounded border" onClick={() => [setModalIsOpen(true), setSelectedAircraftModalObject(aircraft)]}>View</button>
+                            {allAircrafts[selectedSimDay]
+                                .sort((aircraftA: Aircraft, aircraftB: Aircraft) => aircraftA.aircraft_id - aircraftB.aircraft_id)
+                                .map((aircraft: Aircraft, index: any) =>
+                                    <div key={index} className={`d-flex border-start border-end ${allAircrafts[selectedSimDay].length - 1 !== index && 'border-bottom'} border-dark py-3 px-3 fw-medium`}>
+                                        <div className="fw-semibold" style={{ width: '75px' }}>{aircraft.aircraft_id}</div>
+                                        <div className="text-muted" style={{ width: '160px' }}>{aircraft.tail_num}</div>
+                                        <div className="text-muted" style={{ width: '250px' }}>{aircraft.model}</div>
+                                        <div className="text-muted" style={{ width: '150px' }}>{aircraft.capacity}</div>
+                                        <div className="text-muted" style={{ width: '200px' }}>{aircraft.status}</div>
+                                        <div className="text-muted" style={{ width: '200px' }}>in {calculateHoursTillMaintaince(aircraft.hours_since_maint)} hours</div>
+                                        <div className="text-muted text-center" style={{ width: '100px' }}>
+                                            <button className="rounded border" onClick={() => [setModalIsOpen(true), setSelectedAircraftModalObject(aircraft)]}>View</button>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
                         </>
                     ) : (
                         <>
@@ -408,14 +412,12 @@ const AdminPage: React.FC = () => {
                                     </div>
                                 </div>
 
-
-
                                 <div className="d-flex justify-content-center gap-2 align-items-center py-3 border-bottom">
 
                                     <div className="d-flex flex-column text-start w-100 px-4">
                                         <div className="d-flex justify-content-between gap-2">
-                                            <div className="fw-medium">Aircraft At:</div>
-                                            <div>{GetAirportInfoFromAircraft(allAirports, selectedAircraftModalObject)?.name}</div>
+                                            <div className="fw-medium">Aircraft Num:</div>
+                                            <div>ID #{selectedAircraftModalObject.aircraft_id}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -435,8 +437,8 @@ const AdminPage: React.FC = () => {
 
                                     <div className="d-flex flex-column text-start w-100 px-4">
                                         <div className="d-flex justify-content-between gap-2">
-                                            <div className="fw-medium">Aircraft Num:</div>
-                                            <div>ID #{selectedAircraftModalObject.aircraft_id}</div>
+                                            <div className="fw-medium">Aircraft At:</div>
+                                            <div>{GetAirportInfoFromAircraft(allAirports, selectedAircraftModalObject)?.name}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -459,7 +461,7 @@ const AdminPage: React.FC = () => {
                                     <div className="d-flex flex-column text-start w-100 px-4">
                                         <div className="d-flex justify-content-between gap-2">
                                             <div className="fw-medium">Flight Hours:</div>
-                                            <div>{selectedAircraftModalObject.flight_hours} Hours</div>
+                                            <div>{numberFormatter.format(selectedAircraftModalObject.flight_hours)} Hours</div>
                                         </div>
                                     </div>
                                 </div>
