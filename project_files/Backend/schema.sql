@@ -11,16 +11,25 @@ CREATE TABLE airport (
 );
 
 -- Aircraft Table
+DROP TABLE IF EXISTS aircraft;
+
 CREATE TABLE aircraft (
-    aircraft_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    tail_num TEXT NOT NULL UNIQUE,
+    snapshot_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    aircraft_id INTEGER NOT NULL,
+    sim_day INTEGER NOT NULL,
+
+    tail_num TEXT NOT NULL,
     model TEXT NOT NULL,
     capacity INTEGER NOT NULL,
     max_speed REAL NOT NULL,
+
     current_airport_id INTEGER,
     flight_hours REAL DEFAULT 0,
     hours_since_maint REAL DEFAULT 0,
+    hours_until_maint REAL DEFAULT 200,
     status TEXT NOT NULL,
+
+    UNIQUE (aircraft_id, sim_day),
 
     FOREIGN KEY (current_airport_id)
         REFERENCES airport(airport_id)
