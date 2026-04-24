@@ -259,8 +259,11 @@ const AdminPage: React.FC = () => {
                             <>
                                 {[7, 8, 9, 10, 11, 12, 13].map((day) =>
                                     <div className="d-flex flex-column text-center gap-1">
-                                        <div>Day {day + 1}</div>
-                                        <button className="border rounded px-2 border-black" onClick={() => setSelectedSimDay(day + 1)} style={{ background: 'hsl(0, 0%, 90%)' }}>Select</button>
+                                        <div className={`${selectedSimDay === day + 1 && 'fw-semibold'}`}>Day {day + 1}</div>
+                                        <button className={`${selectedSimDay === day + 1 && 'fw-medium text-white'} border rounded px-2 border-black`}
+                                            onClick={() => setSelectedSimDay(day + 1)}
+                                            style={{ background: selectedSimDay === day + 1 ? '#167ed9' : "#e6e6e6" }}
+                                        >{selectedSimDay === day + 1 ? 'Selected' : 'Select'}</button>
                                     </div>
                                 )}
                             </>

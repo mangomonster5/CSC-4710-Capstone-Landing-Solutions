@@ -42,6 +42,8 @@ function AllStateProvider({ children }: { children: any }) {
         for (let d = 0; d < days; d++) {
             const dayFlights: any[] = [];
 
+
+
             for (let f = 0; f < flightsPerDay; f++) {
                 const baseDate = new Date(2026, 3, 15 + d);
 
