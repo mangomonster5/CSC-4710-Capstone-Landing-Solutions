@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMemo } from "react";
 import useAllStateContext from "../context/useAllStateContext";
+import GetAirportInfoFromFlight from "../utils/GetAirportInfoFromFlight";
 import ModalComponent from "../GlobalComponents/ModalComponent";
 import GetAirportInfoFromAircraft from "../utils/GetAirportInfoFromAircraft";
 
@@ -42,33 +43,25 @@ const FlightInfoPage: React.FC = () => {
     const [query, setQuery] = useState("");
     const [submitted, setSubmitted] = useState(false);
 
-    //allFlights is allFlights[simDayIndex] = Flight[]
-    //selectedSimDay is 1-based
+    // allFlights is allFlights[simDayIndex] = Flight[]
+    // selectedSimDay is 1-based
     const todaysFlights: Flight[] = useMemo(() => {
         if (!allFlights || allFlights.length === 0) return [];
         const idx = (selectedSimDay ?? 1) - 1;
         return allFlights[idx] ?? [];
     }, [allFlights, selectedSimDay]);
 
-    //lookup maps
-    const airportMap = useMemo(() => {
-        const m: Record<number, { iata_code: string; city: string; name: string }> = {};
-        (allAirports ?? []).forEach((a: any) => {
-            m[a.airport_id] = { iata_code: a.iata_code, city: a.city, name: a.name };
-        });
-        return m;
-    }, [allAirports]);
-
     const aircraftMap = useMemo(() => {
         const m: Record<number, { tail_num: string; model: string }> = {};
-        (allAircrafts ?? []).forEach((a: any) => {
-            //aircraft table sim_day snapshots
-            if (a.sim_day === selectedSimDay) {
+        // tail_num and model don't change across sim days, so just use the first
+        // snapshot found for each aircraft_id rather than filtering by sim_day
+        (allAircrafts ?? []).flat().forEach((a: any) => {
+            if (!m[a.aircraft_id]) {
                 m[a.aircraft_id] = { tail_num: a.tail_num, model: a.model };
             }
         });
         return m;
-    }, [allAircrafts, selectedSimDay]);
+    }, [allAircrafts]);
 
     const filteredFlights: Flight[] = useMemo(() => {
         if (!submitted || query.trim() === "") return [];
@@ -76,11 +69,10 @@ const FlightInfoPage: React.FC = () => {
         const q = query.trim().toLowerCase();
 
         return todaysFlights.filter((f) => {
-            const origin = airportMap[f.origin_airport_id];
-            const dest   = airportMap[f.destination_airport_id];
+            const origin = GetAirportInfoFromFlight(allAirports ?? [], f, true);
+            const dest   = GetAirportInfoFromFlight(allAirports ?? [], f, false);
             const ac     = aircraftMap[f.aircraft_id];
 
-            //flight number, city, aircraft tail or model, status, gate
             return (
                 f.flight_num.toLowerCase().includes(q) ||
                 origin?.iata_code.toLowerCase().includes(q) ||
@@ -91,11 +83,10 @@ const FlightInfoPage: React.FC = () => {
                 ac?.model.toLowerCase().includes(q) ||
                 f.flight_status.toLowerCase().includes(q) ||
                 (f.gate ?? "").toLowerCase().includes(q) ||
-                //string
                 `${origin?.iata_code}-${dest?.iata_code}`.toLowerCase().includes(q)
             );
         });
-    }, [submitted, query, todaysFlights, airportMap, aircraftMap]);
+    }, [submitted, query, todaysFlights, allAirports, aircraftMap]);
 
     const handleSearch = () => {
         setSubmitted(true);
@@ -178,8 +169,8 @@ const FlightInfoPage: React.FC = () => {
                                     </thead>
                                     <tbody>
                                         {filteredFlights.map((f) => {
-                                            const origin = airportMap[f.origin_airport_id];
-                                            const dest   = airportMap[f.destination_airport_id];
+                                            const origin = GetAirportInfoFromFlight(allAirports ?? [], f, true);
+                                            const dest   = GetAirportInfoFromFlight(allAirports ?? [], f, false);
                                             const ac     = aircraftMap[f.aircraft_id];
                                             const statusColor = STATUS_COLOR[f.flight_status] ?? "#6c757d";
 
