@@ -127,7 +127,7 @@ const LoginPage: React.FC = () => {
                 // console.log(data.user.role)
                 const user = {
                     isAuthenticated: true,
-                    role: data.user.role?? "admin"
+                    role: data.user.role
                 }
 
                 localStorage.setItem("user", JSON.stringify(user));
